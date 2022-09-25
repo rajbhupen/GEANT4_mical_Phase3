@@ -1,0 +1,94 @@
+#ifndef ICALFIELDPROPAGATOR_HH
+#define ICALFIELDPROPAGATOR_HH
+#include "micalDetectorParameterDef.hh"
+#include "MultiSimAnalysis.hh"
+#include "G4ThreeVector.hh"
+//#include "micalDetectorParameterDef.hh"
+//#include "micalutils.hh"
+//#include "G4FieldManager.hh"
+#include "G4SystemOfUnits.hh"
+#include <fstream>
+
+class micalFieldPropagator
+{
+public:
+    micalFieldPropagator();
+    ~micalFieldPropagator();
+  void ElectroMagneticField(const double Point[3], double& B1, double& B2, int ftype);
+
+public:
+ static micalFieldPropagator* FdPointer;
+  // Access functions
+ 
+  micalDetectorParameterDef *paradef;
+  MultiSimAnalysis *pAnalysis;
+
+  double fvalx1[16][6561] ;//[1681];
+  double fvaly1[16][6561];
+  double fvalz1[16][6561];
+  double array1[16][162];
+
+  double GetArray1(int slt, int value) {return array1[slt][value];}
+  double GetFValX1(int slt, int value) {return fvalx1[slt][value];}
+  double GetFValY1(int slt, int value) {return fvaly1[slt][value];}
+
+protected:
+  // Find the global Field Manager
+  
+
+
+ int temp;
+private:
+
+  double ShiftInX, ShiftInY, ShiftInZ;
+
+  G4double   fval;             // Field value
+  G4int      npts;             // Number of poinst
+  G4double   xoff;             // Offset
+  G4double*  pos;              // Position
+  G4double*  slope;            // Slope
+  G4double*  intercept;        // Intercept
+  G4String   filename;         // field map file
+
+  TFile* pMagFile;
+  TTree* fieldMapTree;
+
+  double xpos;
+  double ypos;
+  double zpos;
+  double BxField;
+  double ByField;
+  double BzField;
+  int dofinput;
+  int ndata;
+  //int ndata1[2];
+  int stepSize;
+
+  double irlayZ; //nFeThickness/2;
+  double rpclayZ; //nAirGap/2;
+  double ironrpcZ; // nFeThickness + nAirGap;
+  int nLayer;
+  int nIRLayer;
+  double parino[3];
+  double gapino;
+  double parlay[3];
+  double parchm[3];
+  double parcoilspaceiron[3];
+  int nCoil;
+  G4ThreeVector coilPos[4];
+
+  double posINOMworldX;
+  double posINOMworldY;
+  double posINOMworldZ;
+  double PosLayerTop;
+  double PosLayerBot;
+
+  double INOroomPos[3];
+  double StackPosInRoom[3];
+  double RPCLayerPosZ[10];
+  double IRONLayerPosZ[11];
+  double parirlay[3];
+
+};
+
+#endif // ICALFIELDPROPAGATOR_HH

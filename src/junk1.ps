@@ -1,0 +1,1746 @@
+%!PS-Adobe-3.0
+%%Title: micalCal1SD.cc
+%%For: gobinda
+%%Creator: a2ps version 4.14
+%%CreationDate: Fri Jul 16 18:32:02 2021
+%%BoundingBox: 24 24 588 768
+%%DocumentData: Clean7Bit
+%%Orientation: Landscape
+%%Pages: 4
+%%PageOrder: Ascend
+%%DocumentMedia: Letter 612 792 0 () ()
+%%DocumentNeededResources: font Courier
+%%+ font Courier-Bold
+%%+ font Courier-BoldOblique
+%%+ font Courier-Oblique
+%%+ font Helvetica
+%%+ font Helvetica-Bold
+%%+ font Symbol
+%%+ font Times-Bold
+%%+ font Times-Roman
+%%DocumentProcessColors: Black 
+%%DocumentSuppliedResources: procset a2ps-a2ps-hdr
+%%+ procset a2ps-black+white-Prolog
+%%+ encoding ISO-8859-1Encoding
+%%EndComments
+/a2psdict 200 dict def
+a2psdict begin
+%%BeginProlog
+%%Copyright: (c) 1988, 89, 90, 91, 92, 93 Miguel Santana
+%%Copyright: (c) 1995, 96, 97, 98 Akim Demaille, Miguel Santana
+% Check PostScript language level.
+/languagelevel where {
+  pop /gs_languagelevel languagelevel def
+} {
+  /gs_languagelevel 1 def
+} ifelse
+
+% EPSF import as in the Red Book
+/BeginInclude {
+  /b4_Inc_state save def    		% Save state for cleanup
+  /dict_count countdictstack def	% Count objects on dict stack
+  /op_count count 1 sub def		% Count objects on operand stack 
+  userdict begin
+    0 setgray 0 setlinecap
+    1 setlinewidth 0 setlinejoin
+    10 setmiterlimit [ ] 0 setdash newpath
+    gs_languagelevel 1 ne {
+      false setstrokeadjust false setoverprint 
+    } if
+} bind def
+
+/EndInclude {
+  count op_count sub { pos } repeat	% Clean up stacks
+  countdictstack dict_count sub { end } repeat
+  b4_Inc_state restore
+} bind def
+
+/BeginEPSF {
+  BeginInclude
+  /showpage { } def
+} bind def
+
+/EndEPSF {
+  EndInclude
+} bind def
+
+% Page prefeed
+/page_prefeed {         % bool -> -
+  statusdict /prefeed known {
+    statusdict exch /prefeed exch put
+  } {
+    pop
+  } ifelse
+} bind def
+
+/deffont {
+  findfont exch scalefont def
+} bind def
+
+/reencode_font {
+  findfont reencode 2 copy definefont pop def
+} bind def
+
+% Function c-show (str => -)
+% centers text only according to x axis.
+/c-show { 
+  dup stringwidth pop
+  2 div neg 0 rmoveto
+  show
+} bind def
+
+% Function l-show (str => -)
+% prints texts so that it ends at currentpoint
+/l-show {
+  dup stringwidth pop neg 
+  0 
+  rmoveto show
+} bind def
+
+% center-fit show (str w => -)
+% show centered, and scale currentfont so that the width is less than w
+/cfshow {
+  exch dup stringwidth pop
+  % If the title is too big, try to make it smaller
+  3 2 roll 2 copy
+  gt
+  { % if, i.e. too big
+    exch div
+    currentfont exch scalefont setfont
+  } { % ifelse
+    pop pop 
+  }
+  ifelse
+  c-show			% center title
+} bind def
+
+% Return the y size of the current font
+% - => fontsize
+/currentfontsize {
+  currentfont /FontType get 0 eq {
+    currentfont /FontMatrix get 3 get
+  }{
+    currentfont /FontMatrix get 3 get 1000 mul
+  } ifelse
+} bind def
+
+% reencode the font
+% <encoding-vector> <fontdict> -> <newfontdict>
+/reencode { %def
+  dup length 5 add dict begin
+    { %forall
+      % <vector> <key> <val>
+      1 index /FID ne 
+      { def }{ pop pop } ifelse
+    } forall
+    /Encoding exch def % -
+
+    % Use the font's bounding box to determine the ascent, descent,
+    % and overall height; don't forget that these values have to be
+    % transformed using the font's matrix.
+    % We use `load' because sometimes BBox is executable, sometimes not.
+    % Since we need 4 numbers an not an array avoid BBox from being executed
+    /FontBBox load aload pop
+    FontMatrix transform /Ascent exch def pop
+    FontMatrix transform /Descent exch def pop
+    /FontHeight Ascent Descent sub def
+
+    % Get the underline position and thickness if they're defined.
+    % Use 1 if they are not defined.
+    currentdict /FontInfo 2 copy known
+    { get
+      /UnderlinePosition 2 copy % <FontInfo> /UP <FontInfo> /UP
+      2 copy known
+      { get }{ pop pop 1 } ifelse
+      0 exch FontMatrix transform exch pop
+      def % <FontInfo>
+
+      /UnderlineThickness 2 copy % <FontInfo> /UT <FontInfo> /UT
+      2 copy known
+      { get }{ pop pop 1 } ifelse
+      0 exch FontMatrix transform exch pop
+      def % <FontInfo>
+      pop % -
+    }{ pop pop
+    } ifelse
+
+    currentdict
+  end 
+} bind def
+
+% composite fonts for ASCII-EUC mixed string
+% Version 1.2 1/31/1990
+% Orignal Ken'ichi HANDA (handa@etl.go.jp)
+% Modified Norio Katayama (katayama@rd.nacsis.ac.jp),1998
+% Extend & Fix Koji Nakamaru (maru@on.cs.keio.ac.jp), 1999
+% Anyone can freely copy, modify, distribute this program.
+
+/copyfont {	% font-dic extra-entry-count  copyfont  font-dic
+	1 index maxlength add dict begin
+	{	1 index /FID ne 2 index /UniqueID ne and
+		{def} {pop pop} ifelse
+	} forall
+	currentdict
+	end
+} bind def
+
+/compositefont { % ASCIIFontName EUCFontName RomanScale RomanOffset Rot(T/F) compositefont font
+    /RomanRotation exch def
+    /RomanOffset exch def
+    /RomanScale exch def
+    userdict /fixeucfont_dict known not {
+	userdict begin
+	    /fixeucfont_dict 2 dict begin
+		/UpperByteEncoding [
+		    16#00 1 16#20 { pop 0 } for
+		    16#21 1 16#28 { 16#20 sub } for
+		    16#29 1 16#2F { pop 0 } for
+		    16#30 1 16#74 { 16#27 sub } for
+		    16#75 1 16#FF { pop 0 } for
+		] def
+	        /LowerByteEncoding [
+		    16#00 1 16#A0 { pop /.notdef } for
+		    16#A1 1 16#FE { 16#80 sub 16 2 string cvrs
+				    (cXX) dup 1 4 -1 roll
+				    putinterval cvn } for
+		    /.notdef
+		] def
+		currentdict
+	    end def
+	end
+    } if
+    findfont dup /FontType get 0 eq {
+	14 dict begin
+	    %
+	    % 7+8 bit EUC font
+	    %
+	    12 dict begin
+		/EUCFont exch def
+		/FontInfo (7+8 bit EUC font) readonly def
+		/PaintType 0 def
+		/FontType 0 def
+		/FontMatrix matrix def
+		% /FontName
+		/Encoding fixeucfont_dict /UpperByteEncoding get def
+		/FMapType 2 def
+		EUCFont /WMode known
+		{ EUCFont /WMode get /WMode exch def }
+		{ /WMode 0 def } ifelse
+		/FDepVector [
+		    EUCFont /FDepVector get 0 get
+		    [ 16#21 1 16#28 {} for 16#30 1 16#74 {} for ]
+		    {
+			13 dict begin
+			    /EUCFont EUCFont def
+			    /UpperByte exch 16#80 add def	
+			    % /FontName
+			    /FontInfo (EUC lower byte font) readonly def
+			    /PaintType 0 def
+			    /FontType 3 def
+			    /FontMatrix matrix def
+			    /FontBBox {0 0 0 0} def
+			    /Encoding
+				fixeucfont_dict /LowerByteEncoding get def
+			    % /UniqueID
+			    % /WMode
+			    /BuildChar {
+				gsave
+				exch dup /EUCFont get setfont
+				/UpperByte get
+				2 string
+				dup 0 4 -1 roll put
+				dup 1 4 -1 roll put
+				dup stringwidth setcharwidth
+				0 0 moveto show
+				grestore
+			    } bind def
+			    currentdict
+			end
+			/lowerbytefont exch definefont
+		    } forall
+		] def
+		currentdict
+	    end
+	    /eucfont exch definefont
+	    exch
+	    findfont 1 copyfont dup begin
+		RomanRotation {
+			/FontMatrix FontMatrix
+			[ 0 RomanScale neg RomanScale 0 RomanOffset neg 0 ]
+			matrix concatmatrix def
+		}{
+			/FontMatrix FontMatrix
+			[ RomanScale 0 0 RomanScale 0 RomanOffset ] matrix concatmatrix
+			def
+			/CDevProc
+			    {pop pop pop pop 0 exch -1000 exch 2 div 880} def
+		} ifelse
+	    end
+	    /asciifont exch definefont
+	    exch
+	    /FDepVector [ 4 2 roll ] def
+	    /FontType 0 def
+	    /WMode 0 def
+	    /FMapType 4 def
+	    /FontMatrix matrix def
+	    /Encoding [0 1] def
+	    /FontBBox {0 0 0 0} def
+%	    /FontHeight 1.0 def % XXXX
+	    /FontHeight RomanScale 1.0 ge { RomanScale }{ 1.0 } ifelse def
+	    /Descent -0.3 def   % XXXX
+	    currentdict
+	end
+	/tmpfont exch definefont
+	pop
+	/tmpfont findfont
+    }{
+	pop findfont 0 copyfont
+    } ifelse
+} def	
+
+/slantfont {	% FontName slant-degree  slantfont  font'
+    exch findfont 1 copyfont begin
+    [ 1 0 4 -1 roll 1 0 0 ] FontMatrix exch matrix concatmatrix
+    /FontMatrix exch def
+    currentdict
+    end
+} def
+
+% Function print line number (<string> # -)
+/# {
+  gsave
+    sx cw mul neg 2 div 0 rmoveto
+    f# setfont
+    c-show
+  grestore
+} bind def
+
+% -------- Some routines to enlight plain b/w printings ---------
+
+% Underline
+% width --
+/dounderline {
+  currentpoint
+  gsave
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    0 rlineto
+    stroke
+  grestore
+} bind def
+
+% Underline a string
+% string --
+/dounderlinestring {
+  stringwidth pop
+  dounderline
+} bind def
+
+/UL {
+  /ul exch store
+} bind def
+
+% Draw a box of WIDTH wrt current font
+% width --
+/dobox {
+  currentpoint
+  gsave
+    newpath
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    dup 0 rlineto
+    0 currentfont /FontHeight get currentfontsize mul rlineto
+    neg 0 rlineto
+    closepath
+    stroke
+  grestore
+} bind def
+
+/BX {
+  /bx exch store
+} bind def
+
+% Box a string
+% string --
+/doboxstring {
+  stringwidth pop
+  dobox
+} bind def
+
+%
+% ------------- Color routines ---------------
+%
+/FG /setrgbcolor load def
+
+% Draw the background
+% width --
+/dobackground {
+  currentpoint
+  gsave
+    newpath
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    dup 0 rlineto
+    0 currentfont /FontHeight get currentfontsize mul rlineto
+    neg 0 rlineto
+    closepath
+    bgcolor aload pop setrgbcolor
+    fill
+  grestore
+} bind def
+
+% Draw bg for a string
+% string --
+/dobackgroundstring {
+  stringwidth pop
+  dobackground
+} bind def
+
+
+/BG {
+  dup /bg exch store
+  { mark 4 1 roll ] /bgcolor exch store } if
+} bind def
+
+
+/Show {
+  bg { dup dobackgroundstring } if
+  ul { dup dounderlinestring } if
+  bx { dup doboxstring } if
+  show
+} bind def
+
+% Function T(ab), jumps to the n-th tabulation in the current line
+/T {
+  cw mul x0 add
+  bg { dup currentpoint pop sub dobackground } if
+  ul { dup currentpoint pop sub dounderline } if
+  bx { dup currentpoint pop sub dobox } if
+  y0 moveto
+} bind def
+
+% Function n: move to the next line
+/n {
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+} bind def
+
+% Function N: show and move to the next line
+/N {
+  Show
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+} bind def
+
+/S {
+  Show
+} bind def
+
+%%BeginResource: procset a2ps-a2ps-hdr 2.0 2
+%%Copyright: (c) 1988, 89, 90, 91, 92, 93 Miguel Santana
+%%Copyright: (c) 1995, 96, 97, 98 Akim Demaille, Miguel Santana
+% Function title: prints page header.
+% <ct> <rt> <lt> are passed as argument
+/title { 
+  % 1. Draw the background
+  x v get y v get moveto
+  gsave
+    0 th 2 div neg rmoveto 
+    th setlinewidth
+    0.95 setgray
+    pw 0 rlineto stroke
+  grestore
+  % 2. Border it
+  gsave
+    0.7 setlinewidth
+    pw 0 rlineto
+    0 th neg rlineto
+    pw neg 0 rlineto
+    closepath stroke
+  grestore
+  % stk: ct rt lt
+  x v get y v get th sub 1 add moveto
+%%IncludeResource: font Helvetica
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  % 3. The left title
+  gsave
+    dup stringwidth pop fnfs 0.8 mul add exch % leave space took on stack
+    fnfs 0.8 mul hm rmoveto
+    show			% left title
+  grestore
+  exch
+  % stk: ct ltw rt
+  % 4. the right title
+  gsave
+    dup stringwidth pop fnfs 0.8 mul add exch % leave space took on stack
+    dup
+    pw exch stringwidth pop fnfs 0.8 mul add sub
+    hm
+    rmoveto
+    show			% right title
+  grestore
+  % stk: ct ltw rtw
+  % 5. the center title
+  gsave
+    pw 3 1 roll
+    % stk: ct pw ltw rtw
+    3 copy 
+    % Move to the center of the left room
+    sub add 2 div hm rmoveto
+    % What is the available space in here?
+    add sub fnfs 0.8 mul sub fnfs 0.8 mul sub
+    % stk: ct space_left
+%%IncludeResource: font Helvetica-Bold
+  fHelvetica-Bold fnfs scalefont setfont
+    cfshow
+  grestore
+} bind def
+
+% Function border: prints virtual page border
+/border { %def
+  gsave				% print four sides
+    0 setgray
+    x v get y v get moveto
+    0.7 setlinewidth		% of the square
+    pw 0 rlineto
+    0 ph neg rlineto
+    pw neg 0 rlineto
+    closepath stroke
+  grestore
+} bind def
+
+% Function water: prints a water mark in background
+/water { %def
+  gsave
+    scx scy moveto rotate
+%%IncludeResource: font Times-Bold
+  fTimes-Bold 100 scalefont setfont
+    .97 setgray
+    dup stringwidth pop 2 div neg -50 rmoveto
+    show
+  grestore
+} bind def
+
+% Function rhead: prints the right header
+/rhead {  %def
+  lx ly moveto
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  l-show
+} bind def
+
+% Function footer (cf rf lf -> -)
+/footer {
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  dx dy moveto
+  show
+
+  snx sny moveto
+  l-show
+  
+  fnx fny moveto
+  c-show
+} bind def
+%%EndResource
+%%BeginResource: procset a2ps-black+white-Prolog 2.0 1
+
+% Function T(ab), jumps to the n-th tabulation in the current line
+/T { 
+  cw mul x0 add y0 moveto
+} bind def
+
+% Function n: move to the next line
+/n { %def
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+} bind def
+
+% Function N: show and move to the next line
+/N {
+  Show
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+}  bind def
+
+/S {
+  Show
+} bind def
+
+/p {
+  false UL
+  false BX
+  fCourier bfs scalefont setfont
+  Show
+} bind def
+
+/sy {
+  false UL
+  false BX
+  fSymbol bfs scalefont setfont
+  Show
+} bind def
+
+/k {
+  false UL
+  false BX
+  fCourier-Oblique bfs scalefont setfont
+  Show
+} bind def
+
+/K {
+  false UL
+  false BX
+  fCourier-Bold bfs scalefont setfont
+  Show
+} bind def
+
+/c {
+  false UL
+  false BX
+  fCourier-Oblique bfs scalefont setfont
+  Show
+} bind def
+
+/C {
+  false UL
+  false BX
+  fCourier-BoldOblique bfs scalefont setfont
+  Show 
+} bind def
+
+/l {
+  false UL
+  false BX
+  fHelvetica bfs scalefont setfont
+  Show
+} bind def
+
+/L {
+  false UL
+  false BX
+  fHelvetica-Bold bfs scalefont setfont
+  Show 
+} bind def
+
+/str{
+  false UL
+  false BX
+  fTimes-Roman bfs scalefont setfont
+  Show
+} bind def
+
+/e{
+  false UL
+  true BX
+  fHelvetica-Bold bfs scalefont setfont
+  Show
+} bind def
+
+%%EndResource
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier
+%%IncludeResource: font Courier-Oblique
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Times-Roman
+%%IncludeResource: font Symbol
+%%IncludeResource: font Courier-BoldOblique
+%%BeginResource: encoding ISO-8859-1Encoding
+/ISO-8859-1Encoding [
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/space /exclam /quotedbl /numbersign /dollar /percent /ampersand /quoteright 
+/parenleft /parenright /asterisk /plus /comma /minus /period /slash 
+/zero /one /two /three /four /five /six /seven 
+/eight /nine /colon /semicolon /less /equal /greater /question 
+/at /A /B /C /D /E /F /G 
+/H /I /J /K /L /M /N /O 
+/P /Q /R /S /T /U /V /W 
+/X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore 
+/quoteleft /a /b /c /d /e /f /g 
+/h /i /j /k /l /m /n /o 
+/p /q /r /s /t /u /v /w 
+/x /y /z /braceleft /bar /braceright /asciitilde /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/space /exclamdown /cent /sterling /currency /yen /brokenbar /section 
+/dieresis /copyright /ordfeminine /guillemotleft /logicalnot /hyphen /registered /macron 
+/degree /plusminus /twosuperior /threesuperior /acute /mu /paragraph /bullet 
+/cedilla /onesuperior /ordmasculine /guillemotright /onequarter /onehalf /threequarters /questiondown 
+/Agrave /Aacute /Acircumflex /Atilde /Adieresis /Aring /AE /Ccedilla 
+/Egrave /Eacute /Ecircumflex /Edieresis /Igrave /Iacute /Icircumflex /Idieresis 
+/Eth /Ntilde /Ograve /Oacute /Ocircumflex /Otilde /Odieresis /multiply 
+/Oslash /Ugrave /Uacute /Ucircumflex /Udieresis /Yacute /Thorn /germandbls 
+/agrave /aacute /acircumflex /atilde /adieresis /aring /ae /ccedilla 
+/egrave /eacute /ecircumflex /edieresis /igrave /iacute /icircumflex /idieresis 
+/eth /ntilde /ograve /oacute /ocircumflex /otilde /odieresis /divide 
+/oslash /ugrave /uacute /ucircumflex /udieresis /yacute /thorn /ydieresis 
+] def
+%%EndResource
+% Initialize page description variables.
+/sh 612 def
+/sw 792 def
+/llx 24 def
+/urx 768 def
+/ury 588 def
+/lly 24 def
+/#copies 1 def
+/th 15.000000 def
+/fnfs 11 def
+/bfs 7.493857 def
+/cw 4.496314 def
+
+% Dictionary for ISO-8859-1 support
+/iso1dict 8 dict begin
+  /fCourier ISO-8859-1Encoding /Courier reencode_font
+  /fCourier-Bold ISO-8859-1Encoding /Courier-Bold reencode_font
+  /fCourier-BoldOblique ISO-8859-1Encoding /Courier-BoldOblique reencode_font
+  /fCourier-Oblique ISO-8859-1Encoding /Courier-Oblique reencode_font
+  /fHelvetica ISO-8859-1Encoding /Helvetica reencode_font
+  /fHelvetica-Bold ISO-8859-1Encoding /Helvetica-Bold reencode_font
+  /fTimes-Bold ISO-8859-1Encoding /Times-Bold reencode_font
+  /fTimes-Roman ISO-8859-1Encoding /Times-Roman reencode_font
+currentdict end def
+/bgcolor [ 0 0 0 ] def
+/bg false def
+/ul false def
+/bx false def
+% The font for line numbering
+/f# /Helvetica findfont bfs .6 mul scalefont def
+/fSymbol /Symbol findfont def
+/hm fnfs 0.25 mul def
+/pw
+   cw 81.400000 mul
+def
+/ph
+   522.321860 th add
+def
+/pmw urx llx sub pw 2 mul sub 1 div def
+/pmh 0 def
+/v 0 def
+/x [
+  0
+  dup pmw add pw add
+] def
+/y [
+  pmh ph add 0 mul ph add
+  dup
+] def
+/scx sw 2 div def
+/scy sh 2 div def
+/snx urx def
+/sny lly 2 add def
+/dx llx def
+/dy sny def
+/fnx scx def
+/fny dy def
+/lx snx def
+/ly ury fnfs 0.8 mul sub def
+/sx 0 def
+/tab 8 def
+/x0 0 def
+/y0 0 def
+%%EndSetup
+
+%%Page: (1-2) 1
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(//) c n
+(// ********************************************************************) N
+(// * License and Disclaimer                                           *) N
+(// *                                                                  *) N
+(// * The  Geant4 software  is  copyright of the Copyright Holders  of *) N
+(// * the Geant4 Collaboration.  It is provided  under  the terms  and *) N
+(// * conditions of the Geant4 Software License,  included in the file *) N
+(// * LICENSE and available at  http://cern.ch/geant4/license .  These *) N
+(// * include a list of copyright holders.                             *) N
+(// *                                                                  *) N
+(// * Neither the authors of this software system, nor their employing *) N
+(// * institutes,nor the agencies providing financial support for this *) N
+(// * work  make  any representation or  warranty, express or implied, *) N
+(// * regarding  this  software system or assume any liability for its *) N
+(// * use.  Please see the license in the file  LICENSE  and URL above *) N
+(// * for the full disclaimer and the limitation of liability.         *) N
+(// *                                                                  *) N
+(// * This  code  implementation is the result of  the  scientific and *) N
+(// * technical work of the GEANT4 collaboration.                      *) N
+(// * By using,  copying,  modifying or  distributing the software \(or *) N
+(// * any work based  on the software\)  you  agree  to acknowledge its *) N
+(// * use  in  resulting  scientific  publications,  and indicate your *) N
+(// * acceptance of all terms of the Geant4 Software license.          *) N
+(// ********************************************************************) N
+(//) N
+(// $Id: B2TrackerSD.cc 87359 2014-12-01 16:04:27Z gcosmo $) N
+(//) N
+(/// \\file B2TrackerSD.cc) N
+(/// \\brief Implementation of the B2TrackerSD class) N
+(//refer:https://www.slac.stanford.edu/xorg/geant4/KISTI2019/HandsOn3/#ex1s6) N
+(#include) K
+( ") p
+(G4VSensitiveDetector.hh) str
+(") p n
+(#include) K
+( ") p
+(micalCal1SD.hh) str
+(" ) p
+(//) c n
+(#include) K
+( ") p
+(G4HCofThisEvent.hh) str
+(") p n
+(#include) K
+( ") p
+(G4Step.hh) str
+(") p n
+(#include) K
+( ") p
+(G4ThreeVector.hh) str
+(") p n
+(#include) K
+( ") p
+(G4SDManager.hh) str
+(") p n
+(#include) K
+( ") p
+(G4ios.hh) str
+(") p n
+(#include) K
+( ") p
+(G4LogicalVolumeStore.hh) str
+(") p n
+(#include) K
+( ") p
+(G4RunManager.hh) str
+(") p
+(//..) c n
+(#include) K
+( ") p
+(micalRunAction.hh) str
+(") p
+(//..) c n
+(#include) K
+( ") p
+(micalDetectorParameterDef.hh) str
+(") p n
+(#include) K
+( <iostream>) p n
+(#include) K
+( <fstream>) p n
+( #include ") S
+(TRandom2.h) str
+(") p n
+(using) K
+( ) p
+(namespace) K
+( std; ) p n
+() N
+() N
+(//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......) c n
+(//B1TrackerSD::B1TrackerSD\(B1RunAction* runAction\)) N
+(//: G4UserEventAction\(\),) N
+(  ) p
+(//fRunAction\(runAction\)) c n
+() p n
+(//{} ) c n
+(/////////////////////////////////////////////////////) N
+() p n
+(micalcal1SD::micalcal1SD\() S
+(const) K
+( G4String name\)) p n
+(  : G4VSensitiveDetector\(name\),) N
+(    cal1Collection\() S
+(NULL) K
+(\),) p n
+(    ) S
+(// SWidth\(0\),) c n
+(    ) p
+(// fEnvelopeBox\(0\),) c n
+(    numberInCell\(20000\),) p n
+(    Counter\(0\),) N
+(    InCell\(0\)) N
+({) N
+(  G4String HCname;) N
+() S 8 T (paradef = micalDetectorParameterDef::AnPointer;) N
+(  collectionName.insert\(HCname=") S
+(cal1Collect) str
+("\);) p n
+(  cal1SDMessenger = ) S
+(new) K
+( micalcal1SDMessenger\() p
+(this) K
+(\);  ) p n
+(  pAnalysis = MultiSimAnalysis::AnPointer;) N
+(micalCal1SD.cc) (Page 1/8) (Jul 16, 21 18:31) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(}) p n
+() N
+(//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......) c n
+() p n
+(micalcal1SD::~micalcal1SD\(\) ) N
+({) N
+(//delete fMessenger;) c n
+(}) p n
+(//.......................................................................) c n
+() p n
+(void) k
+( micalcal1SD::Initialize\(G4HCofThisEvent* hce\)) p n
+({) N
+(  ) S
+(//cout<<"micalcal1SD::Initialize start"<<endl;) c n
+(  ) p
+(//InCell =0;) c n
+(  ) p n
+(  ) N
+(  ) S
+(for) K
+(\() p
+(int) k
+( op=0; op<3;op++\) {) p n
+(    partopscint[op] = paradef->partopscint[op];) N
+(  }) N
+(  ) N
+(  AirGapScintTop= paradef->AirGapScintTop;) N
+(  ) N
+(  ) N
+(  ) S
+(for) K
+(\() p
+(int) k
+( ji=0; ji<4;ji++\) {) p n
+(    ) S
+(for) K
+(\() p
+(int) k
+( kl=0; kl<3; kl++\) {) p n
+(      Phys_TopScint_GPos[ji][kl]= paradef->Phys_TopScint_GPos[ji][kl];) S 72 T () N
+(      ) N
+(    }) S
+(//kl) c n
+(  }) p
+(//ji) c n
+(  ) p n
+(  ) N
+(  ) S
+(for) K
+(\() p
+(int) k
+( jk=0; jk<3;jk++\) {) p n
+(    ) S
+(for) K
+(\() p
+(int) k
+( mn=0; mn<3; mn++\) {) p n
+(      ) N
+(      Phys_SideScint_R_GPos[jk][mn]= paradef->Phys_SideScint_R_GPos[jk][mn];) N
+(      Phys_SideScint_L_GPos[jk][mn]= paradef->Phys_SideScint_L_GPos[jk][mn];) N
+(      Phys_SideScint_D_GPos[jk][mn]= paradef->Phys_SideScint_D_GPos[jk][mn];) N
+(    }) S
+(//mn) c n
+(  }) p
+(//jk) c n
+(  ) p n
+( ) S
+(// cout<<"parscint[0]"<<parscint[0]<<endl;) c n
+(  ) p
+(// cout<<"parscint[1]"<<parscint[1]<<endl;) c n
+( ) p
+(//cout<<"parscint[2]"<<parscint[2]<<endl;) c n
+(  ) p
+(//if \(!fEnvelopeBox\)) c n
+(  ) p
+(//{) c n
+(    ) p
+(//G4LogicalVolume* envLV) c n
+(      ) p
+(//= G4LogicalVolumeStore::GetInstance\(\)->GetVolume\("logicScint_1cm"\);) c n
+(    ) p
+(//if \( envLV \) fEnvelopeBox = dynamic_cast<G4Box*>\(envLV->GetSolid\(\)\);) c n
+(  ) p
+(//}) c n
+() p n
+(  ) S
+(//if \( fEnvelopeBox \) {) c n
+(    ) p
+(//pargas[0] = fEnvelopeBox->GetXHalfLength\(\);) c n
+(      ) p
+(//pargas[1] = fEnvelopeBox->GetYHalfLength\(\);) c n
+(    ) p
+(//pargas[2] = fEnvelopeBox->GetZHalfLength\(\);) c n
+(  ) p
+(//}  ) c n
+(  ) p
+(//else  {) c n
+(    ) p
+(//G4ExceptionDescription msg;) c n
+(    ) p
+(//msg << "Envelope volume of box shape not found.\\n"; ) c n
+(    ) p
+(//msg << "Perhaps you have changed geometry.\\n";) c n
+(    ) p
+(//msg << "The gun will be place at the center.";) c n
+(    ) p
+(//G4Exception\("B1PrimaryGeneratorAction::GeneratePrimaries\(\)",) c n
+(     ) p
+(//"MyCode0002",JustWarning,msg\);) c n
+(  ) p
+(//}) c n
+(  ) p
+(//cout<<pargas[0]<<endl;) c n
+(   ) p
+(//cout<<pargas[1]<<endl;) c n
+(    ) p
+(//cout<<pargas[2]<<endl;) c n
+(//..............................................................................) N
+(....................) S 24 T () N
+() p 8 T () N
+(micalCal1SD.cc) (Page 2/8) (Jul 16, 21 18:31) title
+border
+grestore
+(Printed by gobinda) rhead
+(micalCal1SD.cc) (1/4) (Friday July 16, 2021) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (3-4) 2
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(  ) p
+(// Create hits collection) c n
+(  ) p n
+(  cal1Collection ) N
+(    = ) S
+(new) K
+( micalcal1HitsCollection\(SensitiveDetectorName, collectionName[0]\); ) p n
+(  ) N
+(  ) S
+(//cout<<"SensitiveDetectorName" <<SensitiveDetectorName<<endl;) c n
+(  ) p
+(//cout<<"collectionName[0]" <<collectionName[0]<<endl;) c n
+(  ) p
+(// Add this collection in hce) c n
+(  ) p n
+(  G4) S
+(int) k
+( hcID ) p n
+(    = G4SDManager::GetSDMpointer\(\)->GetCollectionID\(collectionName[0]\);) N
+(  hce->AddHitsCollection\( hcID, cal1Collection \); ) N
+(  ) N
+(  paradef =  micalDetectorParameterDef::AnPointer;) N
+(  ) N
+(  ) N
+(  ) S
+(//cout<<"micalcal1SD::Initialize ends ) c 48 T ("<<endl;) N
+(}) p n
+() N
+(//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......) c n
+() p n
+(G4) S
+(bool) k
+( micalcal1SD::ProcessHits\(G4Step* aStep,  ) p n
+(                                G4TouchableHistory*\)  ) S
+(//called everytime when th) c n
+(e particle hts the sensitive dete) N
+({  ) p n
+(  ) N
+(  ) S
+(//cout<<endl<<"micalcal1SD::ProcessHits start"<<endl;) c n
+(  ) p n
+(  G4) S
+(double) k
+( edep = aStep->GetTotalEnergyDeposit\(\)/keV;) p n
+(  ) N
+(  G4TouchableHistory* theTouchable = \(G4TouchableHistory*\)\( aStep->GetPreStepPoi) N
+(nt\(\)->GetTouchable\(\) \);) N
+(  ) N
+(  ) S
+(int) k
+( pdgid = aStep->GetTrack\(\)->GetDefinition\(\)->GetPDGEncoding\(\);) p n
+(  ) S
+(int) k
+( level = theTouchable->GetHistoryDepth\(\);) p n
+(  ) N
+(  ) S
+(//cout<<"level="<<level<<endl; //level=4) c n
+(  ) p
+(//for\(int ij=0; ij<level+1; ij++\) { //level=4) c n
+(  ) p n
+(  ) S
+(//cout<<ij<<" volname "<<theTouchable->GetVolume\(ij\)->GetName\(\)) c n
+(  ) p
+(//<<" copyNo. "<<theTouchable->GetCopyNumber\(ij\) <<"edep "<< edep << "pid "<<p) c n
+(dgid<< "nInLA:"<<theTouchable->GetCopyNumber\(1\)<<endl;) N
+(  ) p
+(//}) c n
+(  ) p n
+(  G4ThreeVector parmom = aStep->GetTrack\(\)->GetMomentum\(\);) N
+(  ) N
+(  ) S
+(double) k
+( momentum= parmom.mag\(\);) p n
+(  ) S
+(double) k
+( polang) p 16 T (= parmom.theta\(\);) N
+(  ) S
+(double) k
+( aziang) p 16 T (= parmom.phi\(\);) N
+(  ) N
+(  ) S
+(//cout<<"edep "<< edep<<endl;) c n
+(  ) p
+(if) K
+( \(edep==0.\)  ) p
+(return) K
+( ) p
+(false) k
+(;) p n
+(  ) N
+(  ) S
+(//We are simulating a  detector that will trigger only if some energy has been) c n
+( deposited \(i.e. via ionization\), ) N
+(  ) p
+(//for example if a neutron passes through the detector \(without making interac) c n
+(tions\) its passage should not be recorded.) N
+(  ) p
+(// Check the energy deposited in the step, if zero do not do anything.) c n
+(  ) p n
+(  ) N
+(  G4ThreeVector glbpos =0.5*\(aStep->GetPreStepPoint\(\)->GetPosition\(\) + aStep->Ge) N
+(tPostStepPoint\(\)->GetPosition\(\)\); ) S
+(//avg distance betwen the two) c n
+(  ) p n
+(  G4ThreeVector tmp;) N
+(  ) N
+(  tmp = \(1/m\)*glbpos;) N
+(  ) S
+(// tmp.y\(\) = \(1/m\)*glbpos.y\(\);) c n
+(  ) p
+(// tmp.z\(\) = \(1/m\)*glbpos.z\(\);) c n
+(  ) p n
+(micalCal1SD.cc) (Page 3/8) (Jul 16, 21 18:31) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(  ) p
+(//cout<<"tmpx" << tmp.x\(\) <<endl;) c n
+(  ) p
+(//cout<<"tmpy" << tmp.y\(\) <<endl;) c n
+(  ) p
+(//cout<<"tmpz" << tmp.z\(\) <<endl;) c n
+(  ) p n
+(  G4) S
+(int) k
+( nScntStrp = theTouchable->GetCopyNumber\(0\);) p n
+(  G4) S
+(int) k
+( nInLA = theTouchable->GetCopyNumber\(1\) ;     ) p n
+(  G4String loc = theTouchable->GetVolume\(1\)->GetName\(\);) N
+(  ) N
+(  ) S
+(//cout<<"loc " << loc<<endl;) c n
+(  ) p
+(//cout<<"nInLA " << nInLA<<endl;) c n
+(  ) p
+(//cout<<"nScntStrp " << nScntStrp<<endl;) c n
+(  ) p n
+(  ) N
+(  ) S
+(//cout<<"check_Process hits_1"<<endl;) c n
+(  G4String Cond_one = ") p
+(physiTopScint_1cm) str
+(";) p n
+(  G4String Cond_two = ") S
+(physiTopScint_2cm) str
+(";) p n
+(  G4String Cond_three = ") S
+(physiSideScint_L) str
+(";) p n
+(  G4String Cond_four = ") S
+(physiSideScint_R) str
+(";) p n
+(  G4String Cond_five =") S
+(physiSideScint_D) str
+(";) p n
+(  G4) S
+(int) k
+( loc_no=-1;) p n
+(  ) N
+(  ) N
+(  ) S
+(if) K
+( \(loc == Cond_one || loc == Cond_two\){) p n
+(    loc_no = 0;) N
+(    ) S
+(//  PhyVolGlPos[0]= paradef->Phys_TopScint_GPos[nInLA][0];) c n
+(    ) p
+(// PhyVolGlPos[2]= paradef->Phys_TopScint_GPos[nInLA][2];) c n
+(    ) p n
+(  } ) S
+(else) K
+( ) p
+(if) K
+( \(loc == Cond_three\){) p n
+(    ) N
+(    loc_no = 1;) N
+(    ) S
+(// PhyVolGlPos[0]= paradef->Phys_SideScint_L_GPos[nInLA][0];) c n
+(    ) p
+(//PhyVolGlPos[1]=) c n
+(    ) p
+(// PhyVolGlPos[2]= paradef->Phys_SideScint_L_GPos[nInLA][2];) c n
+(  } ) p
+(else) K
+( ) p
+(if) K
+( \(loc == Cond_four\){) p n
+(    loc_no = 2;) N
+(    ) S
+(// PhyVolGlPos[0]= paradef->Phys_SideScint_R_GPos[nInLA][0];) c n
+(    ) p
+(//PhyVolGlPos[1]=) c n
+(    ) p
+(// PhyVolGlPos[2]= paradef->Phys_SideScint_R_GPos[nInLA][2];) c n
+(  } ) p
+(else) K
+( ) p
+(if) K
+( \(loc == Cond_five\){) p n
+(    loc_no = 3;) N
+(    ) S
+(// PhyVolGlPos[1]= paradef->Phys_SideScint_D_GPos[nInLA][1];) c n
+(    ) p
+(//PhyVolGlPos[1]=) c n
+(    ) p
+(// PhyVolGlPos[2]= paradef->Phys_SideScint_D_GPos[nInLA][2];) c n
+(  }) p n
+(  ) N
+(  ) S
+(//cout<<"loc_no " << loc_no<<endl;) c n
+(  ) p n
+(  ) S
+(//cout<<"check_Process hits_2"<<endl;) c n
+(  ) p n
+(  ) N
+(  G4) S
+(double) k
+( atime = aStep->GetPreStepPoint\(\)->GetGlobalTime\(\)/\(ns\);) p n
+(  cout<<") S
+(   -------) str
+("<<atime<<endl;) p n
+(  G4) S
+(int) k
+( nInT = G4) p
+(int) k
+(\(atime/125.\); ) p n
+(  cout<<nInT<<endl;) N
+(  G4ThreeVector localpos = theTouchable->GetHistory\(\)->GetTopTransform\(\).Transfo) N
+(rmPoint\(glbpos\);) N
+(  ) S
+(// double tra_LPosy = localpos.y\(\) + partopscint[2]; // shift of origin ) c n
+( ) p
+(//To reduce the usage of memory..................................) c n
+( ) p
+(// unsigned int ScntStrpid;   // 16 bits  declared in hh   15 14 13 12 11 10 9 ) c n
+(8 7 6 5 4 3 2 1 0) N
+(  ) p n
+(  ) S
+(unsigned) k
+( ) p
+(int) k
+( IdSiPM;) p n
+(  ) N
+(  ) S
+(//) c n
+(  ) p n
+(  IdSiPM = loc_no;     ) S
+(//occupies 2 bits) c n
+(  ) p
+(//  cout<<IdSiPM) c 24 T (<<endl;) S 32 T () S 40 T () S 48 T () S 56 T () S 64 T () S 72 T ( ) N
+(  IdSiPM<<=2;) p n
+(  ) S
+(// cout<<IdSiPM) c 24 T (<<endl;) S 32 T () N
+(micalCal1SD.cc) (Page 4/8) (Jul 16, 21 18:31) title
+border
+grestore
+(Printed by gobinda) rhead
+(micalCal1SD.cc) (2/4) (Friday July 16, 2021) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (5-6) 3
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(  IdSiPM +=nInLA;      ) p
+(//occupies 2 bits) c n
+(  ) p
+(// cout<<IdSiPM) c 24 T (<<endl;) S 32 T () N
+(  IdSiPM<<=7;) p n
+(  ) S
+(// cout<<IdSiPM) c 24 T (<<endl;) S 32 T () N
+(  IdSiPM +=nScntStrp;) p
+(// 7 bits space) c n
+(  ) p
+(// cout<<IdSiPM) c 24 T (<<endl;) S 32 T () N
+(  IdSiPM<<=2;) p n
+(  ) S
+(for) K
+(\() p
+(int) k
+( nSiPM=0;nSiPM<4;nSiPM++\){) p n
+(    ) S
+(//cout<<"Id "<<IdSiPM<<endl;) c n
+(    ) p
+(// cout<<"check_Process hits_3"<<endl;) c n
+(    ) p
+(int) k
+( oldCellId = -1;) p n
+(    ) N
+(    ) S
+(//  cout<<"oldCellId "<<oldCellId<<endl;) c n
+(    ) p
+(// cout<<"InCell "<<InCell<<endl;) c n
+(    ) p
+(for) K
+( \() p
+(int) k
+( ij=0; ij<InCell; ij++\) {) p n
+(      ) S
+(// cout<<"ij "<<ij<<endl;) c n
+(      ) p
+(if) K
+( \(IdSiPM ==CellDetID[ij]\) {) p n
+(        oldCellId = ij;) S
+(//cout<<"oldCellId"<<oldCellId<<endl;) c n
+(      }) p n
+(    }) N
+(    ) N
+(    ) S
+(if) K
+( \(oldCellId ==-1 && InCell <numberInCell -1 \) {) p n
+(      ) S
+(// cout<<"New Hit"<<Counter<<endl;) c n
+(      Counter++;) p n
+(      micalcal1Hit* newHit = ) S
+(new) K
+( micalcal1Hit\(\);) p n
+(      ) S
+(// B1TrackerHit* newHit = new B1TrackerHit\(\);) c n
+(      ) p n
+(      newHit->SetHitId\(IdSiPM\);) N
+(      ) N
+(      ) S
+(int) k
+( pdgid = aStep->GetTrack\(\)->GetDefinition\(\)->GetPDGEncoding\(\);) p n
+(      ) S
+(//newHit->SetPos\(aStep->GetPostStepPoint\(\)->GetPosition\(\)\);) c n
+(      newHit->SetpdgId\(pdgid\);) p n
+(      newHit->SetEdep\(edep\);) N
+(      newHit->SetTime\(atime\);) N
+(      newHit->SetPos\(glbpos\); ) S
+(// 0.5*\(aStep->GetPreStepPoint\(\)->GetPosition\(\) + ) c n
+(aStep->GetPostStepPoint\(\)->GetPosition\(\)\)\);) N
+(      ) p
+(//newHit->SetLocalXPos\(localpos.x\(\)\);) c n
+(      ) p
+(//newHit->SetLocalYPos\(localpos.y\(\)\);) c 48 T () S 56 T (     ) N
+(      newHit->SetLocalPos\(localpos\);) p n
+(      ) S
+(//) c 16 T (newHit->SetSigTimDif\(\);) N
+(      newHit->SetMom\( aStep->GetTrack\(\)->GetMomentum\(\)\);) p n
+(      ) N
+(      InCell = cal1Collection->insert\( newHit \);) N
+(      ) S
+(//  cout<<"InCell "<<InCell<<endl;) c n
+(      CellDetID[InCell-1] = IdSiPM;      ) p
+(//?) c n
+(      ) p
+(//  cout<<"CellDetID[InCell-1] "<<CellDetID[InCell-1]<<endl;) c n
+(      ) p
+(//........................................................................) c n
+(...............................) N
+(      ) p n
+(    }) N
+(    ) N
+(    ) S
+(//cout<<"check_Process hits_4"<<endl;) c n
+(    ) p
+(//cout<<"oldCellId "<<oldCellId<<endl;) c n
+(    ) p
+(if) K
+( \(oldCellId >=0\) {) p n
+(      \(*cal1Collection\)[oldCellId]->AddEdep\(edep\);) N
+(      ) S
+(if) K
+( \(atime <\(*cal1Collection\)[oldCellId]->GetTime\(\)\) {) p n
+(        ) N
+(        \(*cal1Collection\)[oldCellId]->SetTime\(atime\);) N
+(      }) N
+(    }) N
+(    ) N
+(    ) S
+(//cout<<"check_Process hits_5"<<endl;) c n
+(    ) p
+(// cout<<"detid:"<<detid<<endl;) c n
+(    ) p
+(//cout<<"micalcal1SD::ProcessHits ends "<<endl;) c n
+(    IdSiPM++;) p n
+(    ) N
+(  }) N
+(  ) S
+(return) K
+( ) p
+(true) k
+(;) p n
+(  ) N
+(micalCal1SD.cc) (Page 5/8) (Jul 16, 21 18:31) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(}) p n
+() N
+(//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......) c n
+() p n
+(void) k
+( micalcal1SD::EndOfEvent\(G4HCofThisEvent*\)) p n
+({) N
+(  ) S
+(double) k
+( sigspeed = paradef->sigspeed;) p
+(//16.3cm/ns ) c n
+(  ) p
+(//) c 8 T (cout<<"micalcal1SD::EndOfEvent START "<<endl;) N
+(  InCell = 0;) p n
+() S 8 T (G4) S
+(float) k
+( ScintHitGPos[3];) p n
+() S 8 T () N
+() S 8 T () S
+(//int ijk=0;) c n
+() p 8 T (G4) S
+(float) k
+( PhyVolGlPos[3];) p n
+() S 8 T () S
+(//int countsy=0;) c n
+(  ) p
+(//micalRunAction* fRunAction = micalRunAction::AnPointer; //# to store data in) c n
+( the same tree created in runaction) N
+() p 8 T () N
+(  ) N
+(  ) S
+(// if \( verboseLevel>1 \) { ) c n
+(  G4) p
+(int) k
+( nofHits = cal1Collection->entries\(\);) p n
+(  ) S
+(//G4cout << G4endl) c n
+(  ) p
+(//<< "-------->Hits Collection: in this event there are " << nofHits ) c n
+(  ) p
+(//<< " hits in the tracker chambers: " << G4endl;) c n
+(  ) p
+(//for \( G4int i=0; i<nofHits; i++ \) \(*cal1Collection\)[i]->Print\(\);) c n
+(  cout<<") p
+(nofHits::) str
+("<<nofHits<<endl;) p n
+(  pAnalysis->CMV_nsimhit = cal1Collection->entries\(\);) N
+(  ) S
+(//cout<<"check-1"<<endl;) c n
+(  ) p
+(for) K
+( \() p
+(int) k
+( ij=0; ij<cal1Collection->entries\(\); ij++\) {) p n
+(    ) S
+(// cout<<"ij"<<ij<<endl;) c n
+(    ) p
+(unsigned) k
+( ) p
+(int) k
+( SiPMId = \(*cal1Collection\)[ij]->GetHitId\(\);) p n
+(    G4ThreeVector posvec = \(*cal1Collection\)[ij]->GetPos\(\);  ) S
+(// get glb poistion) c n
+(    ) p
+(int) k
+( pdgid = \(*cal1Collection\)[ij]->GetpdgId\(\);) p n
+(    ) S
+(double) k
+( atime = \(*cal1Collection\)[ij]->GetTime\(\);          ) p
+(//detid is stored ) c n
+(in Sethitid) N
+(    ) p
+(double) k
+( Edep = \(*cal1Collection\)[ij]->GetEdep\(\); ) p n
+(    G4ThreeVector localpos = \(*cal1Collection\)[ij]->GetLocalPos\(\);) N
+(    ) N
+(    ) N
+(    cout<<") S
+(ij ) str
+("<<ij<<") p
+( Edep ) str
+("<<Edep<<") p
+( pdgid ) str
+("<<pdgid<<") p
+( posvec ) str
+("<<posvec<<") p
+( SiPMId  ) str
+("<<Si) p n
+(PMId <<endl;) N
+(    ) S
+(//cout<<"check1"<<endl;) c n
+(    ) p n
+(    pAnalysis->CMV_detid[ij] = SiPMId;) N
+(    pAnalysis->CMV_simpdgid[ij] =  pdgid;) N
+(    pAnalysis->CMV_simtime[ij] = atime;) N
+(    pAnalysis->CMV_simenr[ij] = Edep;) N
+(    pAnalysis->CMV_simposx[ij] = posvec.x\(\);) N
+(    pAnalysis->CMV_simposy[ij] = posvec.y\(\);) N
+(    pAnalysis->CMV_simposz[ij] = posvec.z\(\);) N
+(    ) N
+(    ) N
+(    ) S
+(int) k
+( LayerNo, loc_no, ScntStrpNo, SiPMNo;) p n
+(    ) S
+(//cout<<"ScntStrpid"<<ScntStrpid<<endl;) c n
+(    ) p n
+(    SiPMNo = SiPMId%4; ) S
+(//2^2) c n
+(    SiPMId>>=2;) p n
+(    ScntStrpNo= SiPMId%128; ) S
+(//2^7) c n
+(    ) p
+(// cout<<"ScntStrpNo"<<ScntStrpNo<<endl;) c n
+(    SiPMId>>=7;) p n
+(    LayerNo = SiPMId%4;) N
+(    ) S
+(// cout<<"LayerNo"<<LayerNo<<endl;) c n
+(    SiPMId>>=2;      ) p n
+(    loc_no = SiPMId;) N
+(    ) S
+(//cout<<"Loc_No"<<loc_no<<endl;) c n
+(    ) p n
+(    pAnalysis->CMV_digiSiPMNo[ij] =SiPMNo;) N
+(    pAnalysis->CMV_digiScntStrpNo[ij] = ScntStrpNo;) N
+(    pAnalysis->CMV_digiLayerNo[ij] =  LayerNo; ) N
+(    pAnalysis->CMV_digiLocNo[ij] =) S 40 T (loc_no;) N
+(micalCal1SD.cc) (Page 6/8) (Jul 16, 21 18:31) title
+border
+grestore
+(Printed by gobinda) rhead
+(micalCal1SD.cc) (3/4) (Friday July 16, 2021) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (7-8) 4
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(    ) p n
+(    cout<<") S
+(local position ) str
+("<<localpos<<endl;) p n
+(    cout<<") S
+( SiPMNo ) str
+("<<SiPMNo <<") p
+( ScntStrpNo  ) str
+("<<ScntStrpNo <<") p
+( LayerNo  ) str
+("<<LayerNo <<") p
+( L) str n
+(oc_No ) S
+("<<loc_no<<endl;) p n
+(   ) N
+(    ) S
+(double) k
+( sigpos;) p n
+(    ) S
+(if) K
+(\(loc_no==3\) {) p n
+(      sigpos=localpos.x\(\);) N
+(      ) S
+(// cout<<"signal position "<<sigpos<<endl;) c n
+(    } ) p
+(else) K
+( {) p n
+(      sigpos = localpos.y\(\);) N
+(      ) S
+(// cout<<"signal position "<<sigpos<<endl;) c n
+(    }) p n
+(    ) N
+(    ) S
+(double) k
+( sigtim = atime +  \(partopscint[1]+ sigpos\)/sigspeed + gRandom->Gaus\(0) p n
+(,1\)*ns;) N
+(    ) S
+(double) k
+(  sigtimdash = atime + \(partopscint[1]- sigpos\)/sigspeed + gRandom->Ga) p n
+(us\(0,1\)*ns ;) N
+(    ) N
+(    ) S
+(if) K
+(\(SiPMNo ==0 || SiPMNo==1\) {) p n
+(      cout<<atime<<") S
+( signal time ) str
+("<<sigtim/ns<<endl;) p n
+(      pAnalysis->CMV_digisigtim[ij]= sigtim;) N
+(    } ) S
+(else) K
+( {) p n
+(      cout<<atime<<") S
+( signal time ) str
+("<<sigtimdash/ns<<endl;) p n
+(      pAnalysis->CMV_digisigtim[ij]=sigtimdash; ) S
+(//GMA it was an error) c n
+(    }) p n
+(    ) N
+(    ) S
+(if) K
+( \( loc_no == 0\){) p n
+(      PhyVolGlPos[0]= paradef->Phys_TopScint_GPos[LayerNo][0];) N
+(      PhyVolGlPos[1]=paradef->Phys_TopScint_GPos[LayerNo][1];) N
+(      PhyVolGlPos[2]= paradef->Phys_TopScint_GPos[LayerNo][2];) N
+(    } ) S
+(else) K
+( ) p
+(if) K
+( \(loc_no == 1\){) p n
+(      PhyVolGlPos[0]= paradef->Phys_SideScint_L_GPos[LayerNo][0];) N
+(      PhyVolGlPos[1]=paradef->Phys_SideScint_L_GPos[LayerNo][1];) N
+(      PhyVolGlPos[2]= paradef->Phys_SideScint_L_GPos[LayerNo][2];) N
+(    } ) S
+(else) K
+( ) p
+(if) K
+( \(loc_no == 2\){) p n
+(      PhyVolGlPos[0]= paradef->Phys_SideScint_R_GPos[LayerNo][0];) N
+(      PhyVolGlPos[1]=paradef->Phys_SideScint_R_GPos[LayerNo][1];) N
+(      PhyVolGlPos[2]= paradef->Phys_SideScint_R_GPos[LayerNo][2];) N
+(    } ) S
+(else) K
+( ) p
+(if) K
+( \(loc_no == 3\){) p n
+(      PhyVolGlPos[1]= paradef->Phys_SideScint_D_GPos[LayerNo][1];) N
+(      PhyVolGlPos[0]=paradef->Phys_SideScint_D_GPos[LayerNo][0];) N
+(      PhyVolGlPos[2]= paradef->Phys_SideScint_D_GPos[LayerNo][2];) N
+(    }) N
+(    ) N
+(    ) S
+(//cout<<"loc_no " << loc_no<<endl;) c n
+(    ) p n
+(    ) N
+(    ) S
+(// cout<<" ---------"<<PhyVolGlPos[0]<<endl;) c n
+(    ) p n
+(    ) S
+(if) K
+(\(loc_no == 0\){) p n
+(      ) N
+(      ScintHitGPos[0] = PhyVolGlPos[0] - 0.5*\(\(88*2*partopscint[0]\)+\(89*AirGapSc) N
+(intTop\)\) +\( ScntStrpNo+1\)*\(AirGapScintTop\)+\(2*ScntStrpNo+1\)*partopscint[0];) N
+(      ScintHitGPos[1] =PhyVolGlPos[1];) N
+(      ScintHitGPos[2] = PhyVolGlPos[2];) N
+(      ) S
+(// pAnalysis->ScntStrpXPos[LayerNo].push_back\(ScintHitGPos[0]\);) c n
+(      ) p
+(// pAnalysis->ScntStrpNo[LayerNo].push_back\(ScntStrpNo\);) c n
+(      ) p n
+(      cout<<") S
+( ---------) str
+("<<ScintHitGPos[0]<<endl;) p n
+(    } ) S
+(else) K
+( ) p
+(if) K
+(\(loc_no == 1 ||loc_no == 2 \){) p n
+(      ScintHitGPos[0] = PhyVolGlPos[0] ;) N
+(      ScintHitGPos[1]= PhyVolGlPos[1];) N
+(      ScintHitGPos[2] = PhyVolGlPos[2]-0.5*\(\(40*2*partopscint[0]\)+\(41*AirGapScin) N
+(tTop\)\)+\( ScntStrpNo+1\)*\(AirGapScintTop\)+\(2*ScntStrpNo+1\)*partopscint[0];) N
+(      ) N
+(    }) S
+(else) K
+( ) p
+(if) K
+(\(loc_no == 3\){) p n
+(      ScintHitGPos[0]=PhyVolGlPos[0];) N
+(      ScintHitGPos[1] = PhyVolGlPos[1] ;) N
+(micalCal1SD.cc) (Page 7/8) (Jul 16, 21 18:31) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(      ScintHitGPos[2] = PhyVolGlPos[2]-0.5*\(\(40*2*partopscint[0]\)+\(41*AirGapScin) p n
+(tTop\)\)+\( ScntStrpNo+1\)*\(AirGapScintTop\)+\(2*ScntStrpNo+1\)*partopscint[0];) N
+(      ) N
+(    }) N
+( ) N
+(    pAnalysis->CMV_digiposx[ij] =) S 40 T (ScintHitGPos[0]; ) N
+(    pAnalysis->CMV_digiposy[ij] =) S 40 T (ScintHitGPos[1]; ) N
+(    pAnalysis->CMV_digiposz[ij] =) S 40 T (ScintHitGPos[2]; ) S 64 T () N
+(  }) S
+(//for ij) c n
+(  ) p n
+(//cout<<"micalcal1SD::EndOfEvent ends "<<endl;) c n
+(  ) p n
+(}) N
+() N
+(//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......) c n
+(micalCal1SD.cc) (Page 8/8) (Jul 16, 21 18:31) title
+border
+grestore
+(Printed by gobinda) rhead
+(micalCal1SD.cc) (4/4) (Friday July 16, 2021) footer
+end % of iso1dict
+pagesave restore
+showpage
+
+%%Trailer
+end
+%%EOF

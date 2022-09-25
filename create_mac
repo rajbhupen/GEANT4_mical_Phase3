@@ -1,0 +1,9 @@
+#!/bin/bash
+  
+for (( ij=1;ij<=$1;ij++ ))
+do
+    foo1=$(printf "%04d" $ij)
+    cat run_all.mac |  sed  's/\/mical\/run\/output_file.*/\/mical\/run\/output_file fileOut\/gen3_inout0_All_updated_'"${foo1}"'/g' > runFiles/raj_run1_${foo1}.mac
+    echo "runFiles/raj_run1_"${foo1}".mac"
+done
+                                                                                                        

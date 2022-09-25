@@ -1,0 +1,109 @@
+
+#include<stdio.h>
+using namespace std;
+
+
+
+void LinePlaneInt(double* Line, double* Plane, double* Point){             
+G4double Dist;
+G4double a, b;
+bool ok;
+
+b = Line[3]*Plane[3] + Line[4]*Plane[4] + Line[5]*Plane[5];
+ok= (fabs(b) > 1e-10) ? 1 : 0;
+if(ok==1) {
+a=(Plane[0]-Line[0])*Plane[3] +
+(Plane[1]-Line[1])*Plane[4] +
+(Plane[2]-Line[2])*Plane[5];
+
+G4double Dist = a/b;
+Point[0] = Line[0] + Line[3]*Dist;
+Point[1] = Line[1] + Line[4]*Dist;
+Point[2] = Line[2] + Line[5]*Dist;
+
+}
+else {
+Point[0]=0; Point[1]=0; Point[2]=0;
+}
+return ok;
+}
+
+
+int main()
+{
+
+	paradef = micalDetectorParameterDef::AnPointer;
+
+	
+for(int op=0; op<3;op++)
+{
+partopscint[op] = paradef->partopscint[op];
+}
+  
+AirGapScintTop= paradef->AirGapScintTop;
+
+
+ for(int ji=0; ji<4;ji++)//layers
+{
+for(int kl=0; kl<3; kl++)
+{
+Phys_TopScint_GPos[ji][kl]= paradef->Phys_TopScint_GPos[ji][kl];	
+
+}//kl
+}//ji
+
+
+for(int jk=0; jk<3;jk++)
+{
+for(int mn=0; mn<3; mn++)
+{
+	
+Phys_SideScint_R_GPos[jk][mn]= paradef->Phys_SideScint_R_GPos[jk][mn];
+Phys_SideScint_L_GPos[jk][mn]= paradef->Phys_SideScint_L_GPos[jk][mn];
+Phys_SideScint_D_GPos[jk][mn]= paradef->Phys_SideScint_D_GPos[jk][mn];
+}//mn
+}//jk
+
+
+
+
+G4double G_Point[3];
+ 
+G4double Line[6]={x0+trans12.x(),y0+trans12.y(),z0+trans12.z(),-dirVector.x(),-dirVector.y(),-dirVector.z()};
+ 
+G4double Plane0[6]={Phys_TopScint_GPos[0][0],Phys_TopScint_GPos[0][1],Phys_TopScint_GPos[0][2],0,0,1}; //CMV Top Scint layer 0
+
+bool pl2 = LinePlaneInt (Line, Plane, G_Point);
+
+ 
+if(pl2)
+{
+  double L_Point[3];
+ L_Point[0]= Plane0[0]-G_Point[0];
+   L_Point[1]= Plane0[1]-G_Point[1];
+    L_Point[2]= Plane0[2]-G_Point[2];
+    
+if(abs(L_Point[0])<0.5*((88*2*partopscint[0])+(89*AirGapScintTop)) && abs(L_Point[1])<1+partopscint[1] )
+  {
+
+ VtX=L_Point[0] ;
+ VtY=L_Point[1];
+ VtZ=L_Point[2];
+
+double LayerNo =
+  double StripXNo = 
+ 
+ 
+  }
+
+  }
+
+
+
+
+
+  
+
+
+  return 0;
+}

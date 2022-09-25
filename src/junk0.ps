@@ -1,0 +1,4645 @@
+%!PS-Adobe-3.0
+%%Title: micalCal0SD.cc
+%%For: gobinda
+%%Creator: a2ps version 4.14
+%%CreationDate: Fri Jul 16 18:31:57 2021
+%%BoundingBox: 24 24 588 768
+%%DocumentData: Clean7Bit
+%%Orientation: Landscape
+%%Pages: 14
+%%PageOrder: Ascend
+%%DocumentMedia: Letter 612 792 0 () ()
+%%DocumentNeededResources: font Courier
+%%+ font Courier-Bold
+%%+ font Courier-BoldOblique
+%%+ font Courier-Oblique
+%%+ font Helvetica
+%%+ font Helvetica-Bold
+%%+ font Symbol
+%%+ font Times-Bold
+%%+ font Times-Roman
+%%DocumentProcessColors: Black 
+%%DocumentSuppliedResources: procset a2ps-a2ps-hdr
+%%+ procset a2ps-black+white-Prolog
+%%+ encoding ISO-8859-1Encoding
+%%EndComments
+/a2psdict 200 dict def
+a2psdict begin
+%%BeginProlog
+%%Copyright: (c) 1988, 89, 90, 91, 92, 93 Miguel Santana
+%%Copyright: (c) 1995, 96, 97, 98 Akim Demaille, Miguel Santana
+% Check PostScript language level.
+/languagelevel where {
+  pop /gs_languagelevel languagelevel def
+} {
+  /gs_languagelevel 1 def
+} ifelse
+
+% EPSF import as in the Red Book
+/BeginInclude {
+  /b4_Inc_state save def    		% Save state for cleanup
+  /dict_count countdictstack def	% Count objects on dict stack
+  /op_count count 1 sub def		% Count objects on operand stack 
+  userdict begin
+    0 setgray 0 setlinecap
+    1 setlinewidth 0 setlinejoin
+    10 setmiterlimit [ ] 0 setdash newpath
+    gs_languagelevel 1 ne {
+      false setstrokeadjust false setoverprint 
+    } if
+} bind def
+
+/EndInclude {
+  count op_count sub { pos } repeat	% Clean up stacks
+  countdictstack dict_count sub { end } repeat
+  b4_Inc_state restore
+} bind def
+
+/BeginEPSF {
+  BeginInclude
+  /showpage { } def
+} bind def
+
+/EndEPSF {
+  EndInclude
+} bind def
+
+% Page prefeed
+/page_prefeed {         % bool -> -
+  statusdict /prefeed known {
+    statusdict exch /prefeed exch put
+  } {
+    pop
+  } ifelse
+} bind def
+
+/deffont {
+  findfont exch scalefont def
+} bind def
+
+/reencode_font {
+  findfont reencode 2 copy definefont pop def
+} bind def
+
+% Function c-show (str => -)
+% centers text only according to x axis.
+/c-show { 
+  dup stringwidth pop
+  2 div neg 0 rmoveto
+  show
+} bind def
+
+% Function l-show (str => -)
+% prints texts so that it ends at currentpoint
+/l-show {
+  dup stringwidth pop neg 
+  0 
+  rmoveto show
+} bind def
+
+% center-fit show (str w => -)
+% show centered, and scale currentfont so that the width is less than w
+/cfshow {
+  exch dup stringwidth pop
+  % If the title is too big, try to make it smaller
+  3 2 roll 2 copy
+  gt
+  { % if, i.e. too big
+    exch div
+    currentfont exch scalefont setfont
+  } { % ifelse
+    pop pop 
+  }
+  ifelse
+  c-show			% center title
+} bind def
+
+% Return the y size of the current font
+% - => fontsize
+/currentfontsize {
+  currentfont /FontType get 0 eq {
+    currentfont /FontMatrix get 3 get
+  }{
+    currentfont /FontMatrix get 3 get 1000 mul
+  } ifelse
+} bind def
+
+% reencode the font
+% <encoding-vector> <fontdict> -> <newfontdict>
+/reencode { %def
+  dup length 5 add dict begin
+    { %forall
+      % <vector> <key> <val>
+      1 index /FID ne 
+      { def }{ pop pop } ifelse
+    } forall
+    /Encoding exch def % -
+
+    % Use the font's bounding box to determine the ascent, descent,
+    % and overall height; don't forget that these values have to be
+    % transformed using the font's matrix.
+    % We use `load' because sometimes BBox is executable, sometimes not.
+    % Since we need 4 numbers an not an array avoid BBox from being executed
+    /FontBBox load aload pop
+    FontMatrix transform /Ascent exch def pop
+    FontMatrix transform /Descent exch def pop
+    /FontHeight Ascent Descent sub def
+
+    % Get the underline position and thickness if they're defined.
+    % Use 1 if they are not defined.
+    currentdict /FontInfo 2 copy known
+    { get
+      /UnderlinePosition 2 copy % <FontInfo> /UP <FontInfo> /UP
+      2 copy known
+      { get }{ pop pop 1 } ifelse
+      0 exch FontMatrix transform exch pop
+      def % <FontInfo>
+
+      /UnderlineThickness 2 copy % <FontInfo> /UT <FontInfo> /UT
+      2 copy known
+      { get }{ pop pop 1 } ifelse
+      0 exch FontMatrix transform exch pop
+      def % <FontInfo>
+      pop % -
+    }{ pop pop
+    } ifelse
+
+    currentdict
+  end 
+} bind def
+
+% composite fonts for ASCII-EUC mixed string
+% Version 1.2 1/31/1990
+% Orignal Ken'ichi HANDA (handa@etl.go.jp)
+% Modified Norio Katayama (katayama@rd.nacsis.ac.jp),1998
+% Extend & Fix Koji Nakamaru (maru@on.cs.keio.ac.jp), 1999
+% Anyone can freely copy, modify, distribute this program.
+
+/copyfont {	% font-dic extra-entry-count  copyfont  font-dic
+	1 index maxlength add dict begin
+	{	1 index /FID ne 2 index /UniqueID ne and
+		{def} {pop pop} ifelse
+	} forall
+	currentdict
+	end
+} bind def
+
+/compositefont { % ASCIIFontName EUCFontName RomanScale RomanOffset Rot(T/F) compositefont font
+    /RomanRotation exch def
+    /RomanOffset exch def
+    /RomanScale exch def
+    userdict /fixeucfont_dict known not {
+	userdict begin
+	    /fixeucfont_dict 2 dict begin
+		/UpperByteEncoding [
+		    16#00 1 16#20 { pop 0 } for
+		    16#21 1 16#28 { 16#20 sub } for
+		    16#29 1 16#2F { pop 0 } for
+		    16#30 1 16#74 { 16#27 sub } for
+		    16#75 1 16#FF { pop 0 } for
+		] def
+	        /LowerByteEncoding [
+		    16#00 1 16#A0 { pop /.notdef } for
+		    16#A1 1 16#FE { 16#80 sub 16 2 string cvrs
+				    (cXX) dup 1 4 -1 roll
+				    putinterval cvn } for
+		    /.notdef
+		] def
+		currentdict
+	    end def
+	end
+    } if
+    findfont dup /FontType get 0 eq {
+	14 dict begin
+	    %
+	    % 7+8 bit EUC font
+	    %
+	    12 dict begin
+		/EUCFont exch def
+		/FontInfo (7+8 bit EUC font) readonly def
+		/PaintType 0 def
+		/FontType 0 def
+		/FontMatrix matrix def
+		% /FontName
+		/Encoding fixeucfont_dict /UpperByteEncoding get def
+		/FMapType 2 def
+		EUCFont /WMode known
+		{ EUCFont /WMode get /WMode exch def }
+		{ /WMode 0 def } ifelse
+		/FDepVector [
+		    EUCFont /FDepVector get 0 get
+		    [ 16#21 1 16#28 {} for 16#30 1 16#74 {} for ]
+		    {
+			13 dict begin
+			    /EUCFont EUCFont def
+			    /UpperByte exch 16#80 add def	
+			    % /FontName
+			    /FontInfo (EUC lower byte font) readonly def
+			    /PaintType 0 def
+			    /FontType 3 def
+			    /FontMatrix matrix def
+			    /FontBBox {0 0 0 0} def
+			    /Encoding
+				fixeucfont_dict /LowerByteEncoding get def
+			    % /UniqueID
+			    % /WMode
+			    /BuildChar {
+				gsave
+				exch dup /EUCFont get setfont
+				/UpperByte get
+				2 string
+				dup 0 4 -1 roll put
+				dup 1 4 -1 roll put
+				dup stringwidth setcharwidth
+				0 0 moveto show
+				grestore
+			    } bind def
+			    currentdict
+			end
+			/lowerbytefont exch definefont
+		    } forall
+		] def
+		currentdict
+	    end
+	    /eucfont exch definefont
+	    exch
+	    findfont 1 copyfont dup begin
+		RomanRotation {
+			/FontMatrix FontMatrix
+			[ 0 RomanScale neg RomanScale 0 RomanOffset neg 0 ]
+			matrix concatmatrix def
+		}{
+			/FontMatrix FontMatrix
+			[ RomanScale 0 0 RomanScale 0 RomanOffset ] matrix concatmatrix
+			def
+			/CDevProc
+			    {pop pop pop pop 0 exch -1000 exch 2 div 880} def
+		} ifelse
+	    end
+	    /asciifont exch definefont
+	    exch
+	    /FDepVector [ 4 2 roll ] def
+	    /FontType 0 def
+	    /WMode 0 def
+	    /FMapType 4 def
+	    /FontMatrix matrix def
+	    /Encoding [0 1] def
+	    /FontBBox {0 0 0 0} def
+%	    /FontHeight 1.0 def % XXXX
+	    /FontHeight RomanScale 1.0 ge { RomanScale }{ 1.0 } ifelse def
+	    /Descent -0.3 def   % XXXX
+	    currentdict
+	end
+	/tmpfont exch definefont
+	pop
+	/tmpfont findfont
+    }{
+	pop findfont 0 copyfont
+    } ifelse
+} def	
+
+/slantfont {	% FontName slant-degree  slantfont  font'
+    exch findfont 1 copyfont begin
+    [ 1 0 4 -1 roll 1 0 0 ] FontMatrix exch matrix concatmatrix
+    /FontMatrix exch def
+    currentdict
+    end
+} def
+
+% Function print line number (<string> # -)
+/# {
+  gsave
+    sx cw mul neg 2 div 0 rmoveto
+    f# setfont
+    c-show
+  grestore
+} bind def
+
+% -------- Some routines to enlight plain b/w printings ---------
+
+% Underline
+% width --
+/dounderline {
+  currentpoint
+  gsave
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    0 rlineto
+    stroke
+  grestore
+} bind def
+
+% Underline a string
+% string --
+/dounderlinestring {
+  stringwidth pop
+  dounderline
+} bind def
+
+/UL {
+  /ul exch store
+} bind def
+
+% Draw a box of WIDTH wrt current font
+% width --
+/dobox {
+  currentpoint
+  gsave
+    newpath
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    dup 0 rlineto
+    0 currentfont /FontHeight get currentfontsize mul rlineto
+    neg 0 rlineto
+    closepath
+    stroke
+  grestore
+} bind def
+
+/BX {
+  /bx exch store
+} bind def
+
+% Box a string
+% string --
+/doboxstring {
+  stringwidth pop
+  dobox
+} bind def
+
+%
+% ------------- Color routines ---------------
+%
+/FG /setrgbcolor load def
+
+% Draw the background
+% width --
+/dobackground {
+  currentpoint
+  gsave
+    newpath
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    dup 0 rlineto
+    0 currentfont /FontHeight get currentfontsize mul rlineto
+    neg 0 rlineto
+    closepath
+    bgcolor aload pop setrgbcolor
+    fill
+  grestore
+} bind def
+
+% Draw bg for a string
+% string --
+/dobackgroundstring {
+  stringwidth pop
+  dobackground
+} bind def
+
+
+/BG {
+  dup /bg exch store
+  { mark 4 1 roll ] /bgcolor exch store } if
+} bind def
+
+
+/Show {
+  bg { dup dobackgroundstring } if
+  ul { dup dounderlinestring } if
+  bx { dup doboxstring } if
+  show
+} bind def
+
+% Function T(ab), jumps to the n-th tabulation in the current line
+/T {
+  cw mul x0 add
+  bg { dup currentpoint pop sub dobackground } if
+  ul { dup currentpoint pop sub dounderline } if
+  bx { dup currentpoint pop sub dobox } if
+  y0 moveto
+} bind def
+
+% Function n: move to the next line
+/n {
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+} bind def
+
+% Function N: show and move to the next line
+/N {
+  Show
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+} bind def
+
+/S {
+  Show
+} bind def
+
+%%BeginResource: procset a2ps-a2ps-hdr 2.0 2
+%%Copyright: (c) 1988, 89, 90, 91, 92, 93 Miguel Santana
+%%Copyright: (c) 1995, 96, 97, 98 Akim Demaille, Miguel Santana
+% Function title: prints page header.
+% <ct> <rt> <lt> are passed as argument
+/title { 
+  % 1. Draw the background
+  x v get y v get moveto
+  gsave
+    0 th 2 div neg rmoveto 
+    th setlinewidth
+    0.95 setgray
+    pw 0 rlineto stroke
+  grestore
+  % 2. Border it
+  gsave
+    0.7 setlinewidth
+    pw 0 rlineto
+    0 th neg rlineto
+    pw neg 0 rlineto
+    closepath stroke
+  grestore
+  % stk: ct rt lt
+  x v get y v get th sub 1 add moveto
+%%IncludeResource: font Helvetica
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  % 3. The left title
+  gsave
+    dup stringwidth pop fnfs 0.8 mul add exch % leave space took on stack
+    fnfs 0.8 mul hm rmoveto
+    show			% left title
+  grestore
+  exch
+  % stk: ct ltw rt
+  % 4. the right title
+  gsave
+    dup stringwidth pop fnfs 0.8 mul add exch % leave space took on stack
+    dup
+    pw exch stringwidth pop fnfs 0.8 mul add sub
+    hm
+    rmoveto
+    show			% right title
+  grestore
+  % stk: ct ltw rtw
+  % 5. the center title
+  gsave
+    pw 3 1 roll
+    % stk: ct pw ltw rtw
+    3 copy 
+    % Move to the center of the left room
+    sub add 2 div hm rmoveto
+    % What is the available space in here?
+    add sub fnfs 0.8 mul sub fnfs 0.8 mul sub
+    % stk: ct space_left
+%%IncludeResource: font Helvetica-Bold
+  fHelvetica-Bold fnfs scalefont setfont
+    cfshow
+  grestore
+} bind def
+
+% Function border: prints virtual page border
+/border { %def
+  gsave				% print four sides
+    0 setgray
+    x v get y v get moveto
+    0.7 setlinewidth		% of the square
+    pw 0 rlineto
+    0 ph neg rlineto
+    pw neg 0 rlineto
+    closepath stroke
+  grestore
+} bind def
+
+% Function water: prints a water mark in background
+/water { %def
+  gsave
+    scx scy moveto rotate
+%%IncludeResource: font Times-Bold
+  fTimes-Bold 100 scalefont setfont
+    .97 setgray
+    dup stringwidth pop 2 div neg -50 rmoveto
+    show
+  grestore
+} bind def
+
+% Function rhead: prints the right header
+/rhead {  %def
+  lx ly moveto
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  l-show
+} bind def
+
+% Function footer (cf rf lf -> -)
+/footer {
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  dx dy moveto
+  show
+
+  snx sny moveto
+  l-show
+  
+  fnx fny moveto
+  c-show
+} bind def
+%%EndResource
+%%BeginResource: procset a2ps-black+white-Prolog 2.0 1
+
+% Function T(ab), jumps to the n-th tabulation in the current line
+/T { 
+  cw mul x0 add y0 moveto
+} bind def
+
+% Function n: move to the next line
+/n { %def
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+} bind def
+
+% Function N: show and move to the next line
+/N {
+  Show
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+}  bind def
+
+/S {
+  Show
+} bind def
+
+/p {
+  false UL
+  false BX
+  fCourier bfs scalefont setfont
+  Show
+} bind def
+
+/sy {
+  false UL
+  false BX
+  fSymbol bfs scalefont setfont
+  Show
+} bind def
+
+/k {
+  false UL
+  false BX
+  fCourier-Oblique bfs scalefont setfont
+  Show
+} bind def
+
+/K {
+  false UL
+  false BX
+  fCourier-Bold bfs scalefont setfont
+  Show
+} bind def
+
+/c {
+  false UL
+  false BX
+  fCourier-Oblique bfs scalefont setfont
+  Show
+} bind def
+
+/C {
+  false UL
+  false BX
+  fCourier-BoldOblique bfs scalefont setfont
+  Show 
+} bind def
+
+/l {
+  false UL
+  false BX
+  fHelvetica bfs scalefont setfont
+  Show
+} bind def
+
+/L {
+  false UL
+  false BX
+  fHelvetica-Bold bfs scalefont setfont
+  Show 
+} bind def
+
+/str{
+  false UL
+  false BX
+  fTimes-Roman bfs scalefont setfont
+  Show
+} bind def
+
+/e{
+  false UL
+  true BX
+  fHelvetica-Bold bfs scalefont setfont
+  Show
+} bind def
+
+%%EndResource
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier
+%%IncludeResource: font Courier-Oblique
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Times-Roman
+%%IncludeResource: font Symbol
+%%IncludeResource: font Courier-BoldOblique
+%%BeginResource: encoding ISO-8859-1Encoding
+/ISO-8859-1Encoding [
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/space /exclam /quotedbl /numbersign /dollar /percent /ampersand /quoteright 
+/parenleft /parenright /asterisk /plus /comma /minus /period /slash 
+/zero /one /two /three /four /five /six /seven 
+/eight /nine /colon /semicolon /less /equal /greater /question 
+/at /A /B /C /D /E /F /G 
+/H /I /J /K /L /M /N /O 
+/P /Q /R /S /T /U /V /W 
+/X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore 
+/quoteleft /a /b /c /d /e /f /g 
+/h /i /j /k /l /m /n /o 
+/p /q /r /s /t /u /v /w 
+/x /y /z /braceleft /bar /braceright /asciitilde /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/space /exclamdown /cent /sterling /currency /yen /brokenbar /section 
+/dieresis /copyright /ordfeminine /guillemotleft /logicalnot /hyphen /registered /macron 
+/degree /plusminus /twosuperior /threesuperior /acute /mu /paragraph /bullet 
+/cedilla /onesuperior /ordmasculine /guillemotright /onequarter /onehalf /threequarters /questiondown 
+/Agrave /Aacute /Acircumflex /Atilde /Adieresis /Aring /AE /Ccedilla 
+/Egrave /Eacute /Ecircumflex /Edieresis /Igrave /Iacute /Icircumflex /Idieresis 
+/Eth /Ntilde /Ograve /Oacute /Ocircumflex /Otilde /Odieresis /multiply 
+/Oslash /Ugrave /Uacute /Ucircumflex /Udieresis /Yacute /Thorn /germandbls 
+/agrave /aacute /acircumflex /atilde /adieresis /aring /ae /ccedilla 
+/egrave /eacute /ecircumflex /edieresis /igrave /iacute /icircumflex /idieresis 
+/eth /ntilde /ograve /oacute /ocircumflex /otilde /odieresis /divide 
+/oslash /ugrave /uacute /ucircumflex /udieresis /yacute /thorn /ydieresis 
+] def
+%%EndResource
+% Initialize page description variables.
+/sh 612 def
+/sw 792 def
+/llx 24 def
+/urx 768 def
+/ury 588 def
+/lly 24 def
+/#copies 1 def
+/th 15.000000 def
+/fnfs 11 def
+/bfs 7.493857 def
+/cw 4.496314 def
+
+% Dictionary for ISO-8859-1 support
+/iso1dict 8 dict begin
+  /fCourier ISO-8859-1Encoding /Courier reencode_font
+  /fCourier-Bold ISO-8859-1Encoding /Courier-Bold reencode_font
+  /fCourier-BoldOblique ISO-8859-1Encoding /Courier-BoldOblique reencode_font
+  /fCourier-Oblique ISO-8859-1Encoding /Courier-Oblique reencode_font
+  /fHelvetica ISO-8859-1Encoding /Helvetica reencode_font
+  /fHelvetica-Bold ISO-8859-1Encoding /Helvetica-Bold reencode_font
+  /fTimes-Bold ISO-8859-1Encoding /Times-Bold reencode_font
+  /fTimes-Roman ISO-8859-1Encoding /Times-Roman reencode_font
+currentdict end def
+/bgcolor [ 0 0 0 ] def
+/bg false def
+/ul false def
+/bx false def
+% The font for line numbering
+/f# /Helvetica findfont bfs .6 mul scalefont def
+/fSymbol /Symbol findfont def
+/hm fnfs 0.25 mul def
+/pw
+   cw 81.400000 mul
+def
+/ph
+   522.321860 th add
+def
+/pmw urx llx sub pw 2 mul sub 1 div def
+/pmh 0 def
+/v 0 def
+/x [
+  0
+  dup pmw add pw add
+] def
+/y [
+  pmh ph add 0 mul ph add
+  dup
+] def
+/scx sw 2 div def
+/scy sh 2 div def
+/snx urx def
+/sny lly 2 add def
+/dx llx def
+/dy sny def
+/fnx scx def
+/fny dy def
+/lx snx def
+/ly ury fnfs 0.8 mul sub def
+/sx 0 def
+/tab 8 def
+/x0 0 def
+/y0 0 def
+%%EndSetup
+
+%%Page: (1-2) 1
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(#include) K
+( ") p
+(micalCal0SD.hh) str
+(") p n
+(#include) K
+( ") p
+(G4Step.hh) str
+(") p n
+(#include) K
+( ") p
+(G4HCofThisEvent.hh) str
+(") p n
+(#include) K
+( ") p
+(G4TouchableHistory.hh) str
+(") p n
+(#include) K
+( ") p
+(G4ios.hh) str
+(") p n
+(#include) K
+( ") p
+(TRandom.h) str
+(") p n
+(#include) K
+( ") p
+(TMath.h) str
+(") p n
+(//#include "micalDetectorParameterDef.hh") c n
+() p n
+(#include) K
+( ") p
+(vect_manager.h) str
+(") p n
+() N
+(#include) K
+( ") p
+(Randomize.hh) str
+(") p n
+(#include) K
+( ") p
+(CLHEP/Random/RandGauss.h) str
+(") p n
+(#define) K
+( multiplicity 0) p n
+() N
+(micalcal0SD::micalcal0SD\(G4String name\)) N
+(  :G4VSensitiveDetector\(name\),) N
+(   ) S
+(//numberInMO\(16\),numberInCH\(7\),numberInLA\(140\), ) c n
+(   numberInX\(100\),numberInY\(100\), numberInT\(4\),numberInCell\(20000\), InCell\(0\) ) p n
+({) N
+(  G4String HCname;) N
+(  collectionName.insert\(HCname=") S
+(cal0Collect) str
+("\);) p n
+(  cal0SDMessenger = ) S
+(new) K
+( micalcal0SDMessenger\() p
+(this) K
+(\);  ) p n
+(  pAnalysis = MultiSimAnalysis::AnPointer;) N
+(  ) S
+(//  inoHit_pointer = new InoHit_Manager\(\);) c n
+(  inoStripX_pointer = ) p
+(new) K
+( InoStripX_Manager\(\);) p n
+(  inoStripY_pointer = ) S
+(new) K
+( InoStripY_Manager\(\);) p n
+(  paradef = micalDetectorParameterDef::AnPointer;) N
+(  twopow31= pow\(2,31\);) N
+(  NewMultiplicity = 1;) N
+(  cout<<") S
+(-------------------------------------------------) str
+("<<endl;) p n
+(  ) S
+(if) K
+( \(NewMultiplicity\){cout<<") p
+(  Strip Multiplicity enabled  ) str
+("<<endl;}) p n
+(  ) S
+(else) K
+({cout<<") p
+(        Strip Multiplicity disabled        ) str
+("<<endl;}  ) p n
+(  cout<<") S
+(-------------------------------------------------) str
+("<<endl;) p n
+(  SetTimeToDigiConv\(0.1\);) N
+(  SetSignalSpeed\(0.15\);) N
+(  SetCorrTimeSmear\(0.7\);) N
+(  SetUnCorrTimeSmear\(0.7\);) N
+(  SetRootRandom\(1\);) N
+(  ) S
+(//Define All the other parameters) c n
+() p n
+(}) N
+() N
+(micalcal0SD::~micalcal0SD\(\) {) N
+(  ) S
+(for) K
+( \() p
+(unsigned) k
+( ij=0; ij<inoStripX_pointer->InoStripX_list.size\(\); ij++\) {) p n
+(    ) S
+(if) K
+( \(inoStripX_pointer->InoStripX_list[ij]\) {) p n
+(      ) S
+(// cout <<"ij "<< ij<<" "<<inoStripX_pointer->InoStripX_list.size\(\)<<endl;) c n
+(      ) p
+(delete) K
+( inoStripX_pointer->InoStripX_list[ij]; inoStripX_pointer->InoStripX) p n
+(_list[ij]=0;) N
+(    }) N
+(  }) N
+() N
+(  inoStripX_pointer->InoStripX_list.clear\(\);) N
+(  ) S
+(if) K
+( \(inoStripX_pointer\) {) p
+(delete) K
+( inoStripX_pointer; inoStripX_pointer=0;}) p n
+(  ) S
+(for) K
+( \() p
+(unsigned) k
+( ij=0; ij<inoStripY_pointer->InoStripY_list.size\(\); ij++\) {) p n
+(    ) S
+(if) K
+( \(inoStripY_pointer->InoStripY_list[ij]\) {) p n
+(      ) S
+(delete) K
+( inoStripY_pointer->InoStripY_list[ij]; inoStripY_pointer->InoStripY) p n
+(_list[ij]=0;) N
+(    }) N
+(  }) N
+(  inoStripY_pointer->InoStripY_list.clear\(\);) N
+(  ) S
+(if) K
+( \(inoStripY_pointer\) {) p
+(delete) K
+( inoStripY_pointer; inoStripY_pointer=0;}) p n
+(}) N
+() N
+(void) k
+( micalcal0SD::Initialize\(G4HCofThisEvent* HCE\) {) p n
+(  ) N
+(  ) S
+(// cout<<"micalcal0SD::Initialize\(..."<<endl;) c n
+(  ) p
+(static) K
+( ) p
+(int) k
+( HCID = -1;) p n
+(  cal0Collection = ) S
+(new) K
+( micalcal0HitsCollection) p n
+(micalCal0SD.cc) (Page 1/28) (Jul 16, 21 18:23) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(    \(SensitiveDetectorName,collectionName[0]\); ) p n
+(  ) S
+(if) K
+(\(HCID<0\) { HCID = GetCollectionID\(0\); }) p n
+(  HCE->AddHitsCollection\(HCID,cal0Collection\);) N
+(  ) N
+(  ) S
+(//  InoHit_Manager* tmp_vect = InoHit_Manager::APointer; ) c n
+(  InoHit_list.clear\(\);) p n
+(  ) S
+(//  inoHit_pointer->InoHit_list.clear\(\);) c n
+(  paradef =  micalDetectorParameterDef::AnPointer;) p n
+(  ) N
+(  inoStripX_pointer->InoStripX_list.clear\(\);) N
+(  inoStripY_pointer->InoStripY_list.clear\(\);) N
+(  ) N
+(  histxmn = histymn = histzmn = 100000.;) N
+(  histxmx = histymx = histzmx =-100000.;) N
+() N
+(  ) S
+(for) K
+( \() p
+(int) k
+( ij=0; ij<3; ij++\) {parino[ij] = paradef->GetParino\(ij\);) p n
+(    ) S
+(// cout<<"parino["<<ij<<"] = "<<parino[ij] <<", "<<paradef->GetParino\(ij\)<<e) c n
+(ndl;) N
+(  }) p n
+(  ) S
+(for) K
+( \() p
+(int) k
+( ij=0; ij<3; ij++\) {parlay[ij] = paradef->GetParlay\(ij\);}) p n
+(  ) S
+(// for \(int ij=0; ij<3; ij++\) {parmod[ij] = paradef->GetParmod\(ij\);}) c n
+(  ) p
+(for) K
+( \() p
+(int) k
+( ij=0; ij<3; ij++\) {parchm[ij] = paradef->GetParchm\(ij\);}) p n
+(  ) S
+(//  for \(int ij=0; ij<3; ij++\) {parair[ij] = paradef->GetParair\(ij\);}) c n
+(  ) p
+(//  for \(int ij=0; ij<3; ij++\) {parirnlay[ij] = paradef->GetParirnlay\(ij\);}) c n
+(  ) p
+(for) K
+( \() p
+(int) k
+( ij=0; ij<3; ij++\) {parcup[ij] = paradef->GetParcup\(ij\);}) p n
+(  ) S
+(// for \(int ij=0; ij<3; ij++\) {parg10[ij] = paradef->GetParg10\(ij\);}) c n
+(  ) p n
+(  ) S
+(for) K
+( \() p
+(int) k
+( ij=0; ij<3; ij++\) {parqurz[ij] = paradef->GetParqurz\(ij\);}) p n
+(  ) S
+(for) K
+( \() p
+(int) k
+( ij=0; ij<3; ij++\) {pargas[ij] = paradef->GetPargas\(ij\);}) p n
+(  ) N
+(  ) S
+(for) K
+( \() p
+(int) k
+( ij=0; ij<3; ij++\) { parirlay[ij] = paradef->GetParirlay\(ij\);}) p n
+(  ) S
+(for) K
+( \() p
+(int) k
+( ij=0; ij<3; ij++\) { parhcoil[ij] = paradef->GetParhcoil\(ij\);}) p n
+(  ) S
+(for) K
+( \() p
+(int) k
+( ij=0; ij<3; ij++\) { parcoilsupport[ij] = paradef->GetParcoilsupport\(i) p n
+(j\);}) N
+() N
+(  nINODet = 1;) S
+(//paradef->GetNumino\(\);) c n
+(  gapino = 0; ) p
+(// paradef->GetGapino\(\);) c n
+() p n
+(  Xstrwd = paradef->GetXStrwd\(\);) N
+(  Ystrwd = paradef->GetYStrwd\(\);) N
+(  ) N
+(  numberInX = paradef->GetnXStrip\(\);) N
+(  numberInY = paradef->GetnYStrip\(\);) N
+() N
+(  numberInMO = 1; ) S
+(//paradef->GetnModule\(\);) c n
+(  numberInCH = 2; ) p
+(//paradef->GetnChamber\(\);) c n
+(  numberInLA = paradef->GetnLayer\(\);) p n
+() N
+(  ) S
+(if) K
+( \( numberInMO >8\) numberInMO=8;) p n
+(  ) S
+(if) K
+( \( numberInCH >8\) numberInCH=8;) p n
+(  ) S
+(if) K
+( \( numberInLA >256\) numberInLA=256;) p n
+(  ) S
+(// 12334457,1239075) c n
+(  ) p
+(// 1202219559) c n
+() p n
+(  ) S
+(if) K
+(\(RootRandom==0\) {) p n
+(    gRandom->SetSeed\(1327511442\);) N
+(  }) N
+(  ) S
+(// cout<<"micalcal0SD::Initialize\( complete..."<<endl;) c n
+() p n
+(}) N
+() N
+(G4) S
+(bool) k
+( micalcal0SD::ProcessHits\(G4Step* aStep, G4TouchableHistory*\) {) p n
+(  G4) S
+(double) k
+( edep = aStep->GetTotalEnergyDeposit\(\)/keV;) p n
+() S 8 T () S
+(//) c 16 T (if \(edep<1.e-6\) return true;) N
+(  ) p
+(// edep = 100*keV;) c n
+(  ) p
+(//G4double edep = aStep->GetTotalEnergyDeposit\(\)/keV-aStep->GetNonIonizingEner) c n
+(gyDeposit\(\)/keV;) N
+(  ) p
+(// cout<<) c n
+(  ) p
+(// G4cout <<"getname "<<GetName\(\)<<G4endl;) c n
+(micalCal0SD.cc) (Page 2/28) (Jul 16, 21 18:23) title
+border
+grestore
+(Printed by gobinda) rhead
+(micalCal0SD.cc) (1/14) (Friday July 16, 2021) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (3-4) 2
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(  ) p
+(// if \(edep>0\) G4cout <<"ical0cal0SD "<<aStep->GetTrack\(\)->GetVolume\(\)->GetNam) c n
+(e\(\)<<" x "<<aStep->GetTrack\(\)->GetVolume\(\)->GetLogicalVolume\(\)->GetName\(\)<<" y ") N
+(<<aStep->GetTrack\(\)->GetVolume\(\)->GetLogicalVolume\(\)->GetMaterial\(\)->GetName\(\)<<) N
+(" "<<aStep->GetPreStepPoint\(\)->GetPosition\(\)<<" "<<edep<<G4endl;) N
+(  ) p n
+(  G4TouchableHistory* theTouchable = \(G4TouchableHistory*\)\( aStep->GetPreStepPoi) N
+(nt\(\)->GetTouchable\(\) \);) N
+(  ) S
+(// cout<<"XXXXXXXXXXXXXXXXXXXXXXX"<<endl;) c n
+(  ) p
+(// for\(int ij=0; ij<14; ij++\) {) c n
+(  ) p
+(//   cout<<"ij "<<ij<<" physiName "<<theTouchable->GetVolume\(ij\)->GetName\(\)<<") c n
+( material = "<<theTouchable->GetVolume\(ij\)->GetLogicalVolume\(\)->GetMaterial\(\)->G) N
+(etName\(\)<<endl;) N
+(  ) p
+(// }) c n
+(  ) p
+(// cout<<"XXXXXXXXXXXXXXXXXXXXXXX"<<endl;) c n
+() p 8 T (G4StepPoint* point) S 32 T () S 40 T (= aStep->GetPreStepPoint\(\);     ) S
+(//      ) c n
+(     G4int tmpint = theTouchable->GetCopyNumber\( 7 \) ;) N
+() p 8 T () S
+(// G4TouchableHandle touch) c 40 T (= point->GetTouchableHandle\(\);) N
+() p 8 T () S
+(// G4VPhysicalVolume* volum= touch->GetVolume\(\);) c n
+() p 8 T () S
+(// G4String name) c 32 T () S 40 T () S 48 T (= volum->GetName\(\);) N
+() p 8 T () S
+(// G4int copyNumber) c 32 T () S 40 T (= touch->GetCopyNumber\(\);) N
+() p 8 T () S
+(// G4LogicalVolume* lvolume= volum->GetLogicalVolume\(\);) c n
+() p 8 T () S
+(const) K
+( G4Track* track) p 32 T (= aStep->GetTrack\(\);) N
+() S 8 T () S
+(//) c 16 T (if \(abs\(track->GetDefinition\(\)->GetPDGEncoding\(\)\) !=13\) return t) N
+(rue;) N
+() p 8 T () S
+(int) k
+( level = theTouchable->GetHistoryDepth\(\);) p n
+(  ) S
+(// cout<<"particle "<<track->GetDefinition\(\)->GetPDGEncoding\(\)<<"     track ID) c n
+( "<<track->GetParentID\(\)<<" "<</*track->GetTrackID<<*/"     physical volume "<<n) N
+(ame<<",     copy number "<<copyNumber<<",     logical volume "<<lvolume->GetName) N
+(\(\)<<"     level "<<level<<endl;) N
+() p n
+(  ) S
+(// cout << "aStep->GetPreStepPoint\(\) = " << theTouchable->GetCopyNumber\(7\) << ) c n
+(endl;) N
+(  ) p n
+(  G4ThreeVector parmom = aStep->GetTrack\(\)->GetMomentum\(\);) N
+(  ) S
+(//  double trkPid=track->GetDefinition\(\)->GetPDGEncoding\(\);) c n
+(  ) p
+(double) k
+( momentum= parmom.mag\(\);) p n
+(  ) S
+(double) k
+( polang) p 16 T (= parmom.theta\(\);) N
+(  ) S
+(double) k
+( aziang) p 16 T (= parmom.phi\(\);) N
+() S 8 T () S
+(//  cout<<"momentum "<<momentum<<"     theta "<<polang<<"     phi "<<azi) c n
+(ang<<" "<<edep<<endl;) N
+(  ) p
+(/*if \(edep>0 \)*/) c n
+() p 8 T () S
+(// cout <<"ROHist " << level<<"   ") c n
+() p 8 T () S
+(// ) c 16 T () S 24 T ( <<theTouchable->GetReplicaNumber\(0\)<<" ") N
+() p 8 T () S
+(// ) c 16 T () S 24 T ( <<theTouchable->GetReplicaNumber\(1\)<<" ") N
+() p 8 T () S
+(// ) c 16 T () S 24 T ( <<theTouchable->GetReplicaNumber\(2\)<<" ") N
+() p 8 T () S
+(// ) c 16 T () S 24 T ( <<theTouchable->GetReplicaNumber\(3\)<<" ") N
+() p 8 T () S
+(// ) c 16 T () S 24 T ( <<theTouchable->GetReplicaNumber\(4\)<<" ") N
+() p 8 T () S
+(// ) c 16 T () S 24 T ( <<theTouchable->GetReplicaNumber\(5\)<<" ") N
+() p 8 T () S
+(// ) c 16 T () S 24 T ( <<theTouchable->GetReplicaNumber\(6\)<<" ") N
+() p 8 T () S
+(// ) c 16 T () S 24 T ( <<theTouchable->GetReplicaNumber\(7\)<<" ") N
+() p 8 T () S
+(// ) c 16 T () S 24 T ( <<theTouchable->GetReplicaNumber\(8\)<<" ") N
+() p 8 T () S
+(// ) c 16 T () S 24 T ( <<theTouchable->GetReplicaNumber\(9\)<<" ") N
+() p 8 T () S
+(// ) c 16 T () S 24 T ( <<theTouchable->GetReplicaNumber\(10\)<<" ") N
+() p 8 T () S
+(// ) c 16 T () S 24 T ( <<theTouchable->GetReplicaNumber\(11\)<<" ") N
+() p 8 T () S
+(// ) c 16 T () S 24 T ( <<theTouchable->GetReplicaNumber\(12\)<<" ") S 72 T () S 80 T () N
+() S 0 T () S 8 T () S 16 T () S 24 T () S 32 T () S 40 T ( ) N
+() p 8 T () S
+(// ) c 16 T () S 24 T ( <<tan\(polang\)*cos\(aziang\)<<" "<<tan\(polang\)*sin\(aziang\)) N
+(<<" "<<edep<<endl;) N
+() p 8 T () S
+(//  <<aStep->GetTrack\(\)->GetTrackID\(\)<<"   ") c n
+(  ) p
+(//  <<aStep->GetTrack\(\)->GetParentID\(\)<<"   ") c n
+(  ) p
+(//   <<aStep->GetTrack\(\)->GetKineticEnergy\(\)/GeV<<" ") c n
+(  ) p
+(//   <<1./\(aStep->GetTrack\(\)->GetTotalEnergy\(\)/GeV\)<<" ") c n
+(  ) p
+(//   <<aStep->GetPreStepPoint\(\)->GetPosition\(\)<<" ") c n
+(  ) p
+(//   <<setw\(5\)<<aStep->GetPreStepPoint\(\)->GetGlobalTime\(\)<<" ") c n
+(  ) p
+(//   <<setw\(5\)<<aStep->GetPreStepPoint\(\)->GetLocalTime\(\)<<" ") c n
+(  ) p
+(//   <<setw\(5\)<<aStep->GetPreStepPoint\(\)->GetProperTime\(\)<<G4endl;) c n
+(  ) p n
+(  ) S
+(if) K
+(\(edep==0.\) ) p
+(return) K
+( ) p
+(false) k
+(;) p n
+(  ) N
+(micalCal0SD.cc) (Page 3/28) (Jul 16, 21 18:23) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(  ) p
+(//GMAA ParentID\(\) should be reoved, for the time being keep it for the test of) c n
+( algorithms) N
+(  ) p
+(if) K
+( \(level <9\) {) p n
+(    G4cout <<") S
+(Hits are not in the sensitive vol) str
+("<<G4endl;) p n
+(    ) S
+(return) K
+( ) p
+(false) k
+(;) p n
+(  }) N
+(  ) N
+(  ) S
+(//20/02/2009 for visualisation plots) c n
+(  ) p n
+(  G4ThreeVector glbpos = 0.5*\(aStep->GetPreStepPoint\(\)->GetPosition\(\) + aStep->G) N
+(etPostStepPoint\(\)->GetPosition\(\)\); ) S
+(//aStep->GetPreStepPoint\(\)->GetPosition\(\);) c n
+() p n
+(  ) S
+(float) k
+( tmpx = \(1/m\)*glbpos.x\(\);) p n
+(  ) S
+(float) k
+( tmpy = \(1/m\)*glbpos.y\(\);) p n
+(  ) S
+(float) k
+( tmpz = \(1/m\)*glbpos.z\(\);) p n
+() N
+(  ) S
+(if) K
+( \(tmpx >histxmx\) histxmx = tmpx;) p n
+(  ) S
+(if) K
+( \(tmpx <histxmn\) histxmn = tmpx;) p n
+(  ) N
+(  ) S
+(if) K
+( \(tmpy >histymx\) histymx = tmpy;) p n
+(  ) S
+(if) K
+( \(tmpy <histymn\) histymn = tmpy;) p n
+(  ) N
+(  ) S
+(if) K
+( \(tmpz >histzmx\) histzmx = tmpz;) p n
+(  ) S
+(if) K
+( \(tmpz <histzmn\) histzmn = tmpz;) p n
+() S 8 T () N
+() S 8 T () S
+(//  G4int tmpint = theTouchable->GetCopyNumber\( 8 \) ;) c n
+() p 8 T () S
+(//  G4int nInCH = 0;//tmpint%8;       // theTouchable->GetCopyNumber\( 6 ) c n
+(\) ;) N
+() p 8 T (G4) S
+(int) k
+( nInMO = 0;) p
+(//int\(tmpint/8\);  // theTouchable->GetCopyNumber\( 5 \) ;) c n
+() p 8 T (G4) S
+(int) k
+( nInCH = theTouchable->GetCopyNumber\( 8 \);) p n
+() S 8 T (G4) S
+(int) k
+( nInLA = theTouchable->GetCopyNumber\( 9 \);) p n
+() S 8 T () N
+(  G4) S
+(int) k
+( nInDT = 0;) p
+(//theTouchable->GetCopyNumber\( 10 \) ;) c n
+(  ) p
+(// pAnalysis->timeAsciiOutput<<"ievt = "<<pAnalysis->ievt<<endl;) c n
+(  ) p
+(// pAnalysis->timeAsciiOutput<<"**********************************************) c n
+(****************************"<<endl;) N
+(  ) p
+(// for\(int ixxj=0; ixxj<14; ixxj++\) {) c n
+(  ) p
+(//   cout <<"theTouchable->GetVolume\("<<ixxj<<"\)->GetName\(\)"<<theTouchable->Ge) c n
+(tVolume\(ixxj\)->GetName\(\)<<" "<<nInLA<<endl;) N
+(  ) p
+(// }) c n
+(  ) p
+(// pAnalysis->timeAsciiOutput <<"G4int tmpint = theTouchable->GetCopyNumber\( 7) c n
+( \) = "<<tmpint<<endl;) N
+() p n
+(  ) S
+(// pAnalysis->timeAsciiOutput <<"G4int nInCH = tmpint%8 = "<<nInCH<<endl;     ) c n
+(  // theTouchable->GetCopyNumber\( 6 \) ;) N
+(  ) p
+(// pAnalysis->timeAsciiOutput <<"G4int nInMO = int\(tmpint/8\) = "<<nInMO<<endl;) c n
+(  // theTouchable->GetCopyNumber\( 5 \) ;) N
+(  ) p
+(// pAnalysis->timeAsciiOutput<<"G4int nInLA = theTouchable->GetCopyNumber\( 8 \)) c n
+( = "<<nInLA<<endl;) N
+(  ) p
+(// pAnalysis->timeAsciiOutput<<"G4int nInDT = theTouchable->GetCopyNumber\( 9 \)) c n
+( = "<<nInDT<<endl;) N
+(  ) p
+(// pAnalysis->timeAsciiOutput<<"______________________________________________) c n
+(___________________________"<<endl;) N
+(  ) p n
+(  G4) S
+(double) k
+( atime = aStep->GetPreStepPoint\(\)->GetGlobalTime\(\)/\(ns\);) p n
+(  ) S
+(// cout<<"geantTimeStamp = "<<atime<<", "<<aStep->GetPreStepPoint\(\)->GetGlobal) c n
+(Time\(\)/\(ns\)<<endl;) N
+(  G4) p
+(int) k
+( nInT = G4) p
+(int) k
+(\(atime/125.\); ) p
+(//\(2*ns\)\); //\(5*ns\)\); // \(10*ns\)\); //\(5*ns\)\); ) c n
+(//maximum of 40 ns) N
+(  ) p n
+(  G4ThreeVector localpos = theTouchable->GetHistory\(\)->GetTopTransform\(\).Transfo) N
+(rmPoint\(glbpos\); ) S
+(// 0.5*\(aStep->GetPreStepPoint\(\)->GetPosition\(\) + aStep->GetPos) c n
+(tStepPoint\(\)->GetPosition\(\)\)\);) N
+(  ) p n
+(  ) S
+(// cout<<"glb "<<glbpos<<" loc "<<localpos<<" "<<glbpos-localpos<<endl;) c n
+() p n
+(  ) S
+(// cout<<"XXXXXXXXXXXXXXXXXXXX"<<endl;) c n
+(  ) p
+(// cout<<"atime "<<atime<<"     nInT "<<nInT<<endl;) c n
+(  ) p
+(// cout<<"localpos "<< 1.e-1*localpos.x\(\)<<" "<< 1.e-1*localpos.y\(\)<<" "<< 1.e) c n
+(micalCal0SD.cc) (Page 4/28) (Jul 16, 21 18:23) title
+border
+grestore
+(Printed by gobinda) rhead
+(micalCal0SD.cc) (2/14) (Friday July 16, 2021) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (5-6) 3
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(-1*localpos.z\(\)<<endl;) c n
+(  ) p
+(//  nInT = 0; // 04/02/2009) c n
+() p n
+(  ) S
+(const) K
+( G4) p
+(int) k
+( MxStrip=3; ) p
+(//1; //GMA230621) c n
+(  ) p
+(const) K
+( G4) p
+(int) k
+( UsedMxStrip=1;) p n
+(  ) N
+(  ) S
+(//GMA This is only for test purpose, actual smearing and storing is done in mi) c n
+(calcal0SD::EndOfEvent\(G4HCofThisEvent*\)) N
+(  G4) p
+(double) k
+( CorrTimeSmr = G4RandGauss::shoot\(0,TimeCorrSmr\);) p n
+(  G4) S
+(double) k
+( atimeX = atime + CorrTimeSmr + G4RandGauss::shoot\(0,TimeUnCorrSmr\);) p n
+(  G4) S
+(double) k
+( atimeY = atime + CorrTimeSmr + G4RandGauss::shoot\(0,TimeUnCorrSmr\);) p n
+(  ) N
+(  ) S
+(// cout<<"SmearedTime = "<<atime + CorrTimeSmr <<endl;) c n
+(  ) p
+(// cout<<"atimeX = "<<atimeX<<endl;) c n
+(  ) p
+(// cout<<"atimeY = "<<atimeY<<endl;) c n
+() p n
+(  ) S
+(//Time shift due to propagation of signal in strip  //Bring this through datab) c n
+(ase) N
+(  ) p
+(// double sigXspeed = 0.15*ns; // 5ns/m; 0.15ns/strip) c n
+(  ) p
+(// double sigYspeed = 0.15*ns; // 5ns/m; 0.15ns/strip) c n
+(  ) p
+(//  atimeX += \(YTpos - Ymin\)*0.005*ns;  //5 ns/m ) c n
+(  ) p
+(//  atimeY += \(XTpos - Xmin\)*0.005*ns;) c n
+() p n
+(  G4) S
+(int) k
+( nInX[MxStrip]={-1, -1, -1}; ) p
+(//GMA230621) c n
+(  G4) p
+(int) k
+( nInY[MxStrip]={-1, -1, -1};) p n
+(  ) N
+(  G4) S
+(double) k
+( yy = pargas[1] + localpos.y\(\); ) p
+(// /m; // /cm; //GMA factor 100 for me) c n
+(ter to cm) N
+(  nInY[0] = ) p
+(int) k
+(\(yy/Ystrwd\);) p n
+(  G4) S
+(double) k
+( xx = pargas[0] + localpos.x\(\); ) p
+(// /m; // /cm; ) c n
+(  nInX[0] = ) p
+(int) k
+(\(xx/Xstrwd\);) p n
+(  ) S
+(// cout<<"nInX[0] "<<nInX[0] <<" "<<nInY[0]<<" "<<nInLA<<endl;) c n
+(  ) p n
+(  ) S
+(for) K
+( \() p
+(int) k
+( ix = 0; ix < UsedMxStrip; ix++\) {) p n
+(    ) S
+(if) K
+(\(!multiplicity && ix>0\) ) p
+(continue) K
+(;) p n
+(    ) S
+(// Aug3109: multiplicy of hits is put off, just to make the tracks comparabe) c n
+( to tracks from earlier code.) N
+(    ) p
+(if) K
+( \(nInX[ix] <0\) ) p
+(continue) K
+(;) p n
+(    ) S
+(for) K
+( \() p
+(int) k
+( iy = 0; iy < UsedMxStrip; iy++\) {) p n
+(      ) S
+(if) K
+(\(!multiplicity && iy>0\) { ) p
+(continue) K
+(;}) p n
+(      ) S
+(if) K
+( \(nInY[iy] <0\)) p 24 T ({) S
+(continue) K
+(;}) p n
+(      ) S
+(// if \(ix>0 || iy>0\) continue; //RANDOM) c n
+(      ) p n
+(      ) S
+(// cout<<"nINODet "<<nINODet<<" "<<numberInCH<<" "<<numberInMO<<" "<<numbe) c n
+(rInLA<<" "<<numberInX<<" "<<numberInY<<endl;) N
+(      ) p
+(// cout <<"Wrong numbers "<<nInLA<<" "<<nInX[ix]<<" "<<nInY[iy] <<" "<<aSt) c n
+(ep->GetPreStepPoint\(\)->GetPosition\(\)<<" "<<localpos<<endl;) N
+(      ) p n
+(      ) S
+(double) k
+( ShiftInX = paradef->GetINOroomPos\(0\)+ paradef->GetStackPosInRoom\(0\)) p n
+( + paradef->GetShiftInX\(\);) N
+(      ) S
+(double) k
+( ShiftInY = paradef->GetINOroomPos\(1\)+ paradef->GetStackPosInRoom\(1\)) p n
+( + paradef->GetShiftInY\(\);) N
+(      ) S
+(double) k
+( ShiftInZ = paradef->GetINOroomPos\(2\)  + paradef->GetStackPosInRoom\() p n
+(2\)+ paradef->GetShiftInZ\(nInLA\);) N
+(      ) N
+(      ) S
+(//         cout<<"ShiftInXYZ "<<ShiftInX<<" "<<ShiftInY<<" "<<ShiftInZ<<en) c n
+(dl;) N
+() p n
+() N
+(      ) S
+(double) k
+( dd1 = \(-pargas[0] + Xstrwd*\(nInX[ix]+0.5\) + ShiftInX\);) p n
+() S 8 T () S 16 T () S 24 T () S
+(double) k
+( shift2y = \(paradef->GetnStack\(\)>1\) ? \(2*nInCH-1\)*) p n
+(parchm[1] : 0; ) S
+(//GMA one/two RPC in a layer) c n
+(      ) p
+(double) k
+( dd2 = \(shift2y -pargas[1] + Ystrwd*\(nInY[iy]+0.5\) + ShiftInY\); ) p n
+(      ) S
+(// double dd3 = ZLayerPos[nInLA]/m;) c n
+() p n
+(      ) S
+(//    cout<<"recxpos "<<dd1<<" genxpos "<<glbpos.x\(\)<<endl;) c n
+(      ) p
+(// cout<<"recypos "<<dd2<<" genypos "<<glbpos.y\(\)<<endl;) c n
+() p n
+(      pAnalysis->pPosX->Fill\(0.1*dd1 - 0.1*glbpos.x\(\)\);) N
+(micalCal0SD.cc) (Page 5/28) (Jul 16, 21 18:23) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(      pAnalysis->pPosY->Fill\(0.1*dd1 - 0.1*glbpos.x\(\)\);) p n
+() N
+(      ) S
+(if) K
+(\(nInDT <0 || nInDT >=nINODet ||) p n
+(       ) S 8 T ( nInCH <0 || nInCH >=numberInCH || ) N
+(      ) S 8 T ( nInMO <0 || nInMO >=numberInMO ||) N
+() S 8 T ( nInLA <0 || nInLA >=numberInLA || ) N
+(      ) S 8 T ( nInX[ix] <0 || nInX[ix] >=numberInX ||) N
+(      ) S 8 T ( nInY[iy] <0 || nInY[iy] >=numberInY\){) N
+() S 8 T () S
+(// cout <<"Wrong numbers "<<ix<<" "<<iy<<" "<<nInCH<<" "<<nInMO<<" "<<nI) c n
+(nLA<<" "<<nInX[ix]<<" "<<nInY[iy]<<" "<<nInT <<" "<<aStep->GetPreStepPoint\(\)->Ge) N
+(tPosition\(\)<<" "<<localpos<<G4endl;) N
+() p 8 T () S
+(continue) K
+(;) p n
+(      }) N
+(      ) N
+(      ) S
+(unsigned) k
+( ) p
+(long) k
+( detid = nInDT; ) p
+(//2bit) c n
+(      detid<<=8;) p n
+(      detid +=nInLA;) N
+(      detid<<=3;) N
+(      detid +=nInMO;) N
+(      detid<<=3;) N
+(      detid +=nInCH;) N
+(      detid<<=7;) N
+(      detid +=nInX[ix];) N
+(      detid<<=7;) N
+(      detid +=nInY[iy];) N
+(      ) N
+(      ) S
+(// cout<<"nInDT,nInLA,nInMO,nInCH,nInX[ix],nInY[iy] "<<nInDT<<" "<<nInLA<<) c n
+(" "<<nInMO<<" "<<nInCH<<" "<<ix<<" "<<nInX[ix]<<" "<<iy<<" "<<nInY[iy]<<endl;) N
+(      ) p
+(// cout<<"XXXXXXXXXXXXXXXXXXXXXX"<<endl;) c n
+(      ) p
+(int) k
+( oldCellId = -1;) p n
+(      ) S
+(for) K
+( \() p
+(int) k
+( ij=0; ij<InCell; ij++\) {) p n
+(        ) S
+(if) K
+( \(detid ==CellDetID[ij]\) {oldCellId = ij;}) p n
+(      }) N
+(      ) S
+(// cout<<" oldCellId "<<oldCellId<<" "<<InCell<<" "<<numberInCell<<endl;) c n
+(      ) p
+(if) K
+( \(oldCellId ==-1 && InCell <numberInCell -1 \) {) p n
+(        micalcal0Hit* newHit = ) S
+(new) K
+( micalcal0Hit\(\);) p n
+(        ) S
+(// cout<<"detid = "<< detid%128 << " nInY[iy] = "<<nInY[iy]<<endl;) c n
+(        ) p
+(// cout<<" 1 "<<"atime = "<<atime<<", GetTime\(\) "<<" pdgid "<<aStep->Get) c n
+(Track\(\)->GetDefinition\(\)->GetPDGEncoding\(\)<<" GetPdgid "<<" oldcellid "<<oldCell) N
+(Id<<endl;) N
+(        ) p
+(// cout<<" 1 aStep->GetTrack\(\) "<<aStep->GetTrack\(\)->GetTrackID\(\)<<" "<<) c n
+(aStep->GetTrack\(\)->GetParentID\(\)<<endl;) N
+(        ) p
+(// cout<<" 1 xpos = "<<glbpos.x\(\)<<" y = "<<glbpos.y\(\)<<" z = "<<glbpos.) c n
+(z\(\)<<endl;) N
+(        ) p n
+(        newHit->SetHitId\(detid\);) N
+(        ) S
+(int) k
+( pdgid = aStep->GetTrack\(\)->GetDefinition\(\)->GetPDGEncoding\(\);) p n
+(        newHit->SetpdgId\(pdgid\);) N
+(        newHit->SetEdep\(edep\);) N
+(        newHit->SetTime\(atime\);) N
+(        newHit->SetPos\(glbpos\); ) S
+(// 0.5*\(aStep->GetPreStepPoint\(\)->GetPosition\(\) ) c n
+(+ aStep->GetPostStepPoint\(\)->GetPosition\(\)\)\);) N
+(        newHit->SetLocalXPos\(localpos.x\(\)\);) p n
+(        newHit->SetLocalYPos\(localpos.y\(\)\);) S 48 T () S 56 T (     ) N
+(        ) S
+(//) c 16 T (newHit->SetLocalPos\(localpos\); ) N
+(        newHit->SetMom\( aStep->GetTrack\(\)->GetMomentum\(\)\);) p n
+(        ) N
+(        InCell = cal0Collection->insert\( newHit \);) N
+(        CellDetID[InCell-1] = detid;) N
+(        ) N
+(        ) S
+(// double MCxx = 0.0;) c n
+(        ) p
+(// double MCyy = 0.0;) c n
+(        ) p
+(// double MCzz = 0.0;) c n
+(        ) p n
+(        ) S
+(//) c 16 T (G4ThreeVector glb = 0.5*\(aStep->GetPreStepPoint\(\)->GetPosition\(\)) N
+( + aStep->GetPostStepPoint\(\)->GetPosition\(\)\);) N
+(        ) p
+(// MCxx = 1.e-3*glb.x\(\);) c n
+(        ) p
+(// MCyy = 1.e-3*glb.y\(\);) c n
+(        ) p
+(// MCzz = 1.e-3*glb.z\(\);) c n
+(micalCal0SD.cc) (Page 6/28) (Jul 16, 21 18:23) title
+border
+grestore
+(Printed by gobinda) rhead
+(micalCal0SD.cc) (3/14) (Friday July 16, 2021) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (7-8) 4
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(        ) p
+(//cout<<"MCxx "<<MCxx<<"     MCyy "<<MCyy<<"     MCzz "<<MCzz<<endl;) c n
+(        ) p
+(//) c n
+(        ) p
+(//GMA Need from micalcal0HitCollection) c n
+(        ) p
+(//GMA This is only for test purpose, actual smearing and storing is done) c n
+( in micalcal0SD::EndOfEvent\(G4HCofThisEvent*\)) N
+(        G4) p
+(int) k
+( xstripid = 0;) p n
+(        xstripid<<=2; ) S
+(//1;) c n
+(        xstripid +=nInDT;) p n
+(        ) N
+(        xstripid<<=8; ) S
+(// 2;) c n
+(        xstripid +=nInLA;) p n
+(        xstripid<<=3; ) S
+(// 8;) c n
+(        xstripid +=nInMO;) p n
+(        ) N
+(        xstripid<<=3;) N
+(        xstripid +=nInCH;) N
+() S 8 T () S 16 T () S 24 T () S 32 T () N
+(        xstripid<<=7; ) S
+(//3;) c n
+(        xstripid +=nInX[ix];) p n
+(        ) N
+(        xstripid<<=5;) N
+(        xstripid +=0; ) S
+(// nInT;) c n
+(        ) p n
+(        xstripid<<=3;) N
+(        xstripid +=TMath::Min\() S
+(int) k
+(\(edep/16\),7\);) p n
+(        ) N
+(        G4) S
+(int) k
+( ystripid = 1;) p n
+(        ) N
+(        ystripid<<=2; ) S
+(//1;) c n
+(        ystripid +=nInDT;) p n
+(        ) N
+(        ystripid<<=8;) N
+(        ystripid +=nInLA;) N
+(        ) N
+(        ystripid<<=3;) N
+(        ystripid +=nInMO;) N
+(        ) N
+(        ystripid<<=3;) N
+(        ystripid +=nInCH;) N
+(        ) N
+(        ystripid<<=7; ) S
+(//3;) c n
+(        ystripid +=nInY[iy];) p n
+(        ) N
+(        ystripid<<=5;) N
+(        ystripid +=0; ) S
+(// nInT;) c n
+(        ) p n
+(        ystripid<<=3;) N
+(        ystripid +=TMath::Min\() S
+(int) k
+(\(edep/16\),7\);) p n
+(        ) N
+(        InoStrip Xstrip;) N
+(        InoStrip Ystrip;) N
+(        ) N
+(        Xstrip.SetpdgId\(pdgid\);) N
+(        Ystrip.SetpdgId\(pdgid\);) N
+(        ) N
+(        Xstrip.SetPlaneView\(0\);) N
+(        Ystrip.SetPlaneView\(1\);) N
+(        ) N
+(        Xstrip.SetStrip\(numberInX*numberInMO*nInDT+numberInX*nInMO+nInX[ix]\);) N
+(        Ystrip.SetStrip\(numberInY*nInCH+nInY[iy]\);) N
+(        ) N
+(        Xstrip.SetPlane\(nInLA\);) N
+(        Ystrip.SetPlane\(nInLA\);) N
+(        ) N
+(        ) S
+(//) c 16 T (G4ThreeVector posvec = aStep->GetPreStepPoint\(\)->GetPosition\(\); ) N
+(//GMA14 Define only once) N
+(        ) p
+(//GMA 250808) c n
+(        ) p n
+(        ) N
+(micalCal0SD.cc) (Page 7/28) (Jul 16, 21 18:23) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(        ) p
+(//) c 16 T ( double ShiftInX = paradef->GetShiftInX\(\);) N
+(        ) p
+(//) c 16 T ( double ShiftInY = paradef->GetShiftInY\(\);) N
+(        ) p
+(// double ShiftInZ = paradef->GetShiftInZ\(nInLA\);) c n
+(        ) p
+(double) k
+( ShiftInX = paradef->GetINOroomPos\(0\)+paradef->GetStackPosInRoom\(0) p n
+(\) + paradef->GetShiftInX\(\);) N
+(        ) S
+(double) k
+( ShiftInY = paradef->GetINOroomPos\(1\)+paradef->GetStackPosInRoom\(1) p n
+(\) + paradef->GetShiftInY\(\);) N
+(        ) S
+(double) k
+( ShiftInZ = paradef->GetINOroomPos\(2\) +paradef->GetStackPosInRoom\() p n
+(2\)+ paradef->GetShiftInZ\(nInLA\);) N
+(        ) S
+(// // ShiftInX = paradef->GetShiftInX\(\);) c n
+(        ) p
+(// // ShiftInY = paradef->GetShiftInY\(\);) c n
+(        ) p
+(// // ShiftInZ = paradef->GetShiftInZ\(\);) c n
+(        ) p n
+(        ) S
+(// cout<<"ShiftInX "<<0.1*ShiftInX<<" "<<0.1*ShiftInY<<" "<<0.1*ShiftInZ) c n
+(<<endl;) N
+(        ) p n
+(        ) N
+(        ) S
+(// double xpos =  \(1/m\)*\( \(nInDT-1\)*\(2*parino[0]+gapino\) - parlay[0]  + ) c n
+(\(2*nInMO+1\)*parmod[0] -pargas[0] + Xstrwd*\(nInX[ix]+0.5\) + ShiftInX\); //GMA use ) N
+(global variables \(for all these three co-ordinates\)) N
+(        ) p
+(// //0.01 is the converson factor for cm t m) c n
+(        ) p
+(// double ypos = \(1/m\)*\(- parmod[1]  + \(2*nInCH+1\)*parchm[1] -pargas[1] ) c n
+(+ Ystrwd*\(nInY[iy]+0.5\) + ShiftInY\);) N
+(        ) p
+(// double zpos = \(1/m\)*\(-\(numberInLA-1\)*\(parirlay[2]+parlay[2]\)+\(nInLA\)*) c n
+(2*\(parirlay[2] + parlay[2]\) + ShiftInZ\); //AAR:** changes for Central Iron Layer) N
+( **) N
+(        ) p n
+(        ) N
+(        ) S
+(// cout <<"Glo Position "<<1000* xpos<<" "<<1000*ypos<<" "<<1000*zpos<<") c n
+( glb "<<glbpos<<" Diff_x "<<1000*xpos-glbpos.x\(\)<<" Diff_y "<<1000*ypos-glbpos.y) N
+(\(\)<<endl;) N
+(        ) p n
+(        ) N
+(        ) S
+(//) c 16 T ( cout<<"parlay[0]"<<parlay[0]<<"gapino"<<gapino<<"pariino[0]"<<p) N
+(arino[0]<<"nInMO"<<nInMO<<"parmod[0]"<<parmod[0]<<"nindt"<<nInDT<<endl;) N
+(        ) p n
+(        ) N
+(        ) N
+(        ) S
+(double) k
+( xpos =  \(1/m\)*\(  -pargas[0] + Xstrwd*\(nInX[ix]+0.5\) + ShiftInX\); ) p
+() c n
+(//GMA use global variables \(for all these three co-ordinates\)) N
+(        ) p
+(//0.01 is the converson factor for cm t m) c n
+(        ) p
+(double) k
+( shift2y = \(paradef->GetnStack\(\)>1\) ? \(2*nInCH-1\)*parchm[1] : 0; ) p
+(/) c n
+(/GMA one/two RPC in a layer) N
+(        ) p
+(double) k
+( ypos = \(1/m\)*\( shift2y -pargas[1] + Ystrwd*\(nInY[iy]+0.5\) + Shift) p n
+(InY\);) N
+(        ) S
+(double) k
+( zpos = \(1/m\)*\(-\(numberInLA-1\)*\(parirlay[2]+parlay[2]\)+\(nInLA\)*2*\() p n
+(parirlay[2] + parlay[2]\) + ShiftInZ\); ) S
+(//AAR:** changes for Central Iron Layer **) c n
+(        ) p n
+() S 8 T () N
+(        ) S
+(//) c 16 T (cout <<"Glo Pos "<< nInLA<<" "<<aStep->GetTrack\(\)->GetMomentum\(\)) N
+(.mag\(\)<<" "<<aStep->GetTrack\(\)->GetMomentum\(\).theta\(\)<<" "<<aStep->GetTrack\(\)->G) N
+(etMomentum\(\).phi\(\)<<" "<<1000* xpos<<" "<<1000*ypos<<" "<<1000*zpos<<" glb "<<gl) N
+(bpos<<endl; //" Diff_x "<<1000*xpos-glbpos.x\(\)<<" Diff_y "<<1000*ypos-glbpos.y\(\)) N
+(<<endl;) N
+() p n
+(        cout <<") S
+(Glo Pos ) str
+("<<pdgid<<") p
+( ) str
+("<<edep<<") p
+( ) str
+("<< nInLA<<") p
+( ) str
+("<<1000* xpos<<") p
+( ) str
+("<<1000) p n
+(*ypos<<") S
+( ) str
+("<<1000*zpos<<") p
+( glb ) str
+("<<glbpos<<") p
+( Diff_x ) str
+("<<1000*xpos-glbpos.x\(\)<<") p
+( Diff_y ) str
+("<<10) p n
+(00*ypos-glbpos.y\(\)<<") S
+( ) str
+("<<aStep->GetTrack\(\)->GetMomentum\(\)<<endl;) p n
+(        ) N
+(        ) N
+(        ) S
+(//localpos) c n
+(        ) p n
+(        ) S
+(//) c 16 T (double lo_xpos =  \(1/m\)*\( -pargas[0] + Xstrwd*\(nInX[ix]+0.5\)\); /) N
+(/GMA use global variables \(for all these three co-ordinates\)) N
+(        ) p
+(//0.01 is the converson factor for cm t m) c n
+(        ) p
+(//) c 16 T (double lo_ypos = \(1/m\)*\( -pargas[1] + Ystrwd*\(nInY[iy]+0.5\)\);) N
+(        ) p
+(//) c 16 T (double lo_zpos = \(1/m\)*\(-\(numberInLA-1\)*\(parirlay[2]+parlay[2]\)+) N
+(\(nInLA\)*2*\(parirlay[2] + parlay[2]\) + ShiftInZ\); //AAR:** changes for Central Ir) N
+(on Layer **) N
+(micalCal0SD.cc) (Page 8/28) (Jul 16, 21 18:23) title
+border
+grestore
+(Printed by gobinda) rhead
+(micalCal0SD.cc) (4/14) (Friday July 16, 2021) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (9-10) 5
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(        ) p n
+(        ) N
+(        ) S
+(//) c 16 T (cout <<"local Position "<<1000* lo_xpos<<" "<<1000*lo_ypos<<" "<) N
+(<1000*lo_zpos<<" loc "<<localpos<<" Diff_x "<<1000*lo_xpos-localpos.x\(\)<<" Diff_) N
+(y "<<1000*lo_ypos-localpos.y\(\)<<endl<<endl;) N
+(        ) p n
+(        ) S
+(//) c n
+(        ) p n
+(        ) N
+(        Xstrip.SetXYPos\(xpos\);) N
+(        Ystrip.SetXYPos\(ypos\);) N
+(        ) N
+(        Xstrip.SetZPos\(zpos\);) N
+(        Ystrip.SetZPos\(zpos\);) N
+(        ) N
+(        Xstrip.SetMomentum\(momentum\);) N
+(        Xstrip.SetTheta\(polang\);) N
+(        Xstrip.SetPhi\(aziang\);) N
+(        ) N
+(        ) S
+(//Do not need it.) c n
+(        Ystrip.SetMomentum\(momentum\);) p n
+(        Ystrip.SetTheta\(polang\);) N
+(        Ystrip.SetPhi\(aziang\);) N
+(        ) N
+(        Xstrip.SetTrueTime\(atime/0.1\);) N
+(        Ystrip.SetTrueTime\(atime/0.1\);) N
+(        ) N
+(        Xstrip.SetSmrTime\(\(atimeX+\(nInY[iy]+0.5\)*SignalSpeed\)/0.1\);) N
+(        Ystrip.SetSmrTime\(\(atimeY+\(nInX[ix]+0.5\)*SignalSpeed\)/0.1\);) N
+(        ) N
+(        ) S
+(// cout<<"nInY[iy] = "<<nInY[iy]<<endl;) c n
+(        ) p
+(// cout<<"nInX[ix] = "<<nInX[ix]<<endl;) c n
+(        ) p
+(// cout<<"sigSpeed*nInY = "<<\(nInY[iy]+0.5\)*SignalSpeed <<endl;) c n
+(        ) p
+(// cout<<"sigSpeed*nInX = "<<\(nInX[ix]+0.5\)*SignalSpeed <<endl;) c n
+(        ) p
+(// cout<<"Non digitised X-Time = "<<\(atimeX+\(nInY[iy]+0.5\)*SignalSpeed\)<) c n
+(<endl;) N
+(        ) p
+(// cout<<"Non digitised Y-Time = "<<\(atimeY+\(nInX[ix]+0.5\)*SignalSpeed\)<) c n
+(<endl;) N
+(        ) p
+(// cout<<"Digitised X-Time = "<< int\(\(atimeX+\(nInY[iy]+0.5\)*SignalSpeed\)) c n
+(/0.1\) <<endl;) N
+(        ) p
+(// cout<<"Digitised Y-Time = "<< int\(\(atimeY+\(nInX[ix]+0.5\)*SignalSpeed\)) c n
+(/0.1\) <<endl;) N
+(        ) p n
+(        Xstrip.SetPulse\(edep\);) N
+(        Ystrip.SetPulse\(edep\); ) N
+(        ) N
+(        InoHit tmpHit\(&Xstrip, &Ystrip\);) N
+(        InoHit_list.push_back\(tmpHit\);) N
+(        ) S
+(//----------------------------------------------------------------------) c n
+(-----------------------ascii_output) N
+(        ) p n
+(        ) S
+(if) K
+( \(pAnalysis->isVisOut==1&&\(pAnalysis->InputOutput==0 ||pAnalysis->Inpu) p n
+(tOutput==3 ||pAnalysis->InputOutput==5\)\) {) N
+(          ) S
+(if) K
+(\(aStep->GetTrack\(\)->GetTrackID\(\)==1 && aStep->GetTrack\(\)->GetParentI) p n
+(D\(\)==0 \) {) N
+(            pAnalysis->H->NPrimHits=2; ) S
+(//Number of Triplet events) c n
+(            pAnalysis->Hp= pAnalysis->H->AddHits\(0,0\); ) p
+(// add a track object //V) c n
+(ALGRIND) N
+(            pAnalysis->Hp->TrackType=-101;) p
+(// Track Type: -1: hits, -2: clulster,) c n
+( -3: triplet, -4: track) N
+(            pAnalysis->Hp->ParCode= 13;       ) p n
+(            pAnalysis->Hp->PrimHitNum= 0;) S
+(// Hit Number) c n
+(            pAnalysis->Hp->ZZ=Xstrip.GetPlane\(\);) p n
+(            pAnalysis->Hp->XX=Xstrip.GetXYPos\(\);) N
+(            pAnalysis->Hp->YY=Ystrip.GetXYPos\(\);) N
+(            ) S
+(//    hh++;) c n
+(          } ) p
+(else) K
+(  {) p n
+(            pAnalysis->H->NPrimHits=2; ) S
+(//Number of Triplet events) c n
+(            pAnalysis->Hp= pAnalysis->H->AddHits\(0,0\); ) p
+(// add a track object //V) c n
+(micalCal0SD.cc) (Page 9/28) (Jul 16, 21 18:23) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(ALGRIND) c n
+(            pAnalysis->Hp->TrackType=-101;) p
+(// Track Type: -1: hits, -2: clulster,) c n
+( -3: triplet, -4: track) N
+(            pAnalysis->Hp->ParCode= 1;) p n
+(            pAnalysis->Hp->PrimHitNum= 1;   ) S
+(// Hit Number) c n
+(            pAnalysis->Hp->ZZ=Xstrip.GetPlane\(\);) p n
+(            pAnalysis->Hp->XX=Xstrip.GetXYPos\(\);) N
+(            pAnalysis->Hp->YY=Ystrip.GetXYPos\(\);) N
+(          }) N
+(        }) S 16 T () S 24 T () N
+(        ) S
+(//) c 16 T (cout<<"ParentID  " << aStep->GetTrack\(\)->GetParentID\(\); ) N
+(        ) p
+(//----------------------------------------------------------------------) c n
+(----------------------) N
+(      }) p n
+(      ) S
+(if) K
+( \(oldCellId >=0\) {) p n
+(      ) S 8 T (\(*cal0Collection\)[oldCellId]->AddEdep\(edep\);) N
+(      ) S 8 T () S
+(if) K
+( \(atime <\(*cal0Collection\)[oldCellId]->GetTime\(\)\) {) p n
+(          ) S
+(//   cout<<"**********************************************************) c n
+(********"<<endl;) N
+(          ) p
+(//   cout<<"atime = "<<atime<<", GetTime\(\) "<<\(*cal0Collection\)[oldCel) c n
+(lId]->GetTime\(\)<<" pdgid "<<aStep->GetTrack\(\)->GetDefinition\(\)->GetPDGEncoding\(\)) N
+(<<" GetPdgid "<<\(*cal0Collection\)[oldCellId]->GetpdgId\(\)<<" oldcellid "<<oldCell) N
+(Id<<endl;) N
+(          ) p
+(//   cout<<"  aStep->GetTrack\(\) "<<aStep->GetTrack\(\)->GetTrackID\(\)<<" ) c n
+("<<aStep->GetTrack\(\)->GetParentID\(\)<<endl;) N
+(          ) p
+(//   G4ThreeVector tmppos1 = 0.5*\(aStep->GetPreStepPoint\(\)->GetPositio) c n
+(n\(\) + aStep->GetPostStepPoint\(\)->GetPosition\(\)\);) N
+(          ) p
+(//   G4ThreeVector tmppos2 = \(*cal0Collection\)[oldCellId]->GetPos\(\);) c n
+(          ) p
+(// cout<<" 2 xpos = "<<tmppos1.x\(\)<<" y = "<<tmppos1.y\(\)<<" z = "<<tmp) c n
+(pos1.z\(\)<<endl;) N
+(          ) p
+(// cout<<" 3 xpos = "<<tmppos2.x\(\)<<" y = "<<tmppos2.y\(\)<<" z = "<<tmp) c n
+(pos2.z\(\)<<endl;) N
+(          ) p n
+(          ) S
+(// cout<<"************************************************************) c n
+(******"<<endl;) N
+(          ) p n
+(          ) N
+(          \(*cal0Collection\)[oldCellId]->SetTime\(atime\);) N
+(      ) S 8 T (}) N
+(      }) N
+(      ) S
+(// ) c 16 T (//) S 24 T (if \(atimeX <\(*cal0Collection\)[oldCellId]->GetTimeX\(\)\) {) N
+(      ) p
+(// ) c 16 T (//) S 24 T (  \(*cal0Collection\)[oldCellId]->SetTimeX\(atimeX\);) N
+(      ) p
+(// ) c 16 T (//) S 24 T (}) N
+(      ) p
+(// ) c 16 T (//) S 24 T (if \(atimeY <\(*cal0Collection\)[oldCellId]->GetTimeY\(\)\) {) N
+(      ) p
+(// ) c 16 T (//) S 24 T (  \(*cal0Collection\)[oldCellId]->SetTimeY\(atimeY\);) N
+(      ) p
+(// ) c 16 T (//) S 24 T (}) N
+(      ) p
+(// }) c n
+(    } ) p
+(// for \(int iy = 0; iy<MxStrip; iy++\) {) c n
+(  } ) p
+(//for \(int ix = 0; ix<MxStrip; ix++\) {) c n
+(  ) p
+(return) K
+( ) p
+(true) k
+(;) p n
+(}) N
+() N
+(void) k
+( micalcal0SD::EndOfEvent\(G4HCofThisEvent*\) { ) p n
+(  ) S
+(// cout<<"EndOfEvent::\(\){..."<<endl;) c n
+(  ) p n
+(  ) S
+(int) k
+( ntriglay = 4;) p n
+(  ) S
+(int) k
+( TrgLayer[4] = {6,7,8,9};) p n
+(  ) S
+(int) k
+( TrgDataX[12] = {0,0,0,0,0,0,0,0,0,0,0,0};) p n
+(  ) S
+(int) k
+( TrgDataY[12] = {0,0,0,0,0,0,0,0,0,0,0,0};) p n
+(  ) S
+(int) k
+( trigStoreX = 0;) p n
+(  ) S
+(int) k
+( trigStoreY = 0;) p n
+(  InCell = 0;) N
+(  ) N
+(  ) S
+(//Time shift due to propagation of signal in strip) c n
+(  ) p
+(// double sigXspeed = 0.15*ns; // 5ns/m; 0.15ns/strip) c n
+(  ) p
+(// double sigYspeed = 0.15*ns; // 5ns/m; 0.15ns/strip) c n
+(  ) p n
+(  ) S
+(//20/02/2009 visualisation variables) c n
+(  ) p
+(int) k
+( ihst = pAnalysis->ihist;) p n
+(micalCal0SD.cc) (Page 10/28) (Jul 16, 21 18:23) title
+border
+grestore
+(Printed by gobinda) rhead
+(micalCal0SD.cc) (5/14) (Friday July 16, 2021) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (11-12) 6
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(  ) p
+(if) K
+( \(pAnalysis->isVisOut>=2\) {) p n
+(    ) N
+(    histxmn -= \(1/m\)*Xstrwd;) N
+(    histxmx += \(1/m\)*Xstrwd;) N
+(    ) N
+(    histymn -= \(1/m\)*Ystrwd;) N
+(    histymx += \(1/m\)*Ystrwd;) N
+(    ) N
+(    histzmn -= \(1/m\)*parlay[2];) N
+(    histzmx += \(1/m\)*parlay[2];) N
+(    ) N
+(    ) S
+(int) k
+( nbinx = ) p
+(int) k
+(\(m*\(histxmx - histxmn\)/Xstrwd\);) p n
+(    ) S
+(int) k
+( nbiny = ) p
+(int) k
+(\(m*\(histymx - histymn\)/Ystrwd\);) p n
+(    ) S
+(int) k
+( nbinz = ) p
+(int) k
+(\(m*\(histzmx - histzmn\)/parlay[2]\);) p n
+(    ) N
+(    ) S
+(if) K
+( \(ihst < pAnalysis->nhistmx-1 && pAnalysis->isVisOut==2\) {) p n
+(      ) S
+(char) k
+( name[100];) p n
+(      sprintf\(name, ") S
+(gens_list_%i) str
+(", ihst\);) p n
+(      cout <<") S
+(name ) str
+("<<name<<endl;) p n
+(      pAnalysis->gens_list[0][ihst] = ) S
+(new) K
+( TH3F\(name, name, nbinx, histxmn, histx) p n
+(mx, nbiny, histymn, histymx, nbinz, histzmn, histzmx\);) N
+(      ) N
+(      sprintf\(name, ") S
+(hits_list_%i) str
+(", ihst\);) p n
+(      pAnalysis->gens_list[1][ihst] = ) S
+(new) K
+( TH3F\(name, name, nbinx, histxmn, histx) p n
+(mx, nbiny, histymn, histymx, nbinz, histzmn, histzmx\);) N
+(      ) N
+(      sprintf\(name, ") S
+(clus_list_%i) str
+(", ihst\);) p n
+(      pAnalysis->gens_list[2][ihst] = ) S
+(new) K
+( TH3F\(name, name, nbinx, histxmn, histx) p n
+(mx, nbiny, histymn, histymx, nbinz, histzmn, histzmx\);) N
+(      ) N
+(      sprintf\(name, ") S
+(trip_list_%i) str
+(", ihst\);) p n
+(      pAnalysis->gens_list[3][ihst] = ) S
+(new) K
+( TH3F\(name, name, nbinx, histxmn, histx) p n
+(mx, nbiny, histymn, histymx, nbinz, histzmn, histzmx\);) N
+(      ) N
+(      sprintf\(name, ") S
+(find_list_%i) str
+(", ihst\);) p n
+(      pAnalysis->gens_list[4][ihst] = ) S
+(new) K
+( TH3F\(name, name, nbinx, histxmn, histx) p n
+(mx, nbiny, histymn, histymx, nbinz, histzmn, histzmx\);) N
+(      ) N
+(      sprintf\(name, ") S
+(fitr_list_%i) str
+(", ihst\);) p n
+(      pAnalysis->gens_list[5][ihst] = ) S
+(new) K
+( TH3F\(name, name, nbinx, histxmn, histx) p n
+(mx, nbiny, histymn, histymx, nbinz, histzmn, histzmx\);    ) N
+(      ) N
+(    }) N
+(  }) N
+(  ) N
+(  cout <<") S
+(tmphitlist filled :cal0SD ) str
+("<< InoHit_list.size\(\)<<endl;) p n
+(  ) S
+(for) K
+( \() p
+(unsigned) k
+( i=0; i<InoHit_list.size\(\) ; i++\) {) p n
+(    ) S
+(//    cout<<"pAnalysis->hitDist->Fill\(InoHit_list["<<i<<"].GetZPlane\(\)\);"<< ) c n
+(InoHit_list[i].GetZPlane\(\) <<endl;) N
+(    pAnalysis->hitDist->Fill\(InoHit_list[i].GetZPlane\(\)\);  ) p n
+(  }) N
+(  ) N
+(  InoHit_list.clear\(\);) N
+(  cout <<") S
+(tmphitlist clear ) str
+("<< endl;) p
+(//inoHit_pointer->InoHit_list.size\(\)<<G4endl;) c n
+(  ) p n
+(  ) S
+(int) k
+( iMnT = 10000; ) p
+(//Should we use these at all ? GMA151001) c n
+(  ) p
+(int) k
+( iMxT = -10000;) p n
+(  ) S
+(double) k
+( eMx = 100;) p n
+(  ) S
+(int) k
+( nHits = 0;) p n
+() N
+(  ) S
+(const) K
+( G4) p
+(int) k
+( MxStrip=1; ) p
+(//GMA230621) c n
+() p n
+() N
+(  ) S
+(if) K
+( \(pAnalysis->InputOutput ==3 || pAnalysis->InputOutput ==4\) {) p n
+(    pAnalysis->inputRootFile->cd\(\);) N
+(    ) S
+(if) K
+(\(pAnalysis->FirstEvt+pAnalysis->ievent< pAnalysis->inputEventTree->GetEntr) p n
+(ies\(\)\){ ) N
+(      pAnalysis->inputEventTree->GetEntry\(pAnalysis->FirstEvt+pAnalysis->ievent+) N
+(+\);) N
+(micalCal0SD.cc) (Page 11/28) (Jul 16, 21 18:23) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(    } ) p
+(else) K
+({) p n
+(      cout<<") S
+(\\n Error: Event no. greater than total no. of entries in the input file. \\n) str
+(";) p n
+(      exit\(1\);) N
+(    }) N
+(    ) S
+(for) K
+(\() p
+(int) k
+( rr1=0; rr1<cal0Collection->entries\(\); rr1++\) {) p n
+(      cout<<rr1<<") S
+( ) str
+(";) p n
+(      \(*cal0Collection\)[rr1]->Print\(\);) N
+(    }) N
+(    ) N
+(    cout <<") S
+(siminput ) str
+("<< pAnalysis->nsimht<<endl;) p n
+(    cout<<") S
+(Before loop: ) str
+("<<cal0Collection->entries\(\)<<endl;) p n
+(    ) S
+(for) K
+(\() p
+(unsigned) k
+( ij=0;ij<pAnalysis->nsimht;ij++\) {) p n
+(      micalcal0Hit* newHit = ) S
+(new) K
+( micalcal0Hit\(\);) p n
+(      G4ThreeVector mom\(pAnalysis->simpx[ij],pAnalysis->simpy[ij],pAnalysis->sim) N
+(pz[ij]\);) N
+(      G4ThreeVector pos\(pAnalysis->simvx[ij],pAnalysis->simvy[ij],pAnalysis->sim) N
+(vz[ij]\);) N
+(      newHit->SetHitId\(pAnalysis->detid[ij]\);) N
+(      newHit->SetpdgId\(pAnalysis->simpdgid[ij]\);) N
+(      newHit->SetEdep\( pAnalysis->simenr[ij] \);) N
+(      newHit->SetTime\( pAnalysis->simtime[ij] \);) N
+() N
+(      newHit->SetPos\( pos \);) N
+(      newHit->SetMom\(mom\);) N
+() N
+(      newHit->SetLocalXPos\(pAnalysis->simlocvx[ij]\);) N
+(      newHit->SetLocalYPos\(pAnalysis->simlocvy[ij]\);) N
+(      cout<<") S
+(ij ) str
+("<<ij<<") p
+( ) str
+("<<pos<<endl;) p n
+(      ) S
+(// newHit->Print\(\);) c n
+(      ) p
+(// cout <<"newhits "<< newHit->GetTime\(\)<<endl;) c n
+(      cal0Collection->insert\( newHit \);) p n
+(    }) N
+(    cout<<") S
+(cal0Collection->size ) str
+("<<cal0Collection->entries\(\)<<endl;) p n
+(    ) S
+(for) K
+(\() p
+(int) k
+( rr1=0; rr1<cal0Collection->entries\(\); rr1++\) {) p n
+(      cout<<rr1<<") S
+( ) str
+(";) p n
+(      \(*cal0Collection\)[rr1]->Print\(\);) N
+(    }) N
+(    ) N
+(    ) S
+(if) K
+( \(pAnalysis->isVisOut==1&&pAnalysis->InputOutput==3 \) {) p n
+(      ) S
+(for) K
+(\() p
+(unsigned) k
+( ij=0;ij<pAnalysis->ngent;ij++\) {) p n
+(        pAnalysis->H->NParticles++;) N
+(        pAnalysis->Hp= pAnalysis->H->AddHits\(0,0\); ) S
+(// add a track object) c n
+(        pAnalysis->Hp->TrackType=-14;) p
+(// Track Type: -1: hits, -2: clulster, -3: ) c n
+(triplet, -4: track -14: particle info) N
+(        pAnalysis->Hp->ParCode=pAnalysis->pidin[ij];) p
+(// track Number) c n
+(        ) p
+(//pAnalysis->Hp->ZZ= \(7.50 + pAnalysis->poszin[ij]/100   - 0.356\)/\(0.048) c n
+(*2\);// vertex z incase of particle info) N
+(        pAnalysis->Hp->ZZ= \(\(\(numberInLA*\(parirlay[2]+parlay[2]\)*cm/m-parlay[2]\)) p n
+(-pAnalysis->poszin[ij]*cm/m\)\)/\(\(parirlay[2]+parlay[2]\)*2*\(1/m\)\);) S
+(// vertex z inca) c n
+(se of particle info) N
+(        pAnalysis->Hp->XX=pAnalysis->posxin[ij]*cm/m; ) p
+(// vertex x incase of part) c n
+(icle info) N
+(        pAnalysis->Hp->YY=pAnalysis->posyin[ij]*cm/m; ) p
+(// vertex y incase of part) c n
+(icle info) N
+(        pAnalysis->Hp->pmag=pAnalysis->momin[ij]; ) p
+(// vertex y incase of particle) c n
+( info) N
+(        pAnalysis->Hp->pt=pAnalysis->thein[ij]; ) p
+(// vertex y incase of particle i) c n
+(nfo) N
+(        pAnalysis->Hp->pp=pAnalysis->phiin[ij]; ) p
+(// vertex y incase of particle i) c n
+(nfo) N
+(      }) p n
+(    }) N
+(    pAnalysis->pRootFile->cd\(\); ) N
+(  }) N
+(  ) S
+(if) K
+( \(pAnalysis->InputOutput <=4\) {) p n
+(    ) S
+(if) K
+( \(pAnalysis->InputOutput==2\) { ) p n
+(      pAnalysis->pRootFile->cd\(\);) N
+(      pAnalysis->nsimht = cal0Collection->entries\(\);) N
+(      ) S
+(//      cout<<" "<<cal0Collection->entries\(\)<<" "<<pAnalysis->nsimht<<endl) c n
+(micalCal0SD.cc) (Page 12/28) (Jul 16, 21 18:23) title
+border
+grestore
+(Printed by gobinda) rhead
+(micalCal0SD.cc) (6/14) (Friday July 16, 2021) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (13-14) 7
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(;) c n
+(      ) p
+(if) K
+( \(pAnalysis->nsimht >pAnalysis->nsimhtmx\) pAnalysis->nsimht =pAnalysis->) p n
+(nsimhtmx;) N
+(      ) S
+(for) K
+( \() p
+(int) k
+( ij=0; ij< cal0Collection->entries\(\) && ij<\() p
+(int) k
+(\)pAnalysis->nsimht;) p n
+( ij++\) {) N
+(        pAnalysis->detid[ij] =  \(*cal0Collection\)[ij]->GetHitId\(\);) N
+(        pAnalysis->simpdgid[ij] =  \(*cal0Collection\)[ij]->GetpdgId\(\);) N
+(        pAnalysis->simtime[ij] = \(*cal0Collection\)[ij]->GetTime\(\);) N
+(        pAnalysis->simenr[ij] = \(*cal0Collection\)[ij]->GetEdep\(\);) N
+(        ) N
+(        G4ThreeVector posvec1 = \(*cal0Collection\)[ij]->GetPos\(\);) N
+(        pAnalysis->simvx[ij] = posvec1.x\(\);) N
+(        pAnalysis->simvy[ij] = posvec1.y\(\);) N
+(        pAnalysis->simvz[ij] = posvec1.z\(\);) N
+(        ) N
+(        G4ThreeVector momvec = \(*cal0Collection\)[ij]->GetMom\(\);) N
+(        pAnalysis->simpx[ij] = momvec.x\(\);) N
+(        pAnalysis->simpy[ij] = momvec.y\(\);) N
+(        pAnalysis->simpz[ij] = momvec.z\(\);) N
+(        ) N
+(        pAnalysis->simlocvx[ij] = \(*cal0Collection\)[ij]->GetLocalXPos\(\);) N
+(        pAnalysis->simlocvy[ij] = \(*cal0Collection\)[ij]->GetLocalYPos\(\);) N
+(        ) N
+(        ) N
+(        ) S
+(if) K
+( \(ij >= \() p
+(int) k
+(\)pAnalysis->nsimhtmx\) ) p
+(break) K
+(; ; ) p
+(//redundant) c n
+(      }) p n
+(      pAnalysis->pEventTree->Fill\(\);) N
+(      ) N
+(    } ) S
+(else) K
+( {) p n
+(      ) S
+(int) k
+( nstripX = ) p
+(int) k
+(\(1.999*pargas[0]/Xstrwd\)+1;) p n
+(      ) S
+(int) k
+( nstripY = ) p
+(int) k
+(\(1.999*pargas[1]/Ystrwd\)+1;) p n
+(      ) S
+(//      cout<<"1cal0Collection->entries\(\) "<<cal0Collection->entries\(\)<<en) c n
+(dl;) N
+(      ) p
+(for) K
+( \() p
+(int) k
+( ij=0; ij<cal0Collection->entries\(\); ij++\) {) p n
+(        ) S
+(// GMA Use 90% efficiency for a hit, use poper value) c n
+(        ) p
+(//    float xx = gRandom->Rndm\(0\);) c n
+(        ) p
+(//    if \(xx>0.9\) continue;) c n
+(        ) p n
+(        ) N
+(        ) S
+(// if \(corrIneffi < CorrIneffiPar\) continue;) c 56 T () N
+(        ) p
+(//GMA or use Poission function fo efficiency) c n
+(        ) p
+(//  On the average, need ~24 eV to produce an electron-ion pair) c n
+(        ) p n
+(        ) S
+(double) k
+( edep = \(*cal0Collection\)[ij]->GetEdep\(\);) p n
+(        ) N
+(        eMx +=edep;) N
+(        ) N
+(        nHits++;) N
+(        ) N
+(        ) S
+(//    int  a4 = gRandom->Poisson\(edep/0.024\);) c n
+(        ) p
+(//    if \(a4 ==0\) continue;) c n
+(        ) p n
+(        G4ThreeVector posvec2 = \(*cal0Collection\)[ij]->GetPos\(\);) N
+(        ) N
+(        ) S
+(if) K
+( \(ihst < pAnalysis->nhistmx-1 && pAnalysis->isVisOut>=2\)  {) p n
+(          pAnalysis->gens_list[0][ihst]->Fill\(\(1/m\)*posvec2.x\(\),\(1/m\)*posvec2.y\() N
+(\), \(1/m\)*posvec2.z\(\)\);) N
+(          ) S
+(//          cout<<"pAnalysis->gens_list[0][ihst]->Fill\(\);"<<endl;) c n
+(          vectGr tmpgr;) p n
+(          tmpgr.x = \(1/m\)*posvec2.x\(\);) N
+(          tmpgr.y = \(1/m\)*posvec2.y\(\);) N
+(          tmpgr.z = \(1/m\)*posvec2.z\(\);) N
+(          tmpgr.dx = 0;) N
+(          tmpgr.dy = 0;) N
+(          tmpgr.dz = 0;) N
+(          ) S
+(if) K
+( \(pAnalysis->isVisOut==3\) pAnalysis->gens_vect[0].push_back\(tmpgr\);) p n
+(        }) N
+(        ) N
+(        G4) S
+(int) k
+( nInX[MxStrip]={-1};) p
+(//, -1, -1}; //GMA230621) c n
+(micalCal0SD.cc) (Page 13/28) (Jul 16, 21 18:23) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(        G4) p
+(int) k
+( nInY[MxStrip]={-1}; ) p
+(//, -1, -1}; ) c n
+(        ) p n
+(        ) S
+(unsigned) k
+( ) p
+(long) k
+( detid = \(*cal0Collection\)[ij]->GetHitId\(\);) p n
+(        ) N
+(        ) S
+(// if \(gRandom->Rndm\(0\) > UnCorrYIneffiPar\) {nInY[0] = detid%128;} //nIn) c n
+(Y;) N
+(        ) p
+(// detid>>=7;) c n
+(        ) p
+(// if \(gRandom->Rndm\(0\) > UnCorrXIneffiPar\) {nInX[0] = detid%128;} //nIn) c n
+(X;) N
+(        nInY[0] = detid%128;) p n
+(        detid>>=7;) N
+(        nInX[0] = detid%128;) N
+(        ) N
+(        ) S
+(if) K
+( \(nInX[0] <0 && nInY[0] <0\) { ) p
+(continue) K
+(;}) p n
+(        detid>>=7;) N
+(        ) S
+(int) k
+( iRPCMod = detid;) p n
+(        ) N
+(        ) S
+(int) k
+( nInCH = detid%8; ) p
+(//nInCH;) c n
+(        detid>>=3;) p n
+(        ) S
+(int) k
+( nInMO = detid%8; ) p
+(//nInMO;) c n
+(        detid>>=3;) p n
+(        ) S
+(int) k
+( nInLA = detid%256; ) p
+(//nInLA;) c n
+(        detid >>=8;) p n
+(        ) S
+(int) k
+( nInDT = detid%4; ) p
+(//nInDT;) c n
+(        ) p n
+(        ) S
+(if) K
+(\(pAnalysis->collatedIn\) {) p n
+(          CorrIneffiPar = pAnalysis->inefficiency_corx[nInLA]->GetBinContent\(nIn) N
+(X[0]+1,nInY[0]\);) N
+(        }) N
+(        ) S
+(if) K
+(\(gRandom->Rndm\(0\) < CorrIneffiPar\) ) p
+(continue) K
+(;) p n
+(        ) S
+(//Gaussian smearing and binning of timing performances) c n
+(        ) p
+(// GMA 05/02/2009 need to put value from hardware) c n
+(        ) p
+(int) k
+( pdgid = \(*cal0Collection\)[ij]->GetpdgId\(\);) p n
+(        ) S
+(double) k
+( atime = \(*cal0Collection\)[ij]->GetTime\(\);) p n
+(        ) S
+(//) c 16 T (double atimeX = \(*cal0Collection\)[ij]->GetTimeX\(\);) N
+(        ) p
+(//) c 16 T (double atimeY = \(*cal0Collection\)[ij]->GetTimeY\(\);) N
+(        ) p n
+(        ) S
+(// atime +=G4RandGauss::shoot\(0,1.0*ns\); //Timing resolution is 1ns) c n
+(        ) p n
+(        G4) S
+(double) k
+( CorrTimeSmr = G4RandGauss::shoot\(0,TimeCorrSmr\);) p n
+(        ) N
+(        G4) S
+(double) k
+( tmpatimeX = atime + SignalSpeed*\(nInY[0]+0.5\) + CorrTimeSmr; ) p
+(//) c n
+( + G4RandGauss::shoot\(0,TimeUnCorrSmr\);) N
+(        G4) p
+(double) k
+( tmpatimeY = atime + SignalSpeed*\(nInX[0]+0.5\) + CorrTimeSmr; ) p
+(//) c n
+( + G4RandGauss::shoot\(0,TimeUnCorrSmr\);) N
+(        ) p n
+(        ) S
+(int) k
+( nInT = ) p
+(int) k
+(\(atime/TimeToDigiConv\); ) p
+(// Assuming Minimum scale of timin) c n
+(g ~100 ps = 0.1 ns) N
+(        ) p
+(if) K
+( \(nInT < iMnT\) { iMnT = nInT;} ) p n
+(        ) S
+(if) K
+( \(nInT > iMxT\) { iMxT = nInT;}) p n
+(        G4) S
+(double) k
+( gapX = \(pargas[0] + \(*cal0Collection\)[ij]->GetLocalXPos\(\) - nIn) p n
+(X[0]*Xstrwd\)/Xstrwd  - 0.5;) N
+(        G4) S
+(double) k
+( gapY = \(pargas[1] + \(*cal0Collection\)[ij]->GetLocalYPos\(\) - nIn) p n
+(Y[0]*Ystrwd\)/Ystrwd  - 0.5;) N
+(        ) S
+(int) k
+( nxmul=1;) p n
+(        ) S
+(int) k
+( nymul=1;) p n
+(        ) S
+(if) K
+( \(nInX[0] >=0 && NewMultiplicity\) {) p n
+(          ) S
+(// cout<<"Hello X World"<<endl;) c n
+(          ) p
+(if) K
+(\(pAnalysis->collatedIn\) {) p n
+(            nxmul = GetRandomXY\(gapX,pAnalysis->strp_xmulsim_cor[nInLA]\);) N
+(          } ) S
+(else) K
+( {) p n
+(            ) S
+(double) k
+( arand=gRandom->Rndm\(\);) p n
+(            ) S
+(if) K
+( \(arand<0.1\) { ) p
+(//10% case three strip hits) c n
+(              nxmul=3;) p n
+(            } ) S
+(else) K
+( { ) p n
+(              ) S
+(if) K
+( \(gRandom->Rndm\(0\) < 3.2*gapX*gapX\) {) p n
+(                nxmul=2;) N
+(              } ) S
+(else) K
+( {) p n
+(                nxmul=1;) N
+(micalCal0SD.cc) (Page 14/28) (Jul 16, 21 18:23) title
+border
+grestore
+(Printed by gobinda) rhead
+(micalCal0SD.cc) (7/14) (Friday July 16, 2021) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (15-16) 8
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(              }) p n
+(            }) N
+(          }) N
+(          ) S
+(if) K
+( \(nxmul==3\) { ) p
+(//10% case three strip hits) c n
+(            nInX[1] = nInX[0] + 1; ) p
+(//int\(gapX/abs\(max\(1.e-12,gapX\)\)\);) c n
+(            nInX[2] = nInX[0] - 1; ) p
+(//int\(gapX/abs\(max\(1.e-12,gapX\)\)\);) c n
+(          } ) p
+(else) K
+( ) p
+(if) K
+( \(nxmul==2\) { ) p n
+(            ) S
+(// f\(x\) = ax**2, => a=3.2) c n
+(            nInX[1] = nInX[0] + ) p
+(int) k
+(\(gapX/\(max\(1.e-12,abs\(gapX\)\)\)\);) p n
+(          } ) N
+(        } ) S
+(// if \(nInX[0] >=0 && NewMultiplicity\) {) c n
+(        ) p
+(if) K
+( \(nInY[0] >=0 && NewMultiplicity\) {) p n
+(          ) S
+(if) K
+(\(pAnalysis->collatedIn\) {) p n
+(            nymul = GetRandomXY\(gapY,pAnalysis->strp_ymulsim_cor[nInLA]\);) N
+(          } ) S
+(else) K
+( {) p n
+(            ) S
+(double) k
+( arand=gRandom->Rndm\(\);) p n
+(            ) S
+(if) K
+( \(arand<0.1\) {nymul = 3;}) p n
+(            ) S
+(else) K
+( { ) p n
+(              ) S
+(if) K
+( \(gRandom->Rndm\(0\) < 3.2*gapY*gapY\) {nymul=2;}) p n
+(              ) S
+(else) K
+( {nymul=1;}) p n
+(            }) N
+(          }) N
+(          ) S
+(if) K
+( \(nymul==3\) { ) p
+(//10% case three strip hits) c n
+(            nInY[1] = nInY[0] + 1; ) p
+(//int\(gapY/abs\(max\(1.e-12,gapY\)\)\);) c n
+(            nInY[2] = nInY[0] - 1; ) p
+(//int\(gapY/abs\(max\(1.e-12,gapY\)\)\);) c n
+(          } ) p
+(else) K
+( ) p
+(if) K
+( \(nymul==2\) { ) p n
+(            nInY[1] = nInY[0] + ) S
+(int) k
+(\(gapY/\(max\(1.e-12,abs\(gapY\)\)\)\);) p n
+(          }) N
+(        }) N
+() N
+(        ) S
+(// if \(gRandom->Rndm\(0\) > UnCorrXIneffiPar\) { ) c n
+(        ) p
+(for) K
+( \() p
+(int) k
+( ix=0; ix<MxStrip; ix++\) { ) p n
+(          ) S
+(if) K
+(\(!NewMultiplicity && ix>0\) ) p
+(continue) K
+(;) p n
+(          ) S
+(if) K
+( \(nInX[ix] <0 || nInX[ix]>=nstripX\) ) p
+(continue) K
+(;) p n
+(          ) S
+(if) K
+(\(pAnalysis->collatedIn && nInLA!=5\) {) p n
+(            UnCorrXIneffiPar = pAnalysis->inefficiency_uncx[nInLA]->GetBinConten) N
+(t\(nInX[ix]+1,nInY[0]+1\);) N
+(          }) N
+(          ) S
+(if) K
+(\(gRandom->Rndm\(0\) < UnCorrXIneffiPar\) ) p
+(continue) K
+(;) p n
+(          ) N
+(          ) S
+(double) k
+( trigeffiX = 0.0;) p n
+(          ) S
+(if) K
+(\(pAnalysis->collatedIn\) {) p n
+(            trigeffiX = pAnalysis->triggereffi_xevt[nInLA]->GetBinContent\(nInX[i) N
+(x]+1,nInY[0]+1\);) N
+(            ) S
+(for) K
+(\() p
+(int) k
+( trglx=0; trglx<ntriglay; trglx++\) {) p n
+(              ) S
+(if) K
+(\(\(nInLA == TrgLayer[trglx]\) && \(G4UniformRand\(\)<\(trigeffiX\)\)\) {) p n
+(                TrgDataX[TrgLayer[trglx]]++;) N
+(              }) N
+(            }) N
+(          } ) S
+(// if\(pAnalysis->collatedIn\) {) c n
+(          ) p n
+(          G4) S
+(double) k
+( atimeX = tmpatimeX +  G4RandGauss::shoot\(0,TimeUnCorrSmr\);) p n
+(          ) S
+(int) k
+( nInTX = ) p
+(int) k
+(\(atimeX/TimeToDigiConv\);) p n
+(          ) S
+(int) k
+( iold = 0;) p n
+(          ) N
+(          ) S
+(for) K
+( \() p
+(unsigned) k
+( jk=0; jk<inoStripX_pointer->InoStripX_list.size\(\); jk++\)) p n
+( {) N
+(            InoStrip* Xstrip =inoStripX_pointer->InoStripX_list[jk]; ) N
+(            ) S
+(if) K
+( \(Xstrip->GetRPCmod\(\)==iRPCMod && ) p n
+(                Xstrip->GetStrip\(\)%numberInX==nInX[ix]\) { ) N
+(              inoStripX_pointer->InoStripX_list[jk]->AddPulse\(edep\); ) S
+(//GMA151001) c n
+( for large multiplicty share this energy) N
+(              ) p
+(if) K
+( \(inoStripX_pointer->InoStripX_list[jk]->GetSmrTime\(\) >nInTX\) {) p n
+(                inoStripX_pointer->InoStripX_list[jk]->SetSmrTime\(nInTX\);) N
+(              }) N
+(              iold = 1; ) S
+(break) K
+(;) p n
+(            }) N
+(          }) N
+() N
+(micalCal0SD.cc) (Page 15/28) (Jul 16, 21 18:23) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(          ) p
+(//GMA Take precaution of these one strip hits) c n
+(          ) p
+(// 1. Segement direction, for X/Y Z-value might be different ) c n
+(          ) p
+(//    consequently direction) c n
+(          ) p
+(// 2. ) c n
+(          ) p
+(//) c n
+(          ) p
+(//) c n
+(          ) p
+(if) K
+( \(iold==0\) {) p n
+(            ) S
+(//            cout <<"ixx "<< ix<<" "<<nInX[ix]<<endl;) c n
+(            InoStrip *  Xstrip = ) p
+(new) K
+( InoStrip\(\); ) p
+(//VALGRIND) c n
+(            Xstrip->SetStrip\(numberInX*numberInMO*nInDT+numberInX*nInMO+nInX[ix]) p n
+(\);) N
+(            ) N
+(            Xstrip->SetpdgId\( pdgid\);) N
+(            Xstrip->SetTrueTime\(nInT\);) N
+(            Xstrip->SetSmrTime\(nInTX\); ) S
+(//nInT) c n
+(            ) p n
+(            cout <<") S
+(xtime ) str
+("<< nInT<<") p
+( ) str
+("<<nInTX<<") p
+( ) str
+("<<Xstrip->GetTrueTime\(\)<<") p
+( ) str
+("<<Xs) p n
+(trip->GetSmrTime\(\)<<") S
+( ) str
+("<<pdgid<<") p
+( ) str
+("<<Xstrip->GetpdgId\(\)<<endl;) p n
+(            ) N
+(            Xstrip->SetPulse\(edep\);) N
+(            Xstrip->SetRPCmod\(iRPCMod\);) N
+(            ) N
+(            G4ThreeVector trkmom = \(*cal0Collection\)[ij]->GetMom\(\);) N
+(            ) N
+(            Xstrip->SetMomentum\(trkmom.mag\(\)\);) N
+(            Xstrip->SetTheta\(trkmom.theta\(\)\);) N
+(            Xstrip->SetPhi\(trkmom.phi\(\)\);) N
+(            ) N
+(            G4ThreeVector posvec3 = \(*cal0Collection\)[ij]->GetPos\(\);) N
+(            ) S
+(//            cout<<"X_posvec3 "<<posvec3<<endl;) c n
+(            Xstrip->SetGenPosX\(posvec3.x\(\)\);) p n
+(            Xstrip->SetGenPosY\(posvec3.y\(\)\);) N
+(            Xstrip->SetGenPosZ\(posvec3.z\(\)\);) N
+(            ) N
+(            G4) S
+(int) k
+( xstripid = 0;) p n
+(            xstripid<<=2;) N
+(            xstripid +=nInDT;) N
+(            ) N
+(            xstripid<<=8;) N
+(            xstripid +=nInLA;) N
+(            ) N
+(            xstripid<<=3;) N
+(            xstripid +=nInMO;) N
+(            ) N
+(            xstripid<<=3;) N
+(            xstripid +=nInCH;) N
+(            ) N
+(            xstripid<<=7;) N
+(            xstripid +=nInX[ix];) N
+(            ) N
+(            xstripid<<=5;) N
+(            xstripid +=0; ) S
+(//nInT;   ) c n
+(            ) p n
+(            xstripid<<=3;) N
+(            xstripid +=TMath::Min\() S
+(int) k
+(\(edep/16\),7\);) p n
+(            ) N
+(            Xstrip->SetId\(xstripid\);) N
+(            ) N
+(            ) S
+(//            cout <<"iold = "<<iold<<", nInLA = "<<nInLA<<", nInX =) c n
+( "<<nInX[ix]<<endl;) N
+(            pAnalysis->DeadStripX->Fill\(nInX[ix]\);) p n
+(            ) S
+(//            cout<<"pAnalysis->DeadStripX->Fill\(nInX\);="<<nInX[ix]<) c n
+(<endl;) N
+(            inoStripX_pointer->InoStripX_list.push_back\(Xstrip\);) p n
+(          } ) S
+(// if \(iold==0\)) c n
+(        } ) p
+(// for \(int ix=0; ix<MxStrip; ix++\)) c n
+() p n
+() N
+(        ) S
+(// if \(gRandom->Rndm\(0\) > UnCorrYIneffiPar\) { ) c n
+(micalCal0SD.cc) (Page 16/28) (Jul 16, 21 18:23) title
+border
+grestore
+(Printed by gobinda) rhead
+(micalCal0SD.cc) (8/14) (Friday July 16, 2021) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (17-18) 9
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(        ) p
+(for) K
+( \() p
+(int) k
+( jy=0; jy<MxStrip; jy++\) { ) p n
+(          ) S
+(if) K
+(\(!NewMultiplicity && jy>0\) ) p
+(continue) K
+(;) p n
+(          ) S
+(if) K
+( \(nInY[jy] <0 || nInY[jy]>=nstripY\) ) p
+(continue) K
+(;) p n
+(          ) N
+(          ) S
+(if) K
+(\(pAnalysis->collatedIn && nInLA!=5\) {) p n
+(            UnCorrYIneffiPar = pAnalysis->inefficiency_uncy[nInLA]->GetBinConten) N
+(t\(nInX[0]+1,nInY[jy]+1\);) N
+(          }) N
+(          ) S
+(if) K
+(\(gRandom->Rndm\(0\) < UnCorrYIneffiPar\) ) p
+(continue) K
+(;) p n
+(          ) N
+(          ) S
+(double) k
+( trigeffiY = 0.0;) p n
+(          ) S
+(if) K
+(\(pAnalysis->collatedIn\) {) p n
+(            trigeffiY = pAnalysis->triggereffi_yevt[nInLA]->GetBinContent\(nInX[0) N
+(]+1,nInY[jy]+1\);) N
+(            ) S
+(for) K
+(\() p
+(int) k
+( trgly=0; trgly<ntriglay; trgly++\) {) p n
+(              ) S
+(if) K
+(\(\(nInLA == TrgLayer[trgly]\) && \(G4UniformRand\(\)<\(trigeffiY\)\)\) {) p n
+(                TrgDataY[TrgLayer[trgly]]++;) N
+(              }) N
+(            }) N
+(          } ) S
+(// if\(pAnalysis->collatedIn\) {) c n
+(          ) p n
+(          G4) S
+(double) k
+( atimeY = tmpatimeY +  G4RandGauss::shoot\(0,TimeUnCorrSmr\);) p n
+(          ) S
+(int) k
+( nInTY = ) p
+(int) k
+(\(atimeY/TimeToDigiConv\);) p n
+(          ) N
+(          ) S
+(int) k
+( iold = 0;) p n
+(          ) S
+(for) K
+( \() p
+(unsigned) k
+( jk=0; jk<inoStripY_pointer->InoStripY_list.size\(\); jk++\)) p n
+( {) N
+(            InoStrip* Ystrip =inoStripY_pointer->InoStripY_list[jk]; ) N
+(            ) S
+(if) K
+( \(Ystrip->GetRPCmod\(\)==iRPCMod && ) p n
+(                Ystrip->GetStrip\(\)%numberInY==nInY[jy]\) { ) N
+(              inoStripY_pointer->InoStripY_list[jk]->AddPulse\(edep\); ) N
+(              ) S
+(if) K
+( \(inoStripY_pointer->InoStripY_list[jk]->GetSmrTime\(\) >nInTY\) {) p n
+(                inoStripY_pointer->InoStripY_list[jk]->SetSmrTime\(nInTY\);) N
+(              }) N
+(              iold = 1; ) S
+(break) K
+(;) p n
+(            }) N
+(          }) N
+(          ) S
+(if) K
+( \(iold==0\) {) p n
+(            InoStrip* Ystrip = ) S
+(new) K
+( InoStrip\(\); ) p
+(//VALGRIND) c n
+(            Ystrip->SetStrip\(numberInY*nInCH+nInY[jy]\);) p n
+(            ) N
+(            Ystrip->SetpdgId\(pdgid\);) N
+(            Ystrip->SetTrueTime\(nInT\);) N
+(            Ystrip->SetSmrTime\(nInTY\);) N
+(            ) S
+(// cout <<"ytime "<< nInT<<" "<<nInTY<<" "<<Ystrip->GetTrueTime\(\)<<") c n
+( "<<Ystrip->GetSmrTime\(\)<<" "<<pdgid<<" "<<Ystrip->GetpdgId\(\)<<endl;) N
+(            ) p n
+(            Ystrip->SetPulse\(edep\);) N
+(            Ystrip->SetRPCmod\(iRPCMod\);) N
+(            G4ThreeVector trkmom = \(*cal0Collection\)[ij]->GetMom\(\);) N
+(            ) N
+(            Ystrip->SetMomentum\(trkmom.mag\(\)\);) N
+(            Ystrip->SetTheta\(trkmom.theta\(\)\);) N
+(            Ystrip->SetPhi\(trkmom.phi\(\)\);) N
+(            ) N
+(            G4ThreeVector posvec = \(*cal0Collection\)[ij]->GetPos\(\);) N
+(            ) S
+(//   cout<<"Y_posvec "<<posvec<<endl;) c n
+(            ) p n
+(            Ystrip->SetGenPosX\(posvec.x\(\)\);) N
+(            Ystrip->SetGenPosY\(posvec.y\(\)\);) N
+(            Ystrip->SetGenPosZ\(posvec.z\(\)\);) N
+(            ) N
+(            G4) S
+(int) k
+( ystripid = 1;) p n
+(            ) N
+(            ystripid<<=2;) N
+(            ystripid +=nInDT;) N
+(            ) N
+(            ystripid<<=8;) N
+(            ystripid +=nInLA;) N
+(micalCal0SD.cc) (Page 17/28) (Jul 16, 21 18:23) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(            ) p n
+(            ystripid<<=3;) N
+(            ystripid +=nInMO;) N
+(            ) N
+(            ystripid<<=3;) N
+(            ystripid +=nInCH;) N
+(            ) N
+(            ystripid<<=7;) N
+(            ystripid +=nInY[jy];) N
+(            ) N
+(            ystripid<<=5;) N
+(            ystripid +=0; ) S
+(//05/01/2009 nInT;   ) c n
+(            ) p n
+(            ystripid<<=3;) N
+(            ystripid +=TMath::Min\() S
+(int) k
+(\(edep/16\),7\);) p n
+(            ) N
+(            Ystrip->SetId\(ystripid\);) N
+(            ) N
+(            ) S
+(//            cout <<"iold = "<<iold<<", nInLA = "<<nInLA<<", nInY =) c n
+( "<<nInY[jy]<<endl;) N
+(            pAnalysis->DeadStripY->Fill\(nInY[jy]\);) p n
+(            ) S
+(// cout<<"pAnalysis->DeadStripY->Fill\(nInY[jy]\);="<<nInY<<endl;) c n
+(            inoStripY_pointer->InoStripY_list.push_back\(Ystrip\);) p n
+(          } ) S
+(// if \(iold==0\)) c n
+(        } ) p
+(//for \(int jy=0; jy<MxStrip; jy++\)) c n
+(        ) p
+(// } //if \(gRandom->Rndm\(0\) > UnCorrYIneffiPar\)) c n
+(        ) p
+(// cout<<"hihihi "<<ij<<endl;) c n
+(      } ) p
+(//for \(int ij=0; ij<cal0Collection->entries\(\); ij++\)) c n
+(      ) p
+(//Add noise hits) c n
+(      ) p
+(//GMA use proper noise hits) c n
+(      ) p
+(// Assume total noise hits is 100 in whole detector) c n
+(      ) p
+(// cout <<"Size2 "<< inoStripX_pointer->InoStripX_list.size\(\)<<" "<<inoStr) c n
+(ipY_pointer->InoStripY_list.size\(\)<<endl;) N
+(      ) p n
+(      ) S
+(double) k
+( genxpos=pAnalysis->posxin[0]; ) p
+(//Position of neutrino vertex) c n
+(      ) p
+(double) k
+( genypos=pAnalysis->posyin[0];) p n
+(      ) S
+(double) k
+( genzpos=pAnalysis->poszin[0];) p n
+(      ) N
+(      ) S
+(int) k
+( igenchm = \(\(genypos+8.0\)/2.0\);  ) p
+(//Y-direction) c n
+(      ) p
+(int) k
+( igenlay = \(\(genzpos+7.5\)/0.096\);) p n
+(      ) S
+(int) k
+( igendt = \(genxpos+24.0\)/16.0;) p n
+(      ) S
+(int) k
+( igenmod = \(\(genxpos+24.0\)/2.0\)-8*igendt;) p n
+(      ) N
+(      ) S
+(for) K
+( \() p
+(int) k
+( ij=0; ij<RandomNoisePar; ij++\) { ) p
+(//RANDOM) c n
+(        ) p
+(const) K
+( ) p
+(int) k
+( nrandom = 15;) p n
+(        ) S
+(float) k
+( randvar[nrandom];) p n
+(        gRandom->RndmArray\(nrandom, randvar\);) N
+(        ) N
+(        ) S
+(//    int nInT = min\(int\(4*randvar[0]\), 3\);) c n
+(        ) p
+(//GMA 05/02/2009 ) c n
+(        ) p
+(int) k
+( nInT = ) p
+(int) k
+(\(\(iMxT-iMnT+200\)*randvar[0]\)-100;  ) p
+(//+-10ns within actual ) c n
+(hits) N
+(        ) p
+(double) k
+( atime = TimeToDigiConv*nInT;) p n
+(        ) N
+(        G4) S
+(double) k
+( CorrTimeSmr = G4RandGauss::shoot\(0,TimeCorrSmr\);) p n
+(        G4) S
+(double) k
+( atimeX = atime + CorrTimeSmr + G4RandGauss::shoot\(0,TimeUnCorrS) p n
+(mr\);) N
+(        G4) S
+(double) k
+( atimeY = atime + CorrTimeSmr + G4RandGauss::shoot\(0,TimeUnCorrS) p n
+(mr\);) N
+(        ) N
+(        ) S
+(int) k
+( nInY = min\() p
+(int) k
+(\(nstripY*randvar[1]\),nstripY-1\);) p n
+(        ) S
+(int) k
+( nInX = min\() p
+(int) k
+(\(nstripX*randvar[2]\),nstripX-1\);) p n
+(        ) N
+(        ) S
+(int) k
+( nInTXX = ) p
+(int) k
+(\(\(atimeX+SignalSpeed*\(nInY+0.5\)\)/TimeToDigiConv\);) p n
+(        ) S
+(int) k
+( nInTYY = ) p
+(int) k
+(\(\(atimeY+SignalSpeed*\(nInX+0.5\)\)/TimeToDigiConv\);) p n
+(        ) N
+(        ) S
+(// int nInCH = min\(int\(numberInCH*randvar[3]\),numberInCH-1\);) c n
+(        ) p
+(// int nInMO = min\(int\(numberInMO*randvar[4]\),numberInMO-1\);) c n
+(        ) p
+(// int nInLA = min\(int\(numberInLA*randvar[5]\),numberInLA-1\);) c n
+(micalCal0SD.cc) (Page 18/28) (Jul 16, 21 18:23) title
+border
+grestore
+(Printed by gobinda) rhead
+(micalCal0SD.cc) (9/14) (Friday July 16, 2021) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (19-20) 10
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(        ) p
+(// int nInDT = int\(3*randvar[7]\);) c n
+(        ) p n
+(        ) S
+(int) k
+( nInCH = ) p
+(int) k
+(\(igenchm + 3*\(randvar[3]-0.5\)+0.5\);) p n
+(        ) S
+(int) k
+( nInMO = ) p
+(int) k
+(\(igenmod + 3*\(randvar[4]-0.5\)+0.5\);) p n
+(        ) S
+(int) k
+( nInLA = ) p
+(int) k
+(\(igenlay + 40*\(randvar[5]-.5\)+0.5\);) p n
+(        ) S
+(int) k
+( nInDT = igendt;) p n
+(        ) N
+(        ) S
+(if) K
+( \(\(nInCH<0 || nInCH >=numberInCH\) ||) p n
+(            \(nInMO<0 || nInMO >=numberInMO\) ||) N
+(            \(nInLA<0 || nInLA >=numberInLA\)\) ) S
+(continue) K
+(;) p n
+(        ) N
+(        ) N
+(        ) S
+(float) k
+( edep = gRandom->Exp\(eMx/max\(1,nHits\)\); ) p
+(//Exponential distribution) c n
+(        ) p n
+(        ) S
+(int) k
+( ihitxy=2; ) p
+(//both hit) c n
+(        ) p
+(if) K
+( \(randvar[8]<0.25\) {ihitxy=0;} ) p
+(else) K
+( ) p
+(if) K
+( \(randvar[8]<0.50\) {ihitxy=1;}) p n
+(        ) N
+(        ) S
+(int) k
+( iRPCMod = nInDT;) p n
+(        iRPCMod<<=8;) N
+(        iRPCMod +=nInLA;) N
+(        iRPCMod<<=3;) N
+(        iRPCMod +=nInMO;) N
+(        iRPCMod<<=3;) N
+(        iRPCMod +=nInCH;) N
+(        ) S
+(int) k
+( ioldx = 0;) p n
+(        ) N
+(        ) S
+(for) K
+( \() p
+(unsigned) k
+( jk=0; jk<inoStripX_pointer->InoStripX_list.size\(\); jk++\) {) p n
+(          InoStrip* Xstrip =inoStripX_pointer->InoStripX_list[jk]; ) N
+(          ) S
+(if) K
+( \(Xstrip->GetRPCmod\(\)==iRPCMod && ) p n
+(              Xstrip->GetStrip\(\)%numberInX==nInX\) { ) N
+(            inoStripX_pointer->InoStripX_list[jk]->AddPulse\(edep\);) N
+(            ) S
+(if) K
+( \(inoStripX_pointer->InoStripX_list[jk]->GetSmrTime\(\) >nInTXX\) {) p n
+(              inoStripX_pointer->InoStripX_list[jk]->SetSmrTime\(nInTXX\);) N
+(            }) N
+(            ioldx = 1; ) S
+(break) K
+(;) p n
+(          }) N
+(        }) N
+(        ) S
+(int) k
+( ioldy = 0;) p n
+(        ) S
+(for) K
+( \() p
+(unsigned) k
+( jk=0; jk<inoStripY_pointer->InoStripY_list.size\(\); jk++\) {) p n
+(          InoStrip* Ystrip =inoStripY_pointer->InoStripY_list[jk]; ) N
+(          ) S
+(if) K
+( \(Ystrip->GetRPCmod\(\)==iRPCMod && ) p n
+(              Ystrip->GetStrip\(\)%numberInY==nInY\) { ) N
+(            inoStripY_pointer->InoStripY_list[jk]->AddPulse\(edep\); ) N
+(            ) S
+(if) K
+( \(inoStripY_pointer->InoStripY_list[jk]->GetSmrTime\(\) >nInTYY\) {) p n
+(              inoStripY_pointer->InoStripY_list[jk]->SetSmrTime\(nInTYY\);) N
+(            }) N
+(            ioldy = 1; ) S
+(break) K
+(;) p n
+(          }) N
+(        }) N
+(        ) S
+(//) c n
+(        ) p
+(// GMA Noise hits may be correlated, may not be) c n
+(        ) p
+(// Here used equal distribution of correlated and uncorrelated hits) c n
+(        ) p
+(// Use proper value from detector information) c n
+(        ) p n
+(        ) S
+(if) K
+( \(ihitxy%2==0 && ioldx==0\) { ) p n
+(          InoStrip*  Xstrip = ) S
+(new) K
+( InoStrip\(\);) p n
+(          Xstrip->SetStrip\(numberInX*numberInMO*nInDT+numberInX*nInMO+nInX\);) N
+(          Xstrip->SetRPCmod\(iRPCMod\);) N
+(          ) N
+(          Xstrip->SetTrueTime\(nInT\);) N
+(          Xstrip->SetSmrTime\(nInTXX\);) N
+(          Xstrip->SetPulse\(edep\);) N
+(          ) N
+(          G4) S
+(int) k
+( xstripid = 0;) p n
+(          xstripid<<=2;) N
+(          xstripid +=nInDT;) N
+(          ) N
+(          xstripid<<=8;) N
+(          xstripid +=nInLA;) N
+(micalCal0SD.cc) (Page 19/28) (Jul 16, 21 18:23) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(          ) p n
+(          xstripid<<=3;) N
+(          xstripid +=nInMO;) N
+(          ) N
+(          xstripid<<=3;) N
+(          xstripid +=nInCH;) N
+(          ) N
+(          xstripid<<=7;) N
+(          xstripid +=nInX;) N
+(          ) N
+(          xstripid<<=5;) N
+(          xstripid +=0; ) S
+(// nInT;   ) c n
+(          ) p n
+(          xstripid<<=3;) N
+(          xstripid +=TMath::Min\() S
+(int) k
+(\(edep/16\),7\);) p n
+(          ) N
+(          Xstrip->SetId\(xstripid\);) N
+(          ) N
+(          inoStripX_pointer->InoStripX_list.push_back\(Xstrip\);) N
+(        } ) S
+(// if \(ihitxy%2==0 && ioldx==0\)) c n
+(        ) p n
+(        ) S
+(if) K
+( \(ihitxy>0 && ioldy==0\) { ) p n
+(          InoStrip*  Ystrip = ) S
+(new) K
+( InoStrip\(\);) p n
+(          Ystrip->SetStrip\(numberInY*nInCH+nInY\);) N
+(          Ystrip->SetRPCmod\(iRPCMod\);) N
+(          Ystrip->SetTrueTime\(nInT\);) N
+(          Ystrip->SetSmrTime\(nInTYY\);) N
+(          Ystrip->SetPulse\(edep\);) N
+(          ) N
+(          G4) S
+(int) k
+( ystripid = 1;) p n
+(          ) N
+(          ystripid<<=2; ) S
+(//1;) c n
+(          ystripid +=nInDT;) p n
+(          ) N
+(          ystripid<<=8;) N
+(          ystripid +=nInLA;) N
+(          ) N
+(          ystripid<<=3;) N
+(          ystripid +=nInMO;) N
+(          ) N
+(          ystripid<<=3;) N
+(          ystripid +=nInCH;) N
+(          ) N
+(          ystripid<<=7;) N
+(          ystripid +=nInY;) N
+(          ) N
+(          ystripid<<=5;) N
+(          ystripid +=0; ) S
+(// nInT;   ) c n
+(          ) p n
+(          ystripid<<=3;) N
+(          ystripid +=TMath::Min\() S
+(int) k
+(\(edep/16\),7\);) p n
+(          ) N
+(          Ystrip->SetId\(ystripid\);) N
+(          ) N
+(          inoStripY_pointer->InoStripY_list.push_back\(Ystrip\); ) N
+(        } ) S
+(// if \(ihitxy>0 && ioldy==0\)) c n
+(      } ) p
+(//for \(int ij=0; ij<100; ij++\)) c n
+(      ) p
+(// cout <<"Size1 "<< inoStripX_pointer->InoStripX_list.size\(\)<<" "<<inoStr) c n
+(ipY_pointer->InoStripY_list.size\(\)<<endl;) N
+(      ) p
+(//All these %tage and [5] should be either from database of thorugh messan) c n
+(ger class) N
+(      ) p
+(//2% time will have five consecutive strip hit) c n
+(      ) p
+(//5% time will every eigth strip) c n
+(      ) p
+(//3% time correlated noise in X/Y Strips) c n
+(      ) p
+(const) K
+( ) p
+(int) k
+( nConseStr=4;) p n
+(      vector<InoStrip*> tmp_striplist;) N
+(      ) S
+(int) k
+( nsizex = inoStripX_pointer->InoStripX_list.size\(\);) p n
+(      ) S
+(int) k
+( nsizey = inoStripY_pointer->InoStripY_list.size\(\);) p n
+(      ) S
+(for) K
+( \() p
+(int) k
+( ixy=0; ixy<2; ixy++\) {) p n
+(micalCal0SD.cc) (Page 20/28) (Jul 16, 21 18:23) title
+border
+grestore
+(Printed by gobinda) rhead
+(micalCal0SD.cc) (10/14) (Friday July 16, 2021) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (21-22) 11
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(        tmp_striplist.clear\(\);) p n
+(        ) S
+(if) K
+( \(ixy==0\) {) p n
+(          ) S
+(for) K
+( \() p
+(int) k
+( ix=0; ix<nsizex; ix++\) {) p n
+(            tmp_striplist.push_back\(inoStripX_pointer->InoStripX_list[ix]\);) N
+(          }) N
+(        } ) S
+(else) K
+( {) p n
+(          ) S
+(for) K
+( \() p
+(int) k
+( ix=0; ix<nsizey; ix++\) {) p n
+(            tmp_striplist.push_back\(inoStripY_pointer->InoStripY_list[ix]\);) N
+(          }) N
+(        }) N
+(        ) N
+(        ) S
+(for) K
+( \() p
+(unsigned) k
+( ) p
+(int) k
+( jk=0; jk<tmp_striplist.size\(\); jk++\) {) p n
+(          InoStrip* Xstrip =tmp_striplist[jk]; ) N
+(          ) S
+(int) k
+( nInX[nConseStr]={-1,-1,-1,-1};) p n
+(          ) S
+(int) k
+( nNoise=0;) p n
+(          ) S
+(double) k
+( xrnd = gRandom->Rndm\(0\);) p n
+(          ) N
+(          ) S
+(int) k
+( idetid = tmp_striplist[jk]->GetId\(\);) p n
+(          ) S
+(int) k
+( istrip = \(\(idetid>>8\)&0x7f\);) p n
+(          ) S
+(double) k
+( time = tmp_striplist[jk]->GetSmrTime\(\);) p n
+(          ) N
+(          ) S
+(if) K
+( \(xrnd < CorrNoisePar1\) { ) p n
+(            nNoise=4;) N
+(            nInX[0] = istrip+1;) N
+(            nInX[1] = istrip+2;) N
+(            nInX[2] = istrip-1;) N
+(            nInX[3] = istrip-2;) N
+(            ) S
+(for) K
+( \() p
+(int) k
+( ix=0; ix<nConseStr; ix++\) {) p n
+(              ) S
+(if) K
+( \(nInX[ix] >\(nstripX-1\)\) { nInX[ix] -=nConseStr;}) p n
+(              ) S
+(if) K
+( \(nInX[ix] <0 \) {nInX[ix] +=nConseStr;}) p n
+(            }) N
+(          } ) S
+(else) K
+( ) p
+(if) K
+( \(xrnd< CorrNoisePar1+CorrNoisePar2\) { ) p n
+(            nNoise=3;) N
+(            ) S
+(int) k
+( irem=istrip%8;) p n
+(            ) S
+(int) k
+( iint=) p
+(int) k
+(\(istrip/32\);) p n
+(            ) S
+(int) k
+( counter[4]={irem+32*iint, irem+8+32*iint, irem+16+32*iint, irem+) p n
+(24+32*iint};) N
+(            ) N
+(            nNoise =0;) N
+(            ) S
+(for) K
+( \() p
+(int) k
+( ix=0; ix<nNoise+1; ix++\) {) p n
+(              ) S
+(if) K
+( \(istrip!=counter[ix]\) {) p n
+(                nInX[nNoise] = counter[ix];) N
+(                nNoise++;) N
+(              }) N
+(            }) N
+(          } ) S
+(else) K
+( ) p
+(if) K
+( \(xrnd < CorrNoisePar1+CorrNoisePar2+CorrNoisePar3\) {) p n
+(            nNoise =1;) N
+(            nInX[0] = -istrip;) N
+(          }) N
+(          ) N
+(          ) S
+(for) K
+( \() p
+(int) k
+( ix=0; ix<nNoise; ix++\) {) p n
+(            InoStrip* xstrp = ) S
+(new) K
+( InoStrip\(Xstrip\);) p n
+(            ) N
+(            xstrp->SetSmrTime\(time+G4RandGauss::shoot\(0,TimeUnCorrSmr\)\);) N
+(            xstrp->SetPulse\(-100.0\);) N
+(            ) S
+(if) K
+( \(nInX[ix]>=0\) {) p n
+(              ) S
+(unsigned) k
+( ) p
+(int) k
+( tmpid = idetid;) p n
+(              ) S
+(int) k
+( iext =tmpid&0xff; ) p n
+(              tmpid>>=15;) N
+(              ) S
+(//) c 24 T (    int strp = tmpid&0x7f;) N
+(              ) p
+(//) c 24 T (    tmpid>>=7;) N
+(              tmpid<<=7;) p n
+(              tmpid +=nInX[ix];) N
+(              tmpid<<=8;) N
+(              tmpid +=iext;) N
+(              xstrp->SetId\(tmpid\);) N
+(              ) S
+(if) K
+( \(ixy==0\) {) p n
+(                inoStripX_pointer->InoStripX_list.push_back\(xstrp\);) N
+(              } ) S
+(else) K
+( {) p n
+(micalCal0SD.cc) (Page 21/28) (Jul 16, 21 18:23) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(                inoStripY_pointer->InoStripY_list.push_back\(xstrp\);) p n
+(              }) N
+(            } ) S
+(else) K
+( { ) p
+(//Y correlation) c n
+(              ) p
+(unsigned) k
+( ) p
+(int) k
+( tmpid = idetid + \(ixy==0\) ? twopow31 : -twopow31;) p n
+(              xstrp->SetId\(tmpid\);) N
+(              ) S
+(if) K
+( \(ixy==0\) { ) p n
+(                inoStripY_pointer->InoStripY_list.push_back\(xstrp\);) N
+(              } ) S
+(else) K
+( {) p n
+(                inoStripX_pointer->InoStripX_list.push_back\(xstrp\); ) N
+(              }) N
+(            }) N
+(          } ) S
+(// for \(int ix=0; ix<nNoise; ix++\)) c n
+(        } ) p
+(// for \(int jk=0; jk<nsize; jk++\)) c n
+(      }) p n
+(      tmp_striplist.clear\(\);) N
+(      ) N
+(      ) S
+(for) K
+(\() p
+(int) k
+( trgi=0; trgi<numberInLA; trgi++\) {) p n
+(        ) S
+(if) K
+(\(TrgDataX[trgi]>0\) {) p n
+(          trigStoreX++;) N
+(        }) N
+(        ) S
+(if) K
+(\(TrgDataY[trgi]>0\) {) p n
+(          trigStoreY++;) N
+(        }) N
+(      } ) S
+(// for\(int trgi=0; trgi<numberInLA; trgi++\) {) c n
+(    } ) p
+(//else of if \(pAnalysis->InputOutput==2\)) c n
+(    ) p n
+(    cout <<") S
+(Size ) str
+("<< inoStripX_pointer->InoStripX_list.size\(\)<<") p
+( ) str
+("<<inoStripY_poin) p n
+(ter->InoStripY_list.size\(\)<<endl;) N
+(    ) N
+(    ) S
+(if) K
+( \(pAnalysis->InputOutput==1 || pAnalysis->InputOutput==4\) {) p n
+(      pAnalysis->pRootFile->cd\(\);) N
+(      pAnalysis->trigx = trigStoreX;) N
+(      pAnalysis->trigy = trigStoreY;) N
+(      pAnalysis->ndigiht = inoStripX_pointer->InoStripX_list.size\(\) ) N
+(        + inoStripY_pointer->InoStripY_list.size\(\);) N
+(      ) S
+(if) K
+( \(pAnalysis->ndigiht >pAnalysis->ndigihtmx\) pAnalysis->ndigiht =pAnalysi) p n
+(s->ndigihtmx;) N
+(      ) S
+(for) K
+( \() p
+(unsigned) k
+( ij=0; ij<inoStripX_pointer->InoStripX_list.size\(\) && ij<pAna) p n
+(lysis->ndigiht ; ij++\) {) N
+(        pAnalysis->stripid[ij] =inoStripX_pointer->InoStripX_list[ij]->GetId\(\);) N
+(        pAnalysis->digipdgid[ij] =inoStripX_pointer->InoStripX_list[ij]->GetpdgI) N
+(d\(\);) N
+(        pAnalysis->digitime[ij] = inoStripX_pointer->InoStripX_list[ij]->GetSmrT) N
+(ime\(\);) N
+(        pAnalysis->digitruetime[ij] = inoStripX_pointer->InoStripX_list[ij]->Get) N
+(TrueTime\(\);) N
+(        pAnalysis->digienr[ij] =inoStripX_pointer->InoStripX_list[ij]->GetPulse\() N
+(\);) N
+(        pAnalysis->digivx[ij] =inoStripX_pointer->InoStripX_list[ij]->GetGenPosX) N
+(\(\);) N
+(        pAnalysis->digivy[ij] =inoStripX_pointer->InoStripX_list[ij]->GetGenPosY) N
+(\(\);) N
+(        pAnalysis->digivz[ij] =inoStripX_pointer->InoStripX_list[ij]->GetGenPosZ) N
+(\(\);) N
+(        ) N
+(        G4ThreeVector trkmom\(1000,1,1\);) N
+(        trkmom.setMag\(inoStripX_pointer->InoStripX_list[ij]->GetMomentum\(\)\);) N
+(        trkmom.setTheta\(inoStripX_pointer->InoStripX_list[ij]->GetTheta\(\)\);) N
+(        trkmom.setPhi\(inoStripX_pointer->InoStripX_list[ij]->GetPhi\(\)\);) N
+(        ) N
+(        pAnalysis->digipx[ij] = trkmom.x\(\);) N
+(        pAnalysis->digipy[ij] = trkmom.y\(\);) N
+(        pAnalysis->digipz[ij] = trkmom.z\(\);) N
+(        ) S
+(if) K
+( \(ij >=pAnalysis->ndigihtmx\) ) p
+(break) K
+(; ) p
+(//redundant) c n
+(        ) p n
+(        cout<<") S
+(ij ) str
+("<<ij<<") p
+( ) str
+("<<pAnalysis->digivx[ij]<<") p
+( ) str
+("<<pAnalysis->digivy[ij]<<") p
+( ) str
+() p n
+("<<pAnalysis->digivz[ij]<<") S
+( ) str
+("<<\(pAnalysis->stripid[ij]>>8\)<<endl;) p n
+(        ) N
+(      }) N
+(micalCal0SD.cc) (Page 22/28) (Jul 16, 21 18:23) title
+border
+grestore
+(Printed by gobinda) rhead
+(micalCal0SD.cc) (11/14) (Friday July 16, 2021) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (23-24) 12
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(      ) p
+(unsigned) k
+( jk = inoStripX_pointer->InoStripX_list.size\(\);) p n
+(      ) S
+(for) K
+( \() p
+(unsigned) k
+( ij=0; ij<inoStripY_pointer->InoStripY_list.size\(\) && jk< pAn) p n
+(alysis->ndigiht; ij++, jk++\) {) N
+(        pAnalysis->stripid[jk] =inoStripY_pointer->InoStripY_list[ij]->GetId\(\);) N
+(        pAnalysis->digipdgid[jk] =inoStripY_pointer->InoStripY_list[ij]->GetpdgI) N
+(d\(\);) N
+(        pAnalysis->digitime[jk] =inoStripY_pointer->InoStripY_list[ij]->GetSmrTi) N
+(me\(\);) N
+(        pAnalysis->digitruetime[jk] = inoStripY_pointer->InoStripY_list[ij]->Get) N
+(TrueTime\(\);) N
+(        pAnalysis->digienr[jk] =inoStripY_pointer->InoStripY_list[ij]->GetPulse\() N
+(\);) N
+(        pAnalysis->digivx[jk] =inoStripY_pointer->InoStripY_list[ij]->GetGenPosX) N
+(\(\);) N
+(        pAnalysis->digivy[jk] =inoStripY_pointer->InoStripY_list[ij]->GetGenPosY) N
+(\(\);) N
+(        pAnalysis->digivz[jk] =inoStripY_pointer->InoStripY_list[ij]->GetGenPosZ) N
+(\(\);) N
+(        ) N
+(        G4ThreeVector trkmom\(1000,0,0\);) N
+(        trkmom.setMag\(inoStripY_pointer->InoStripY_list[ij]->GetMomentum\(\)\);) N
+(        trkmom.setTheta\(inoStripY_pointer->InoStripY_list[ij]->GetTheta\(\)\);) N
+(        trkmom.setPhi\(inoStripY_pointer->InoStripY_list[ij]->GetPhi\(\)\);) N
+(        ) N
+(        pAnalysis->digipx[jk] = trkmom.x\(\);) N
+(        pAnalysis->digipy[jk] = trkmom.y\(\);) N
+(        pAnalysis->digipz[jk] = trkmom.z\(\);) N
+(        ) S
+(if) K
+( \(jk >=pAnalysis->ndigihtmx\) ) p
+(break) K
+(; ) p
+(//redundant) c n
+(        cout<<") p
+(jk ) str
+("<<jk<<") p
+( ) str
+("<<pAnalysis->digivx[jk]<<") p
+( ) str
+("<<pAnalysis->digivy[jk]<<") p
+( ) str
+() p n
+("<<pAnalysis->digivz[jk]<<") S
+( ) str
+("<<\(pAnalysis->stripid[jk]>>8\)<<endl;) p n
+(      }) N
+(      cout<<") S
+(digioutput ) str
+("<<pAnalysis->ndigiht<<") p
+( ) str
+("<<pAnalysis->trigx<<") p
+( ) str
+("<<pAnalysis) p n
+(->trigy<<endl;) N
+(      pAnalysis->pEventTree->Fill\(\);) N
+(    }) N
+(  } ) S
+(else) K
+( { ) p
+(//read diginint file //if \(pAnalysis->InputOutput <=4\)  ) c n
+(    pAnalysis->inputRootFile->cd\(\);) p n
+(    ) N
+(    ) S
+(if) K
+(\(pAnalysis->FirstEvt+pAnalysis->ievent< pAnalysis->inputEventTree->GetEntr) p n
+(ies\(\)\){    ) N
+(      pAnalysis->inputEventTree->GetEntry\(pAnalysis->FirstEvt+pAnalysis->ievent+) N
+(+\);) N
+(    } ) S
+(else) K
+( {) p n
+(      cout<<") S
+(\\n Error: Event no. greater than total no. of entries in the input file.\\n) str
+(";) p n
+(      exit\(1\);) N
+(    }) N
+(    ) N
+(    ) S
+(for) K
+(\() p
+(unsigned) k
+( ij=0;ij<pAnalysis->ngent;ij++\) {) p n
+(      ) S
+(if) K
+( \(pAnalysis->isVisOut==1\) {) p n
+(        pAnalysis->H->NParticles++;) N
+(        pAnalysis->Hp= pAnalysis->H->AddHits\(0,0\); ) S
+(// add a track object //VALGR) c n
+(IND) N
+(        pAnalysis->Hp->TrackType=-14;) p
+(// Track Type: -1: hits, -2: clulster, -3: ) c n
+(triplet, -4: track -14: particle info) N
+(        pAnalysis->Hp->ParCode=pAnalysis->pidin[ij];) p
+(// track Number) c n
+(        ) p
+(//pAnalysis->Hp->ZZ= \(7.50 + pAnalysis->poszin[ij]/100   - 0.356\)/\(0.048) c n
+(*2\);// vertex z incase of particle info) N
+(        pAnalysis->Hp->ZZ= \(\(\(numberInLA*\(parirlay[2]+parlay[2]\)*cm/m-parlay[2]\)) p n
+(-pAnalysis->poszin[ij]*cm/m\)\)/\(\(parirlay[2]+parlay[2]\)*2*\(1/m\)\);) S
+(// vertex z inca) c n
+(se of particle info) N
+(        pAnalysis->Hp->XX=pAnalysis->posxin[ij]*cm/m; ) p
+(// vertex x incase of part) c n
+(icle info) N
+(        pAnalysis->Hp->YY=pAnalysis->posyin[ij]*cm/m; ) p
+(// vertex y incase of part) c n
+(icle info) N
+(        pAnalysis->Hp->pmag=pAnalysis->momin[ij]; ) p
+(// vertex y incase of particle) c n
+( info) N
+(        pAnalysis->Hp->pt=pAnalysis->thein[ij]; ) p
+(// vertex y incase of particle i) c n
+(nfo) N
+(        pAnalysis->Hp->pp=pAnalysis->phiin[ij]; ) p
+(// vertex y incase of particle i) c n
+(micalCal0SD.cc) (Page 23/28) (Jul 16, 21 18:23) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(nfo) c n
+(      }) p n
+(    }) N
+(    ) S
+(//--------------------------------------------------------------------------) c n
+(---------------------------------------) N
+(    ) p n
+(    ) S
+(for) K
+(\() p
+(unsigned) k
+( ij=0;ij<pAnalysis->ndigiht;ij++\) {) p n
+(      ) S
+(unsigned) k
+( istrp = pAnalysis->stripid[ij];) p n
+(      InoStrip*  Xstrip = ) S
+(new) K
+( InoStrip\(\); ) p
+(//VALGRIND) c n
+(      Xstrip->SetId\(istrp\);) p n
+(      Xstrip->SetpdgId\(pAnalysis->digipdgid[ij]\);) N
+(      Xstrip->SetSmrTime\(pAnalysis->digitime[ij]\);) N
+(      Xstrip->SetTrueTime\(pAnalysis->digitruetime[ij]\);) N
+(      Xstrip->SetPulse\(pAnalysis->digienr[ij]\);) N
+(      ) N
+(      G4ThreeVector tmp3v\(pAnalysis->digipx[ij], pAnalysis->digipy[ij], pAnalysi) N
+(s->digipz[ij]\);) N
+(      Xstrip->SetMomentum\(tmp3v.mag\(\)\);) N
+(      Xstrip->SetTheta\(tmp3v.theta\(\)\);) N
+(      Xstrip->SetPhi\(tmp3v.phi\(\)\);) N
+(      ) N
+(      Xstrip->SetGenPosX\(pAnalysis->digivx[ij]\);) N
+(      Xstrip->SetGenPosY\(pAnalysis->digivy[ij]\);) N
+(      Xstrip->SetGenPosZ\(pAnalysis->digivz[ij]\);) N
+() N
+() N
+(      cout<<") S
+(G_Position ) str
+("<<ij<<") p
+( ) str
+("<< pAnalysis->digivx[ij]<<") p
+( ) str
+("<< pAnalysis->digivy[) p n
+(ij]<<") S
+( ) str
+("<< pAnalysis->digivz[ij]<<endl;) p n
+(      ) N
+(      ) S
+(if) K
+( \(\(istrp>>31\)==0\) { ) p
+(//Most significant bit is X/Y) c n
+() p 8 T (inoStripX_pointer->InoStripX_list.push_back\(Xstrip\);) N
+(      } ) S
+(else) K
+( {) p n
+() S 8 T (inoStripY_pointer->InoStripY_list.push_back\(Xstrip\);) N
+(      }) N
+(    }) N
+(    pAnalysis->pRootFile->cd\(\);) N
+(  } ) S
+(//if \(pAnalysis->InputOutput <=4\)  ) c n
+(  ) p
+(//Fill up positions, layer etc of all strips from stripid for futher use) c n
+(  ) p
+(if) K
+( \(pAnalysis->InputOutput==0 || pAnalysis->InputOutput ==3 || pAnalysis->Inpu) p n
+(tOutput==5\) {) N
+(    ) N
+(    cout<<""<<endl<<") S
+(...................Entered Reconstruction.............) str
+("<<endl;) p n
+(    ) S
+(double) k
+( ShiftInX = paradef->GetINOroomPos\(0\) + paradef->GetStackPosInRoom\(0\) ) p n
+(+ paradef->GetShiftInX\(\);) N
+(    ) S
+(double) k
+( ShiftInY = paradef->GetINOroomPos\(1\) + paradef->GetStackPosInRoom\(1\) ) p n
+(+ paradef->GetShiftInY\(\);) N
+(    ) S
+(double) k
+( ShiftInZ = paradef->GetINOroomPos\(2\) + paradef->GetStackPosInRoom\(2\) ) p n
+(+ paradef->GetShiftInZ\(0\);) N
+(    ) S
+(// ShiftInX = paradef->GetShiftInX\(\);) c n
+(    ) p
+(// ShiftInY = paradef->GetShiftInY\(\);) c n
+(    ) p
+(// ShiftInZ = paradef->GetShiftInZ\(\);) c n
+(    ) p n
+() S 8 T () S 16 T () S
+(//     cout<<"X Side ShiftInXYZ "<<ShiftInX<<" "<<ShiftInY<<" "<) c n
+(<ShiftInZ<<endl;) N
+() p 8 T () S 16 T () S
+(//     cout<<inoStripX_pointer->InoStripX_list.size\(\)<<endl;) c n
+(    ) p
+(for) K
+( \() p
+(unsigned) k
+( ij=0; ij<inoStripX_pointer->InoStripX_list.size\(\); ij++\) {) p n
+(      ) S
+(unsigned) k
+( istrp = inoStripX_pointer->InoStripX_list[ij]->GetId\(\);) p n
+(      ) N
+(      ) S
+(double) k
+( energy = istrp%8;) p n
+(      istrp >>=8;) N
+(      ) S
+(int) k
+( nInX = istrp%128;) p n
+(      istrp>>=7;) N
+(      ) S
+(int) k
+( iRPCMod = istrp%65536; ) p
+(//  2**16) c n
+(      ) p
+(int) k
+( nInCH = istrp%8;) p n
+(      istrp>>=3;) N
+(      ) S
+(int) k
+( nInMO = istrp%8;) p n
+(      istrp>>=3;) N
+(      ) S
+(int) k
+( nInLA = istrp%256;) p n
+(      ) N
+(micalCal0SD.cc) (Page 24/28) (Jul 16, 21 18:23) title
+border
+grestore
+(Printed by gobinda) rhead
+(micalCal0SD.cc) (12/14) (Friday July 16, 2021) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (25-26) 13
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(      istrp>>=8;) p n
+(      ) S
+(int) k
+( nInDT = istrp%4;      ) p n
+(      istrp>>=2;) N
+(      inoStripX_pointer->InoStripX_list[ij]->SetPlaneView\(istrp\);) N
+(      inoStripX_pointer->InoStripX_list[ij]->SetPlane\(nInLA\);) N
+(      inoStripX_pointer->InoStripX_list[ij]->SetRPCmod\(iRPCMod\);) N
+(      inoStripX_pointer->InoStripX_list[ij]->SetStrip\(numberInX*numberInMO*nInDT) N
+(+numberInX*nInMO+nInX\);) N
+() N
+() N
+(     ) N
+(       ) S
+(double) k
+( xpos = \(1/m\)*\(-pargas[0] + Xstrwd*\(nInX+0.5\) + ShiftInX\);) p n
+(      ) S
+(//) c 16 T (double xpos =  \(1/m\)*\( \(nInDT-1\)*\(2*parino[0]+gapino\) - parlay[0) N
+(]  + \(2*nInMO+1\)*parmod[0] -pargas[0] + Xstrwd*\(nInX+0.5\) + ShiftInX\);) N
+(      ) p n
+() S 8 T () S 16 T () S 24 T ( ) S
+(double) k
+( ypos = \(1/m\)*\( ShiftInY + \(paradef->GetnStack\(\)>) p n
+(1\) ? \(2*nInCH-1\)*parchm[1] : 0\) ;) N
+(      ) S
+(//double zpos = \(1/m\)*\(-parino[2] + 2*\(parhcoil[2]+parcoilsupport[2]\) + 2*) c n
+(\(nInLA+1\)*parirlay[2] + \(2*nInLA+1\)*\(parlay[2]\)\);) N
+(      ) p
+(double) k
+( zpos = \(1/m\)*\(-\(numberInLA-1\)*\(parirlay[2]+parlay[2]\)+\(nInLA\)*2*\(pa) p n
+(rirlay[2] + parlay[2]\) + ShiftInZ\); ) S
+(//AAR:** changes for Central Iron Layer **) c n
+(      ) p n
+(      ) S
+(//if smearing //RANDOM) c n
+(      inoStripX_pointer->InoStripX_list[ij]->SetXYPos\(xpos\);) p n
+(      inoStripX_pointer->InoStripX_list[ij]->SetZPos\(zpos\);) N
+() N
+() S 8 T () S 16 T () S 24 T () S
+(//      cout<<" X "<<nInLA<<" "<<ij<<" nInX "<<nInX<<" x) c n
+(pos "<<1000*inoStripX_pointer->InoStripX_list[ij]->GetXYPos\(\)<<" "<<inoStripX_po) N
+(inter->InoStripX_list[ij]->GetGenPosX\(\)<<" diffX "<<1000*xpos -inoStripX_pointer) N
+(->InoStripX_list[ij]->GetGenPosX\(\)<<" zpos "<<1000*inoStripX_pointer->InoStripX_) N
+(list[ij]->GetZPos\(\)<<" "<<inoStripX_pointer->InoStripX_list[ij]->GetGenPosZ\(\)<<") N
+( diffZ "<<1000*zpos - inoStripX_pointer->InoStripX_list[ij]->GetGenPosZ\(\)<<endl;) N
+() p n
+(      pAnalysis->pPosX->Fill\(100*xpos - 0.1*inoStripX_pointer->InoStripX_list[ij) N
+(]->GetGenPosX\(\)\);) N
+(      pAnalysis->pPosZ->Fill\(100*zpos - 0.1*inoStripX_pointer->InoStripX_list[ij) N
+(]->GetGenPosZ\(\)\);) N
+(      pAnalysis->pPosXX->Fill\(100*xpos, 100*xpos - 0.1*inoStripX_pointer->InoStr) N
+(ipX_list[ij]->GetGenPosX\(\)\);) N
+(      pAnalysis->pPosZZ->Fill\(100*zpos, 100*zpos - 0.1*inoStripX_pointer->InoStr) N
+(ipX_list[ij]->GetGenPosZ\(\)\);) N
+(      ) S
+(// cout<<"pAnalysis->\(pPosX,pPosZ,pPosXX,pPosZZ\)->Fill\(\);"<<endl;) c n
+(      ) p
+(if) K
+( \(energy >100000 || abs\(ypos\)>100000\) cout <<") p
+(ypos ) str
+("<<ypos<<") p
+( ) str
+("<<energy<<e) p n
+(ndl;) N
+(      ) N
+(    }) N
+() S 8 T () S 16 T () S
+(//      cout<<inoStripY_pointer->InoStripY_list.size\(\)<<endl;) c n
+(    ) p
+(for) K
+( \() p
+(unsigned) k
+( ij=0; ij<inoStripY_pointer->InoStripY_list.size\(\); ij++\) {) p n
+(      ) S
+(unsigned) k
+( istrp = inoStripY_pointer->InoStripY_list[ij]->GetId\(\);) p n
+(      ) N
+(      ) S
+(double) k
+( energy = istrp%8;) p n
+(      istrp >>=8;) N
+(      ) S
+(int) k
+( nInY = istrp%128;) p n
+(      istrp>>=7;) N
+(      ) S
+(int) k
+( iRPCMod = istrp%65536; ) p
+(//  2**16) c n
+(      ) p
+(int) k
+( nInCH = istrp%8;) p n
+(      istrp>>=3;) N
+(      ) S
+(int) k
+( nInMO = istrp%8;) p n
+(      istrp>>=3;) N
+(      ) S
+(int) k
+( nInLA = istrp%256;) p n
+(      ) N
+(      istrp>>=8;) N
+(      ) S
+(int) k
+( nInDT = istrp%4;      ) p n
+(      istrp>>=2;) N
+(      ) N
+(      inoStripY_pointer->InoStripY_list[ij]->SetPlaneView\(istrp\);) N
+(      inoStripY_pointer->InoStripY_list[ij]->SetPlane\(nInLA\);) N
+(      inoStripY_pointer->InoStripY_list[ij]->SetRPCmod\(iRPCMod\);) N
+(      inoStripY_pointer->InoStripY_list[ij]->SetStrip\(numberInY*nInCH+nInY\);) N
+(micalCal0SD.cc) (Page 25/28) (Jul 16, 21 18:23) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(      ) p n
+(      ) S
+(double) k
+( xpos = \(1/m\)*\( ShiftInX\);) p n
+(      ) S
+(//) c 16 T (double xpos =  \(1/m\)*\( \(nInDT-1\)*\(2*parino[0]+gapino\) - parlay[0) N
+(]  + \(2*nInMO+1\)*parmod[0] + ShiftInX\);) N
+() p 8 T () S 16 T () S 24 T () S
+(double) k
+( shift2y = \(paradef->GetnStack\(\)>1\) ? \(2*nInCH-1\)*) p n
+(parchm[1] : 0; ) S
+(//GMA one/two RPC in a layer) c n
+(       ) p
+(double) k
+( ypos = \(1/m\)*\(shift2y -pargas[1] + Ystrwd*\(nInY+0.5\) + ShiftInY\);) p n
+(       ) S
+(//) c 16 T (double ypos = \(1/m\)*\(- parmod[1]  + \(2*nInCH+1\)*parchm[1] -parga) N
+(s[1] + Ystrwd*\(nInY+0.5\) + ShiftInY\);) N
+(      ) p
+(double) k
+( zpos = \(1/m\)*\(-\(numberInLA-1\)*\(parirlay[2]+parlay[2]\)+\(nInLA\)*2*\(pa) p n
+(rirlay[2] + parlay[2]\) + ShiftInZ\); ) S
+(//AAR:** changes for Central Iron Layer **) c n
+(      ) p n
+(      inoStripY_pointer->InoStripY_list[ij]->SetXYPos\(ypos\);) N
+(      inoStripY_pointer->InoStripY_list[ij]->SetZPos\(zpos\);) N
+(      ) N
+() S 8 T () S 16 T () S 24 T () S
+(//      cout<< " Y "<<nInLA<<" "<<ij<<" ypos "<<1000*ino) c n
+(StripY_pointer->InoStripY_list[ij]->GetXYPos\(\)<<" "<<inoStripY_pointer->InoStrip) N
+(Y_list[ij]->GetGenPosY\(\)<<" diffY "<<1000*ypos - inoStripY_pointer->InoStripY_li) N
+(st[ij]->GetGenPosY\(\)<<" zpos "<<100*inoStripY_pointer->InoStripY_list[ij]->GetZP) N
+(os\(\)<<" "<<inoStripY_pointer->InoStripY_list[ij]->GetGenPosZ\(\)<<" diffZ "<<1000*) N
+(zpos - inoStripY_pointer->InoStripY_list[ij]->GetGenPosZ\(\)<<endl;) N
+() p n
+(      pAnalysis->pPosY->Fill\(100*ypos - 0.1*inoStripY_pointer->InoStripY_list[ij) N
+(]->GetGenPosY\(\)\);) N
+(      pAnalysis->pPosZ->Fill\(100*zpos - 0.1*inoStripY_pointer->InoStripY_list[ij) N
+(]->GetGenPosZ\(\)\);) N
+(      ) N
+(      pAnalysis->pPosYY->Fill\(100*ypos, 100*ypos - 0.1*inoStripY_pointer->InoStr) N
+(ipY_list[ij]->GetGenPosY\(\)\);) N
+(      pAnalysis->pPosZZ->Fill\(100*zpos, 100*zpos - 0.1*inoStripY_pointer->InoStr) N
+(ipY_list[ij]->GetGenPosZ\(\)\);) N
+(      ) S
+(// cout<<"pAnalysis->\(pPosY,pPosZ,pPosYY,pPosZZ\)->Fill\(\);"<<endl;) c n
+(      ) p
+(// cout<<"micalcal0SD::EndOfEvent\(G4HCofThisEvent*\) {....."<<endl;) c n
+(      ) p
+(if) K
+( \(energy >100000 || abs\(xpos\)>100000\) cout <<") p
+(xpos ) str
+("<<xpos<<") p
+( ) str
+("<<energy<<e) p n
+(ndl;) N
+(    }) N
+(  }) N
+(  ) S
+(//  cout<<"...}EndofEvent\(\) "<<endl;) c n
+(}) p n
+() N
+(void) k
+( micalcal0SD::clear\(\)) p n
+({) N
+(} ) N
+() N
+(void) k
+( micalcal0SD::DrawAll\(\)) p n
+({) N
+(} ) N
+() N
+(void) k
+( micalcal0SD::PrintAll\(\)) p n
+({) N
+(} ) N
+() N
+(void) k
+( micalcal0SD::SetCorrTimeSmear\(G4) p
+(double) k
+( val\) {) p n
+(  cout<<") S
+(void micalcal0SD::SetCorrTimeSmear\(G4double ) str
+("<<val<<") p
+(\)) str
+("<<endl;) p n
+(  ) S
+(// cout<<"CorrTimeSmear = "<<val<<endl;) c n
+(  ) p
+(// cout<<"...}"<<endl;) c n
+(  TimeCorrSmr = val;) p n
+(  pAnalysis->SetCorrTimeError\(val\);) N
+(}) N
+() N
+(void) k
+( micalcal0SD::SetUnCorrTimeSmear\(G4) p
+(double) k
+( val\) {) p n
+(  cout<<") S
+(void micalcal0SD::SetUnCorrTimeSmear\(G4double ) str
+("<<val<<") p
+(\)) str
+("<<endl;) p n
+(  ) S
+(// cout<<"UnCorrTimeSmear = "<<val<<endl;) c n
+(  ) p
+(// cout<<"...}"<<endl;) c n
+(  TimeUnCorrSmr = val;) p n
+(  pAnalysis->SetUnCorrTimeError\(val\);) N
+( }) N
+() N
+(void) k
+( micalcal0SD::SetCorrInefficiency\(G4) p
+(double) k
+( val\) {) p n
+(micalCal0SD.cc) (Page 26/28) (Jul 16, 21 18:23) title
+border
+grestore
+(Printed by gobinda) rhead
+(micalCal0SD.cc) (13/14) (Friday July 16, 2021) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (27-28) 14
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate 90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(  cout<<") p
+(void micalcal0SD::SetCorrInefficiency\(G4double ) str
+("<<val<<") p
+(\)) str
+("<<endl;) p n
+(  ) S
+(// cout<<"CorrInefficiency = "<<val<<endl;) c n
+(  ) p
+(// cout<<"...}"<<endl;) c n
+(  CorrIneffiPar = val;) p n
+( }) N
+() N
+(void) k
+( micalcal0SD::SetUnCorrXInefficiency\(G4) p
+(double) k
+( val\) {) p n
+(  cout<<") S
+(void micalcal0SD::SetUnCorrXInefficiency\(G4double ) str
+("<<val<<") p
+(\)) str
+("<<endl;) p n
+(  ) S
+(// cout<<"UnCorrXInefficiency = "<<val<<endl;) c n
+(  UnCorrXIneffiPar = val;) p n
+(   ) S
+(// cout<<"...}"<<endl;) c n
+(}) p n
+() N
+(void) k
+( micalcal0SD::SetUnCorrYInefficiency\(G4) p
+(double) k
+( val\) {) p n
+(  cout<<") S
+(void micalcal0SD::SetUnCorrYInefficiency\(G4double ) str
+("<<val<<") p
+(\)) str
+("<<endl;) p n
+(  ) S
+(// cout<<"UnCorrYInefficiency = "<<val<<endl;) c n
+(  UnCorrYIneffiPar = val;) p n
+(   ) S
+(// cout<<"...}"<<endl;) c n
+(}) p n
+() N
+(void) k
+( micalcal0SD::SetTimeToDigiConv\(G4) p
+(double) k
+( val\) {) p n
+(  cout<<") S
+(void micalcal0SD::SetTimeToDigiConv\(G4double ) str
+("<<val<<") p
+(\)) str
+("<<endl;) p n
+(  ) S
+(// cout<<"TimeToDigiConv = "<<val<<endl;) c n
+(  ) p
+(// cout<<"...}"<<endl;) c n
+(  TimeToDigiConv = val;) p n
+(  pAnalysis->SetTimeToDigiConvVal\(val\);) N
+(}) N
+() N
+(void) k
+( micalcal0SD::SetSignalSpeed\(G4) p
+(double) k
+( val\) {) p n
+(  cout<<") S
+(void micalcal0SD::SetSignalSpeed\(G4double ) str
+("<<val<<") p
+(\)) str
+("<<endl;) p n
+(  ) S
+(// cout<<"SignalSpeed = "<<val<<endl;) c n
+(  ) p
+(// cout<<"...}"<<endl;) c n
+(  SignalSpeed = val;) p n
+(  pAnalysis->SetSignalSpeedVal\(val\);) N
+(}) N
+() N
+(void) k
+( micalcal0SD::SetCorrNoise1\(G4) p
+(double) k
+( val\) {) p n
+(  cout<<") S
+(void micalcal0SD::SetCorrNoise1\(G4double ) str
+("<<val<<") p
+(\)) str
+("<<endl;) p n
+(  ) S
+(// cout<<"CorrNoisePar1 = "<<val<<endl;) c n
+(  CorrNoisePar1 = val;) p n
+(   ) S
+(// cout<<"...}"<<endl;) c n
+(}) p n
+() N
+(void) k
+( micalcal0SD::SetCorrNoise2\(G4) p
+(double) k
+( val\) {) p n
+(  cout<<") S
+(void micalcal0SD::SetCorrNoise2\(G4double ) str
+("<<val<<") p
+(\)) str
+("<<endl;) p n
+(  ) S
+(// cout<<"CorrNoisePar2 = "<<val<<endl;) c n
+(  CorrNoisePar2 = val;) p n
+(   ) S
+(// cout<<"...}"<<endl;) c n
+(}) p n
+() N
+(void) k
+( micalcal0SD::SetCorrNoise3\(G4) p
+(double) k
+( val\) {) p n
+(  cout<<") S
+(void micalcal0SD::SetCorrNoise3\(G4double ) str
+("<<val<<") p
+(\)) str
+("<<endl;) p n
+(  ) S
+(// cout<<"CorrNoisePar3 = "<<val<<endl;) c n
+(  CorrNoisePar3 = val;) p n
+(   ) S
+(// cout<<"...}"<<endl;) c n
+(}) p n
+() N
+(void) k
+( micalcal0SD::SetRandomNoise\(G4) p
+(int) k
+( val\) {) p n
+(  cout<<") S
+(void micalcal0SD::SetRandomNoise\(G4int ) str
+("<<val<<") p
+(\)) str
+("<<endl;) p n
+(  ) S
+(// cout<<"RandomNoisePar = "<<val<<endl;) c n
+(  RandomNoisePar = val;) p n
+(  ) S
+(// cout<<"...}"<<endl;) c n
+(}) p n
+() N
+(void) k
+( micalcal0SD::SetRootRandom\(G4) p
+(int) k
+( val\) {) p n
+(  cout<<") S
+(void micalcal0SD::SetRootRandom\(G4int ) str
+("<<val<<") p
+(\)) str
+("<<endl;) p n
+(  cout<<") S
+(-------------------------------------------------) str
+("<<endl;) p n
+(  ) S
+(if) K
+( \(val\){cout<<") p
+(  Root Random Enabled  ) str
+("<<endl;}) p n
+(  ) S
+(else) K
+({cout<<") p
+(        Root Random Disabled        ) str
+("<<endl;}  ) p n
+(micalCal0SD.cc) (Page 27/28) (Jul 16, 21 18:23) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(  cout<<") p
+(-------------------------------------------------) str
+("<<endl;) p n
+() N
+(  ) S
+(// cout<<"RootRandom = "<<RootRandom<<endl;) c n
+(  RootRandom = val;) p n
+(  ) S
+(// cout<<"...}"<<endl;) c n
+(}) p n
+() N
+(int) k
+( micalcal0SD::GetRandomXY\() p
+(double) k
+(& GapX, TH2D* tmphistx\) {) p n
+(  ) S
+(double) k
+( sumX = G4UniformRand\(\);) p n
+(  ) S
+(int) k
+( xbinf = tmphistx->GetXaxis\(\)->FindBin\(GapX\);) p n
+(  ) S
+(int) k
+( nmult = -1;) p n
+(  ) S
+(int) k
+( iiter = 0;) p n
+(  ) S
+(int) k
+( nmxusedhits = 3;) p n
+(  ) S
+(while) K
+(\(nmult<=0\) {) p n
+(    sumX = G4UniformRand\(\);) N
+(    ) S
+(double) k
+( valY = 0.0;) p n
+(    ) S
+(for) K
+( \() p
+(int) k
+( ijf=0; ijf<=nmxusedhits+1; ijf++\) {) p n
+(      valY += tmphistx->GetBinContent\(xbinf, ijf+1\);) N
+(      ) S
+(if) K
+( \(valY > sumX\) {) p n
+() S 8 T (nmult = ijf; ) N
+() S 8 T () S
+(break) K
+(;) p n
+(      }) N
+(    } ) S
+(// for \(int ijf=0; ijf<=nmxusedhits; ijf++\) {) c n
+(    ) p
+(if) K
+( \(iiter++==100\) {) p n
+(      nmult = 1;) N
+(    }) N
+(  } ) S
+(// while\(nmult<=0\) { ) c n
+() p n
+(  ) S
+(return) K
+( nmult;) p n
+(}) N
+(micalCal0SD.cc) (Page 28/28) (Jul 16, 21 18:23) title
+border
+grestore
+(Printed by gobinda) rhead
+(micalCal0SD.cc) (14/14) (Friday July 16, 2021) footer
+end % of iso1dict
+pagesave restore
+showpage
+
+%%Trailer
+end
+%%EOF

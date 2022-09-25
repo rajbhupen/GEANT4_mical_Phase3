@@ -1,0 +1,216 @@
+#include "micalFieldPropagator.hh"
+
+#include "F2int.h"
+#include "Polint.h"
+//#define debug
+#define polint 0
+#define interpolate 1
+
+micalFieldPropagator *micalFieldPropagator::FdPointer;
+
+micalFieldPropagator::micalFieldPropagator() {   
+  FdPointer=this;
+  pAnalysis= MultiSimAnalysis::AnPointer;
+  paradef = micalDetectorParameterDef::AnPointer;
+  irlayZ = paradef->GetParirlay(2);
+  rpclayZ = paradef->GetParlay(2);
+  ironrpcZ = 2*(irlayZ+rpclayZ);
+  nLayer = paradef->GetnLayer();
+  nIRLayer = paradef->GetnIRLayer();
+  gapino = 200; 
+  for(int ij=0;ij<3;ij++) {
+    parino[ij] = paradef->GetParino(ij);
+    parirlay[ij] = paradef->GetParirlay(ij);
+  }
+
+  for(int ij=0; ij<nIRLayer; ij++) {
+    IRONLayerPosZ[ij] = paradef->GetIRONLayerPosZ(ij);
+  }
+  for(int ij=0; ij<nLayer; ij++) {
+    RPCLayerPosZ[ij] = paradef->GetRPCLayerPosZ(ij);
+  }
+  for(int ij=0; ij<3; ij++) {
+    StackPosInRoom[ij] = paradef->GetStackPosInRoom(ij);
+    INOroomPos[ij] = paradef->GetINOroomPos(ij);
+  }
+
+  ShiftInX = paradef->GetShiftInX();
+  ShiftInY = paradef->GetShiftInY();
+  ShiftInZ = paradef->GetShiftInZ();
+  
+  if(interpolate) { 
+    pMagFile = new TFile("B_smoothed_full_ical_60kA-turns_4_sets_of_coil_slot_cetre_at_4m.root","read"); //VALGRIND
+    // pMagFile = new TFile("/products/GEANT4.10/ICALDOCS/B_smoothed_full_ical_60kA-turns_4_sets_of_coil_slot_cetre_at_4m.root","read"); //VALGRIND
+  } else { 
+    pMagFile = new TFile("B_smoothed_full_0.05.root","read"); //VALGRIND
+  }
+  
+  if (!pMagFile) {
+    G4cout << "Error Field map root opening file !" << G4endl;
+    exit(-1);
+  } else {
+    G4cout<< " Field Map file being read opened" <<G4endl;
+  }
+  
+  fieldMapTree = (TTree*)pMagFile->Get("FieldMap");
+  
+  fieldMapTree->SetBranchAddress("xpos", &xpos); //in mm
+  fieldMapTree->SetBranchAddress("ypos", &ypos);
+  fieldMapTree->SetBranchAddress("zpos", &zpos);
+  fieldMapTree->SetBranchAddress("BxField",&BxField);  //in tesla
+  fieldMapTree->SetBranchAddress("ByField",&ByField);
+  fieldMapTree->SetBranchAddress("BzField",&BzField);
+  //double increment=0.05;
+  dofinput =3;
+  stepSize=50;
+  //slotxlength=4000;
+  //slotylength=4000;
+  //nslot= (16000/4000)*(16000/4000);
+  ndata=(int)(4000/stepSize)+1;
+  
+  int nentries=fieldMapTree->GetEntries();
+  int cnt[16]={0};
+  int arx[16]={0};
+  int ary[16]={ndata,ndata,ndata,ndata,ndata,ndata,ndata,ndata,ndata,ndata,ndata,ndata,ndata,ndata,ndata,ndata};
+  int ij=0;int jk=0; int kl=0;
+  int ix=0;int iy=0;
+  
+  for(int ixi=0;ixi<nentries-1;ixi++){
+    
+    
+    fieldMapTree->GetEntry(ixi);
+    ij=(int)(ypos/4000)*4+(int)(xpos/4000);
+    if(xpos!=16000&&ypos!=16000) {
+      jk=cnt[ij]++;
+      fvalx1[ij][jk]=BxField;
+      fvaly1[ij][jk]=ByField;
+      fvalz1[ij][jk]=BzField;
+    }
+    
+    if((int)xpos%4000==0 && (int)xpos/4000>0){
+      ix=ij-1;
+      if(ypos==16000){ix= ix-4;}
+      jk=cnt[ix]++;
+      fvalx1[ix][jk]=BxField;
+      fvaly1[ix][jk]=ByField;
+      fvalz1[ix][jk]=BzField;
+    }
+    if((int)ypos%4000==0 &&(int) ypos/4000>0){
+      iy=ij-4;
+      if(xpos!=16000 ){
+	jk=cnt[iy]++;
+	fvalx1[iy][jk]=BxField;
+	fvaly1[iy][jk]=ByField;
+	fvalz1[iy][jk]=BzField;
+      }
+      if((int)xpos%4000==0&& (int) xpos/4000>0  ){iy= iy-1;
+	jk=cnt[iy]++;
+	fvalx1[iy][jk]=BxField;
+	fvaly1[iy][jk]=ByField;
+	fvalz1[iy][jk]=BzField;
+      }
+    }
+    if((int)(xpos)%4000==50){
+      if(ypos!=16000){
+	kl=ary[ij]++;
+	array1[ij][kl]= ypos/m;
+      }
+      if((int)ypos%4000 ==0 && (int)ypos/4000>0){
+	kl=ary[ij-4]++;
+	array1[ij-4][kl]= ypos/m;
+      }
+    }
+
+    if((int)(ypos)%4000==50){
+      if(xpos!=16000){
+	kl=arx[ij]++;
+	array1[ij][kl]= xpos/m;}
+      if((int)xpos%4000==0 && (int)xpos/4000>0){
+	kl=arx[ij-1]++;
+	array1[ij-1][kl]= xpos/m;
+      }
+    }
+  }
+  fieldMapTree->GetEntry(0);
+  array1[0][0]=0;
+  array1[0][ndata]=0;
+  fvalx1[0][0]=BxField;
+  fvaly1[0][0]=ByField;
+  fvalz1[0][0]=BzField;
+}
+
+micalFieldPropagator::~micalFieldPropagator() {
+  if(pMagFile) {
+    pMagFile->Close();
+    delete pMagFile;
+    pMagFile=0;
+  }
+}
+
+void micalFieldPropagator::ElectroMagneticField(const double xyzc[3], double &Bx, double &By, int ftype) {
+  // translating xyzc[] position to the centre of the magnet. // Apoorva 7 Apr 2017
+
+  PosLayerTop = IRONLayerPosZ[nIRLayer-1] + irlayZ + StackPosInRoom[2] + INOroomPos[2];
+  PosLayerBot = IRONLayerPosZ[0] - irlayZ + StackPosInRoom[2] + INOroomPos[2];
+  // posINOMworldX = paradef->GetINOMPositionGlobalX();
+  // posINOMworldY = paradef->GetINOMPositionGlobalY();
+  // posINOMworldZ = paradef->GetINOMPositionGlobalZ();
+  
+  
+
+  int igrid[3]={0};
+  double Bxf=0;
+  double Byf=0;
+  int ndata1[]={81,81};
+  double tmppos[3];
+
+  if(xyzc[0] > parino[0]) {
+    tmppos[0]= xyzc[0]-200-16000;
+  } else if(xyzc[0] < -parino[0]) {
+    tmppos[0]= xyzc[0]+200+16000;
+  } else {
+    tmppos[0]= xyzc[0];
+  }
+  tmppos[1] = xyzc[1];
+  tmppos[2] = xyzc[2];
+
+  double tmpxpos = xyzc[0] - StackPosInRoom[0] - INOroomPos[0];
+  double tmpypos = xyzc[1] - StackPosInRoom[1] - INOroomPos[1];
+  double tmpzpos = xyzc[2];
+  
+  bool isInoModule = false;
+  if(abs(tmpxpos)<parirlay[0] && abs(tmpypos)<parirlay[1] && tmpzpos<PosLayerTop && tmpzpos>PosLayerBot) {
+    isInoModule = true;
+  }
+  
+  bool isIronLay = false;
+  double am22;
+  am22 = tmppos[2];
+  am22 = tmpzpos;
+  am22 = fabs(am22);
+  
+  if(fmod(am22,ironrpcZ)<irlayZ/*28.0*/ || fmod(am22,ironrpcZ)>ironrpcZ - irlayZ/*68.0*/) {
+    isIronLay = true;
+  }
+
+  igrid[0]= (int)((tmppos[0]+8000)*mm);
+  igrid[1]= (int)((tmppos[1]+8000)*mm);
+  igrid[2]= (int)(tmppos[2]*mm);
+  
+  if(isInoModule && isIronLay) {
+    F2int(0,2,dofinput,igrid,ndata1,Bxf); 
+    F2int(1,2,dofinput,igrid,ndata1,Byf); 
+    
+    Bx = Bxf*tesla;
+    By = Byf*tesla;
+    Bx = 0*tesla;
+    By = 1*tesla;
+  } else {
+    Bx = 0*tesla;
+    By = 0*tesla;
+  }
+ 
+#ifdef ddebug
+#endif
+}
+

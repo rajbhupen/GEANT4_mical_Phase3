@@ -1,0 +1,146 @@
+/run/verbose 2
+/control/execute vis.mac
+/mical/run/inout 0
+/mical/run/isVis 0
+/mical/run/isXterm 0
+/mical/gun/Gen 0
+/mical/gun/TopTrgLay 9
+/mical/gun/BottomTrgLay 6
+/mical/gun/pid 13
+/mical/gun/rndm off
+/mical/gun/vxsmear 0.
+/mical/gun/vysmear 200.
+/mical/gun/vzsmear 0.
+/mical/gun/energy 1.6
+/mical/gun/ensmear 0
+/mical/gun/incpos 0 -1073 -21
+/mical/gun/incdir 0. 0. -1.
+/mical/gun/phsmear 0
+/mical/run/output_file Gen_0_inout_0_Ev_1_raj
+/mical/run/input_file Gen_0_inout_0_Ev_1_raj
+/vis/open OGL 600x600-0+0
+/vis/sceneHandler/create OGL
+/vis/viewer/create ! ! 600x600-0+0
+/vis/viewer/refresh
+/vis/viewer/set/autoRefresh false
+/vis/verbose errors
+/vis/drawVolume
+/vis/scene/create
+/vis/scene/add/volume world
+/vis/sceneHandler/attach
+/vis/viewer/set/viewpointThetaPhi 0 0
+/vis/viewer/zoom 1.0
+/vis/scene/add/scale
+/vis/scene/notifyHandlers
+/vis/scene/add/axes 0 0 0 1
+/vis/scene/notifyHandlers
+/vis/scene/add/trajectories smooth
+/tracking/storeTrajectory 2
+/vis/scene/notifyHandlers
+/vis/modeling/trajectories/create/drawByCharge
+/vis/modeling/trajectories/drawByCharge-0/default/setDrawStepPts true
+/vis/scene/notifyHandlers scene-0
+/vis/modeling/trajectories/drawByCharge-0/default/setStepPtsSize 2
+/vis/scene/notifyHandlers scene-0
+/vis/scene/add/hits
+/vis/scene/notifyHandlers
+/vis/scene/endOfEventAction accumulate
+/vis/viewer/set/autoRefresh true
+/vis/viewer/refresh
+/vis/verbose warnings
+/vis/viewer/set/projection orthogonal
+/vis/viewer/refresh
+/vis/viewer/zoomTo 300.0
+/vis/viewer/refresh
+/vis/viewer/scaleTo 1 1 1
+/vis/viewer/refresh
+/vis/viewer/set/targetPoint 1.73182 0 0 m
+/vis/viewer/refresh
+/vis/viewer/dollyTo 0 fm
+/vis/viewer/refresh
+/vis/viewer/set/lightsMove object
+/vis/viewer/refresh
+/vis/viewer/set/lightsVector 1 1 1
+/vis/viewer/refresh
+/vis/viewer/set/rotationStyle constrainUpDirection
+/vis/viewer/refresh
+/vis/viewer/set/background 0 0 0 1
+/vis/viewer/refresh
+/vis/viewer/set/defaultColour 1 1 1 1
+/vis/viewer/refresh
+/vis/viewer/set/defaultTextColour 0 0 1 1
+/vis/viewer/refresh
+/vis/viewer/set/style wireframe
+/vis/viewer/refresh
+/vis/viewer/set/hiddenEdge false
+/vis/viewer/refresh
+/vis/viewer/set/auxiliaryEdge false
+/vis/viewer/refresh
+/vis/viewer/set/hiddenMarker false
+/vis/viewer/refresh
+/vis/viewer/set/globalLineWidthScale 1
+/vis/viewer/refresh
+/vis/viewer/set/globalMarkerScale 1
+/vis/viewer/refresh
+/vis/viewer/set/culling global true
+/vis/viewer/refresh
+/vis/viewer/set/culling invisible true
+/vis/viewer/refresh
+/vis/viewer/set/culling density false
+/vis/viewer/refresh
+/vis/viewer/set/culling coveredDaughters false
+/vis/viewer/refresh
+/vis/viewer/set/sectionPlane off
+/vis/viewer/refresh
+/vis/viewer/set/cutawayMode union
+/vis/viewer/refresh
+/vis/viewer/clearCutawayPlanes
+/vis/viewer/refresh
+/vis/viewer/set/explodeFactor 1 0 0 0 fm
+/vis/viewer/refresh
+/vis/viewer/set/lineSegmentsPerCircle 24
+/vis/viewer/refresh
+/control/execute gui.mac
+/control/execute icons.mac
+/gui/addIcon "Open macro file" open /control/execute
+/gui/addIcon "Save viewer state" save /vis/viewer/save
+/gui/addIcon "Move" move
+/gui/addIcon "Pick" pick
+/gui/addIcon "Zoom out" zoom_out
+/gui/addIcon "Zoom in" zoom_in
+/gui/addIcon "Rotate" rotate
+/gui/addIcon "Hidden line removal" hidden_line_removal
+/gui/addIcon "Hidden line and hidden surface removal" hidden_line_and_surface_removal
+/gui/addIcon "Surfaces" solid
+/gui/addIcon "Wireframe" wireframe
+/gui/addIcon "Perspective" perspective
+/gui/addIcon "Orthographic" ortho
+/gui/addMenu file File
+/gui/addButton file Quit exit
+/gui/addMenu run Run
+/gui/addButton run run_top "/control/execute run_t.mac"
+/gui/addButton run run_left "/control/execute run_l.mac"
+/gui/addButton run run_right "/control/execute run_r.mac"
+/gui/addButton run run_back "/control/execute run_b.mac"
+/gui/addButton run run_all "/control/execute run_all.mac"
+/gui/addMenu gun Gun
+/gui/addButton gun "50 MeV" "/gun/energy 50 MeV"
+/gui/addButton gun "1 GeV" "/gun/energy 1 GeV"
+/gui/addButton gun "10 GeV" "/gun/energy 10 GeV"
+/gui/addButton gun "e-" "/gun/particle e-"
+/gui/addButton gun "pi0" "/gun/particle pi0"
+/gui/addButton gun "pi+" "/gun/particle pi+"
+/gui/addButton gun "neutron" "/gun/particle neutron"
+/gui/addButton gun "proton" "/gun/particle proton"
+/gui/addMenu field Field
+/gui/addButton field "off" "/globalField/setValue 0   0 0 tesla"
+/gui/addButton field "0.2 tesla" "/globalField/setValue 0.2 0 0 tesla"
+/gui/addButton field "2.0 tesla" "/globalField/setValue 2.0 0 0 tesla"
+/gui/addMenu viewer Viewer
+/gui/addButton viewer "Set style surface" "/vis/viewer/set/style surface"
+/gui/addButton viewer "Set style wireframe" "/vis/viewer/set/style wireframe"
+/gui/addButton viewer "Refresh viewer" "/vis/viewer/refresh"
+/gui/addButton viewer "Update viewer (interaction or end-of-file)" "/vis/viewer/update"
+/gui/addButton viewer "Flush viewer (= refresh + update)" "/vis/viewer/flush"
+/gui/addButton viewer "Update scene" "/vis/scene/notifyHandlers"
+/gui/addIcon "Run beam on" user_icon "/run/beamOn 1" run.png

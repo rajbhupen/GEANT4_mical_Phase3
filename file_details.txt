@@ -1,0 +1,51 @@
+# mical+cmvd(Tiles Format): With Kohlahal trackfit algorithm.
+# mical: has 11 iron 11 RPC. Top 10th RPC is dummy only used in trackfitalg in presence of magfield (Note: this is changed see below)
+# bottom is iron then rpc
+
+
+#24 June 2022: added cosmic flux root file(flux_Pethu_FLUKA_SIBYLL.root) in gen4 in primary generator action.
+
+# June 2022: ijk was 1 in eventaction. so left wall was 4500 and top was 4600mm.
+cal0sdmessenger corrected.
+Tiles geometry added: 8tileno+nintile
+det area fixed position <e-10 added in mevent action
+
+# last iteration added in trackfit alg. to do extrapolation only if reconstruction is there.
+
+#25 June 2022: Extra walls shifted more back since few events with 1 &2 hits present.
+
+# 26 June 2022: Extrapolation to roof added.
+
+# not using random no. in MultipleScattering function in InoTrackfitAlg.cc
+
+//11/07/22
+
+# Changed Stack posin room
+# Added frpshift in shiftinZ
+
+# Removed Dummy layer RPC..
+- For this nlayer is then 10, iron layer is 11..
+- doubleLa in include/InoTrackFitAlg.h is 10, But ZPosLayer is 12, 11 for cmvd(Dummy) 12 for roof
+SO for extrapolation for cmvd added ZposLayer[10] by hand and kept diffplane==1 and totdist accordingly. Now extrapolation for cmvd will take place in one step as like roof.
+
+
+18 july 2022
+step size is 1mm in iron rest according to widths. InitTrack corrected. 
+Field Derivative is set 0 by hand.
+
+minclosedist<300 in EventAction.cc commented off
+
+# After meeting with Sir Monday 11 july 2022:
+scale magnetic field hist by 0.85(it was missing in my files).
+Also added InitTrack function in InotrackFitalg() before calling Get Propagator.
+
+# things to be done:
+Change Gen4:
+reduce cmvd branches
+
+
+
+
+
+
+
