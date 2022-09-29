@@ -21,6 +21,10 @@
 class micalEventActionMessenger;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+const int  layfirst =0;
+  const int  laylast =9;
+  const int nlayer=10;
+  const float xyPosDev=3*0.03/sqrt(12); // seven sigma 2.0; //maximum deviation of points from fit line (2 strp units) 2 *3cm = 0.06
 
 class micalEventAction : public G4UserEventAction
 {
@@ -60,6 +64,8 @@ bool LinePlaneInt(double* Line, double* Plane, double* Point);
   InoTrackCand_Manager* inoTrackCand_pointer;
 
   vector <CmvHit*> CmvHitBank[7][4]; //7:sides-top,left,right,back, 4:layers
+  vector <CmvCluster*> CmvClusterBank[7][4]; //7:sides-top,left,right,back, 4:layers
+
 private:
   micalDetectorParameterDef* paradef;
   double StripXWidth;
@@ -129,6 +135,32 @@ double PhyVolGlPos[7][4][3];
           double ztinter = 0;
 
 
+  vector <InoCluster*> ClustsInTrackBank[20][10];//ntrkmx is 20 in Mutlisim.h  
+
+  int occulyr;
+  int Nx,Ny;
+  double Xpos[nlayer];
+  bool Xusedpos[nlayer];
+  double Xdev[nlayer];
+
+  double Ypos[nlayer];
+  bool Yusedpos[nlayer];
+  double Ydev[nlayer];
+
+  double CorrTimeError;
+  double UnCorrTimeError;
+  double timeerr;
+
+  double errxsq[nlayer], errysq[nlayer];
+  
+	  double xslope, xinters;
+	  double yslope, yinters;
+
+  	  double xchi2, ychi2;
+	  int nmnhits =5;
+	  int mxchisq =2;
+	  double xerrcst, xerrcov, xerrlin;
+	  double yerrcst, yerrcov, yerrlin;
   
 	
 };

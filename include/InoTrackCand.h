@@ -489,7 +489,10 @@ double GetVtxUdVError() const;
 
   Int_t GetNDOF() const;
   void SetNDOF(Int_t);
+  Int_t GetNDOF2() const;
+  void SetNDOF2(Int_t);
 
+  
   Double_t GetRangeBiasedQP() const;
   void SetRangeBiasedQP(Double_t qp);
 
@@ -522,7 +525,7 @@ double GetVtxUdVError() const;
   int FCPC;
   int checkfcpc;
   Int_t mNDOF;
-  
+    Int_t mNDOF2;  
   double mVtxXX;
   double mVtxYY;  
   double mVtxTX;

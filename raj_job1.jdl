@@ -12,7 +12,7 @@ Executable = raj_jobwrapper.sh
 should_transfer_files = YES
 when_to_transfer_output = ON_EXIT
 
-transfer_input_files = mICAL,geo_mical_world20rpc.gdml,B_mical_hist.root,env.sh,corsikadata_4m.root,flux_Pethu_FLUKA_SIBYLL.root,noise_indi_sipm.root,Range.txt,runFiles
+transfer_input_files = mICAL,geo_mical_world20rpc.gdml,B_mical_hist.root,env.sh,flux_Pethu_FLUKA_SIBYLL.root,noise_indi_sipm.root,Range.txt,runFiles,Collated_evtraw_20181120_20210813ai_5of8.root
 
 
 transfer_output_files = fileOut

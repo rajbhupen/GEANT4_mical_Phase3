@@ -819,18 +819,12 @@ ShiftInZ = paradef->GetShiftInZ(0);
 	  
 	  while(brkpt) {
 
-	    // vx = 2.5*pargas[0]*(2*G4UniformRand()-1.0);
-	    // vy = 2.5*pargas[1]*(2*G4UniformRand()-1.0);
-	    // vz = RPCLayerPosZ[toptrgly];
-
-	    vx = 2.0*pargas[0]*(2*G4UniformRand()-1.0);
-	    //	    vy = 2.0*pargas[1]*(2*G4UniformRand()-1.0);//Single Stack
-	  
+	    vx = pargas[0]*(2*G4UniformRand()-1.0);
+            vy =(2*(pargas[1]+parchm[1])*G4UniformRand())+(-parchm[1]-paradef->GetParFrpBox(1)+paradef->GetShiftInY() );
 	    vz = RPCLayerPosZ[toptrgly];
 
-	    vy =(2*(pargas[1]+parchm[1])*G4UniformRand())+(-parchm[1]-paradef->GetParFrpBox(1)+paradef->GetShiftInY() );
 	    cout<<"vy "<<vy<<endl;	    
-	    if(vy<(parchm[1]+paradef->GetShiftInY()-paradef->GetParFrpBox(1)) && vy > (-parchm[1]-paradef->GetParFrpBox(1)+paradef->GetShiftInY()+2*pargas[1] ) ) continue;//Dead space between 2-stacks
+	    if(vy<(parchm[1]+paradef->GetShiftInY()-paradef->GetParFrpBox(1)) && vy > (-parchm[1]+paradef->GetParFrpBox(1)+paradef->GetShiftInY()+2*pargas[1] ) ) continue;//Dead space between 2-stacks
 
 	    cout<<"..inside top RPC.."<<endl;
 	    if(fabs(vx)<pargas[0]) {
@@ -858,7 +852,7 @@ ShiftInZ = paradef->GetShiftInZ(0);
 	   
 	      if(fabs(Point1[0])<pargas[0]){
 
-		 if( Point1[1]>(parchm[1]+paradef->GetShiftInY()-paradef->GetParFrpBox(1) )    ||  Point1[1] < (-parchm[1]-paradef->GetParFrpBox(1)+paradef->GetShiftInY()+2*pargas[1] ) ) { //Last condition for deadspace between 2 stacks
+		if( (Point1[1]>(parchm[1]+paradef->GetShiftInY()-paradef->GetParFrpBox(1) ) && Point1[1] < (parchm[1]+paradef->GetShiftInY()+paradef->GetParFrpBox(1)+2*pargas[1] ) )    ||  (Point1[1] < (-parchm[1]+paradef->GetParFrpBox(1)+paradef->GetShiftInY()+2*pargas[1]) && Point1[1]>  (-parchm[1]-paradef->GetParFrpBox(1)+paradef->GetShiftInY())          ) ) { //Last condition for deadspace between 2 stacks
 		 cout<<"..inside bottom RPC.."<<endl;
 		pAnalysis->naperture++;
 		double Line2[6];

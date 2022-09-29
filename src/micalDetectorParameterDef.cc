@@ -575,15 +575,15 @@ ScintLayGPos[0][0][1]=StackPosInRoom[1]+ INOroomPos[1];
  
 ScintLayGPos[0][1][0]=ScintLayGPos[0][0][0]+ScntLayShifTop;
 ScintLayGPos[0][1][1]=ScintLayGPos[0][0][1];
-ScintLayGPos[0][1][2]=ScintLayGPos[0][0][2] + 9 +AlTileBase+ partopscint[2];
+ScintLayGPos[0][1][2]=ScintLayGPos[0][0][2] + 9 + AlTileBase + partopscint[2];
 
 ScintLayGPos[0][2][0]=ScintLayGPos[0][1][0]+ScntLayShifTop;
 ScintLayGPos[0][2][1]=ScintLayGPos[0][1][1];
-ScintLayGPos[0][2][2]=ScintLayGPos[0][1][2]+ partopscint[2] +AlTileBase +9;
+ScintLayGPos[0][2][2]=ScintLayGPos[0][1][2] + partopscint[2] + AlTileBase + 9;
 
-ScintLayGPos[0][3][0]=ScintLayGPos[0][2][0]+ScntLayShifTop;
+ScintLayGPos[0][3][0]=ScintLayGPos[0][2][0] + ScntLayShifTop;
 ScintLayGPos[0][3][1]=ScintLayGPos[0][2][1];
-ScintLayGPos[0][3][2]=ScintLayGPos[0][2][2]+ 9 +partopscint[2]+ partopscint[2];
+ ScintLayGPos[0][3][2]=ScintLayGPos[0][2][2] + 9 + AlTileBase + partopscint[2]  ;
 
 
 

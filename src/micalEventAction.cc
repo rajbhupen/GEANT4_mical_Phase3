@@ -89,13 +89,13 @@ bool micalEventAction::ClosDistbtwLineEdge(double* Line,double* Plane, std::vect
  //cmv straightline extrapolation
 
 bool micalEventAction::LinePlaneInt(double* Line, double* Plane, double* Point){
-  cout<<"bool micalEventAction::LinePlaneInt(double* Line, double* Plane, double* Point){"<<endl;
+  //  cout<<"bool micalEventAction::LinePlaneInt(double* Line, double* Plane, double* Point){"<<endl;
   //	G4double Dist;
   //	G4double a, b;
   bool ok;
 	
   double b = Line[3]*Plane[3] + Line[4]*Plane[4] + Line[5]*Plane[5];
-  cout<<Line[3]<<" "<<Plane[3]<<" "<<Line[4]<<" "<<Plane[4]<<" "<<Line[5]<<" "<<Plane[5]<<" "<<b<<endl;
+  //  cout<<Line[3]<<" "<<Plane[3]<<" "<<Line[4]<<" "<<Plane[4]<<" "<<Line[5]<<" "<<Plane[5]<<" "<<b<<endl;
   // ok= (fabs(b) > 1e-10) ? 1 : 0;//
   
   ok= ((1.0*b)> 1e-10) ? 1 : 0;//#we only do intersection with those planes which muon passed first..
@@ -103,16 +103,16 @@ bool micalEventAction::LinePlaneInt(double* Line, double* Plane, double* Point){
     double a=(Plane[0]-Line[0])*Plane[3] +
       (Plane[1]-Line[1])*Plane[4] +
       (Plane[2]-Line[2])*Plane[5];
-    cout<<"a "<<a<<endl;
+    //    cout<<"a "<<a<<endl;
     G4double Dist = a/b;
-    cout<<"dist: "<<Dist<<endl;
+    //    cout<<"dist: "<<Dist<<endl;
     
     Point[0] = Line[0] + Line[3]*Dist;
     Point[1] = Line[1] + Line[4]*Dist;
     Point[2] = Line[2] + Line[5]*Dist;
-    cout<<"Point "<<Point[0]<<" "<<Point[1]<<" "<<Point[2]<<endl;
+    //    cout<<"Point "<<Point[0]<<" "<<Point[1]<<" "<<Point[2]<<endl;
   } else {
-    cout<<"Setting Point =-100000 "<< endl;
+    //    cout<<"Setting Point =-100000 "<< endl;
     Point[0]=-1000000; Point[1]=-1000000; Point[2]=-1000000;
   }
   return ok;
@@ -123,30 +123,43 @@ bool micalEventAction::LinePlaneInt(double* Line, double* Plane, double* Point){
 
 
 void micalEventAction::CMVD_Extrapolation(){   
+
   
   cout<<"......................CMVD straight line extrapolation........................."<<endl;
-  CmvLayExtra_pointer = new CmvLayExtra_Manager();
-  CmvLayExtra_pointer->CmvLayExtra_list.clear();
+
+  cout<<"Store in CmvClusterBank"<<endl;
+  cout<<"CmvCluster_pointer->CmvCluster_list.size() "<<CmvCluster_pointer->CmvCluster_list.size()<<endl;
+  for(int pl=0;pl<7;pl++){
+    for(int la=0;la<4;la++){
+
+      CmvClusterBank[pl][la].clear();
+
+
+    }
+
+
+
+  }
+  for (unsigned int ix=0; ix<CmvCluster_pointer->CmvCluster_list.size(); ix++) {
+    CmvCluster* tmpcluster = CmvCluster_pointer->CmvCluster_list[ix];
+    tmpcluster->Print();
+    CmvClusterBank[tmpcluster->GetPlane()-1][tmpcluster->GetLayer()].push_back(tmpcluster);
+  }
+
+  
+  //  CmvLayExtra_pointer = new CmvLayExtra_Manager();
+  //  CmvLayExtra_pointer->CmvLayExtra_list.clear();
 
 
   int counter=0;
-   
 
-
-
-
-
-
-
-
-  
-  //	paradef = micalDetectorParameterDef::AnPointer;
-  // InoTrackCand_Manager *pfitTrack = InoTrackCand_Manager::APointer;
   
   int ijmax=0;
   cout<<"check ab "<<pAnalysis->ntrkt<<endl;
   for (unsigned jk=0; jk<pAnalysis->ntrkt ; jk++) {
-    cout<<"ntrkt "<<pAnalysis->ntrkt<<endl;
+
+    pAnalysis->CMVDnLayer =pAnalysis->cmvdnlayermx;
+    cout<<"ntrkt CMVDnLayer "<<pAnalysis->ntrkt<<" "<<pAnalysis->CMVDnLayer<< endl;
   
     //		double    momvx = pAnalysis->momvx[jk];
     //This theta phi represents a track going downward. The dirvector using this theta phi matched with generated direction vector (in PGA after...)
@@ -185,242 +198,7 @@ void micalEventAction::CMVD_Extrapolation(){
     //    pAnalysis->chisq[jk]=-1.0; pAnalysis->chisq2[jk]=-1.0;
     //    pAnalysis->posxvx[jk]=0.0;  pAnalysis->posyvx[jk]=0.0;  pAnalysis->poszvx[jk]=0.0;
    
-    pAnalysis->cmv_lay[jk]=-1;
-    pAnalysis->extra_diff1[jk]=pAnalysis->extra_diff2[jk]=pAnalysis->extra_diff3[jk]= 1000000;
 
-    
-    pAnalysis->cmv_locno00[jk]=0; pAnalysis->cmv_locno01[jk]=0; pAnalysis->cmv_locno02[jk]=0; pAnalysis->cmv_locno03[jk]=0;
-    pAnalysis->cmv_locno10[jk]=0; pAnalysis->cmv_locno11[jk]=0; pAnalysis->cmv_locno12[jk]=0;
-    pAnalysis->cmv_locno20[jk]=0; pAnalysis->cmv_locno21[jk]=0; pAnalysis->cmv_locno22[jk]=0;
-    pAnalysis->cmv_locno30[jk]=0; pAnalysis->cmv_locno31[jk]=0; pAnalysis->cmv_locno32[jk]=0;    
-    pAnalysis->cmv_locno40[jk]=0; pAnalysis->cmv_locno41[jk]=0; pAnalysis->cmv_locno42[jk]=0;
-    pAnalysis->cmv_locno50[jk]=0; pAnalysis->cmv_locno51[jk]=0; pAnalysis->cmv_locno52[jk]=0;
-    pAnalysis->cmv_locno60[jk]=0; pAnalysis->cmv_locno61[jk]=0; pAnalysis->cmv_locno62[jk]=0;
-
-
-   
-    pAnalysis->distofclosapp[jk]=-1000000;
-    pAnalysis->planeedge[jk]=-1000000;
-    pAnalysis->cmv_Expposx[jk] = -1000000; pAnalysis->cmv_Expposy[jk] = -1000000; pAnalysis->cmv_Expposz[jk] = -1000000;
-    pAnalysis->cmv_DCAposx[jk]; pAnalysis->cmv_DCAposy[jk]; pAnalysis->cmv_DCAposz[jk];
-    
-    pAnalysis->extrapolatim00[jk]=-1000000; pAnalysis->extrapolatim01[jk]=-1000000; pAnalysis->extrapolatim02[jk]=-1000000; pAnalysis->extrapolatim03[jk]=-1000000;
-    pAnalysis->Trig00[jk]=-1000000; pAnalysis->Trig01[jk]=-1000000; pAnalysis->Trig02[jk]=-1000000; pAnalysis->Trig03[jk]=-1000000;
- 
-    pAnalysis->clustersize00[jk]=100; pAnalysis->clustersize01[jk]=100; pAnalysis->clustersize02[jk]=100; pAnalysis->clustersize03[jk]=100;
-    pAnalysis->clustersize10[jk]=100; pAnalysis->clustersize11[jk]=100; pAnalysis->clustersize12[jk]=100;
-    pAnalysis->clustersize20[jk]=100; pAnalysis->clustersize21[jk]=100; pAnalysis->clustersize22[jk]=100;
-    pAnalysis->clustersize30[jk]=100; pAnalysis->clustersize31[jk]=100; pAnalysis->clustersize32[jk]=100; 
-    pAnalysis->clustersize40[jk]=100; pAnalysis->clustersize41[jk]=100; pAnalysis->clustersize42[jk]=100; 
-    pAnalysis->clustersize50[jk]=100; pAnalysis->clustersize51[jk]=100; pAnalysis->clustersize52[jk]=100; 
-    pAnalysis->clustersize60[jk]=100; pAnalysis->clustersize61[jk]=100; pAnalysis->clustersize62[jk]=100; 
-    
-    pAnalysis->extrapolposx00[jk]=-1000000; pAnalysis->extrapolposy00[jk]=-1000000; pAnalysis->extrapolposz00[jk]=-1000000; pAnalysis->cmvhitrecoposx00[jk]=-1000000;   pAnalysis->cmvhitrecoposy00[jk]=-1000000; pAnalysis->cmvhitrecoposz00[jk]=-1000000; pAnalysis->cmvhittrueposx00[jk]=-1000000; pAnalysis->cmvhittrueposy00[jk]=-1000000; pAnalysis->cmvhittrueposz00[jk]=-1000000; pAnalysis->cmvhitrecoposxerr00[jk]=-1000000; pAnalysis->cmvhitrecoposyerr00[jk]=-1000000; pAnalysis->cmvhitrecoposzerr00[jk]=-1000000;         pAnalysis->extrapolposxerr00[jk]=-1000000; pAnalysis->extrapolposyerr00[jk]=-1000000; pAnalysis->extrapolposzerr00[jk]=-1000000;      pAnalysis->extrapolposx01[jk]=-1000000; pAnalysis->extrapolposy01[jk]=-1000000; pAnalysis->extrapolposz01[jk]=-1000000;      pAnalysis->cmvhitrecoposx01[jk]=-1000000; pAnalysis->cmvhitrecoposy01[jk]=-1000000; pAnalysis->cmvhitrecoposz01[jk]=-1000000;   pAnalysis->cmvhittrueposx01[jk]=-1000000; pAnalysis->cmvhittrueposy01[jk]=-1000000; pAnalysis->cmvhittrueposz01[jk]=-1000000; pAnalysis->cmvhitrecoposxerr01[jk]=-1000000; pAnalysis->cmvhitrecoposyerr01[jk]=-1000000; pAnalysis->cmvhitrecoposzerr01[jk]=-1000000;         pAnalysis->extrapolposxerr01[jk]=-1000000; pAnalysis->extrapolposyerr01[jk]=-1000000; pAnalysis->extrapolposzerr01[jk]=-1000000;                   pAnalysis->extrapolposx02[jk]=-1000000; pAnalysis->extrapolposy02[jk]=-1000000; pAnalysis->extrapolposz02[jk]=-1000000;      pAnalysis->cmvhitrecoposx02[jk]=-1000000; pAnalysis->cmvhitrecoposy02[jk]=-1000000; pAnalysis->cmvhitrecoposz02[jk]=-1000000; pAnalysis->cmvhittrueposx02[jk]=-1000000; pAnalysis->cmvhittrueposy02[jk]=-1000000; pAnalysis->cmvhittrueposz02[jk]=-1000000; pAnalysis->cmvhitrecoposxerr02[jk]=-1000000; pAnalysis->cmvhitrecoposyerr02[jk]=-1000000; pAnalysis->cmvhitrecoposzerr02[jk]=-1000000; pAnalysis->extrapolposxerr02[jk]=-1000000; pAnalysis->extrapolposyerr02[jk]=-1000000; pAnalysis->extrapolposzerr02[jk]=-1000000; pAnalysis->extrapolposx03[jk]=-1000000; pAnalysis->extrapolposy03[jk]=-1000000; pAnalysis->extrapolposz03[jk]=-1000000; pAnalysis->cmvhitrecoposx03[jk]=-1000000; pAnalysis->cmvhitrecoposy03[jk]=-1000000; pAnalysis->cmvhitrecoposz03[jk]=-1000000; pAnalysis->cmvhittrueposx03[jk]=-1000000; pAnalysis->cmvhittrueposy03[jk]=-1000000; pAnalysis->cmvhittrueposz03[jk]=-1000000; pAnalysis->cmvhitrecoposxerr03[jk]=-1000000; pAnalysis->cmvhitrecoposyerr03[jk]=-1000000; pAnalysis->cmvhitrecoposzerr03[jk]=-1000000;         pAnalysis->extrapolposxerr03[jk]=-1000000; pAnalysis->extrapolposyerr03[jk]=-1000000; pAnalysis->extrapolposzerr03[jk]=-1000000;                 pAnalysis->extrapolposx10[jk]=-1000000; pAnalysis->extrapolposy10[jk]=-1000000; pAnalysis->extrapolposz10[jk]=-1000000;      pAnalysis->cmvhitrecoposx10[jk]=-1000000; pAnalysis->cmvhitrecoposy10[jk]=-1000000; pAnalysis->cmvhitrecoposz10[jk]=-1000000;   pAnalysis->cmvhittrueposx10[jk]=-1000000; pAnalysis->cmvhittrueposy10[jk]=-1000000; pAnalysis->cmvhittrueposz10[jk]=-1000000;      pAnalysis->cmvhitrecoposxerr10[jk]=-1000000; pAnalysis->cmvhitrecoposyerr10[jk]=-1000000; pAnalysis->cmvhitrecoposzerr10[jk]=-1000000;         pAnalysis->extrapolposxerr10[jk]=-1000000; pAnalysis->extrapolposyerr10[jk]=-1000000; pAnalysis->extrapolposzerr10[jk]=-1000000;                pAnalysis->extrapolposx11[jk]=-1000000; pAnalysis->extrapolposy11[jk]=-1000000; pAnalysis->extrapolposz11[jk]=-1000000;      pAnalysis->cmvhitrecoposx11[jk]=-1000000; pAnalysis->cmvhitrecoposy11[jk]=-1000000; pAnalysis->cmvhitrecoposz11[jk]=-1000000;   pAnalysis->cmvhittrueposx11[jk]=-1000000; pAnalysis->cmvhittrueposy11[jk]=-1000000; pAnalysis->cmvhittrueposz11[jk]=-1000000;     pAnalysis->cmvhitrecoposxerr11[jk]=-1000000; pAnalysis->cmvhitrecoposyerr11[jk]=-1000000; pAnalysis->cmvhitrecoposzerr11[jk]=-1000000;         pAnalysis->extrapolposxerr11[jk]=-1000000; pAnalysis->extrapolposyerr11[jk]=-1000000; pAnalysis->extrapolposzerr11[jk]=-1000000;                pAnalysis->extrapolposx12[jk]=-1000000; pAnalysis->extrapolposy12[jk]=-1000000; pAnalysis->extrapolposz12[jk]=-1000000;      pAnalysis->cmvhitrecoposx12[jk]=-1000000; pAnalysis->cmvhitrecoposy12[jk]=-1000000; pAnalysis->cmvhitrecoposz12[jk]=-1000000;   pAnalysis->cmvhittrueposx12[jk]=-1000000; pAnalysis->cmvhittrueposy12[jk]=-1000000; pAnalysis->cmvhittrueposz12[jk]=-1000000;      pAnalysis->cmvhitrecoposxerr12[jk]=-1000000; pAnalysis->cmvhitrecoposyerr12[jk]=-1000000; pAnalysis->cmvhitrecoposzerr12[jk]=-1000000;         pAnalysis->extrapolposxerr12[jk]=-1000000; pAnalysis->extrapolposyerr12[jk]=-1000000; pAnalysis->extrapolposzerr12[jk]=-1000000;
-    pAnalysis->extrapolposx20[jk]=-1000000; pAnalysis->extrapolposy20[jk]=-1000000; pAnalysis->extrapolposz20[jk]=-1000000;      pAnalysis->cmvhitrecoposx20[jk]=-1000000; pAnalysis->cmvhitrecoposy20[jk]=-1000000; pAnalysis->cmvhitrecoposz20[jk]=-1000000;   pAnalysis->cmvhittrueposx20[jk]=-1000000; pAnalysis->cmvhittrueposy20[jk]=-1000000; pAnalysis->cmvhittrueposz20[jk]=-1000000;      pAnalysis->cmvhitrecoposxerr20[jk]=-1000000; pAnalysis->cmvhitrecoposyerr20[jk]=-1000000; pAnalysis->cmvhitrecoposzerr20[jk]=-1000000;         pAnalysis->extrapolposxerr20[jk]=-1000000; pAnalysis->extrapolposyerr20[jk]=-1000000; pAnalysis->extrapolposzerr20[jk]=-1000000;
-
-
-
-    //   int laymax;
-    //   for(int loc = 0;loc<4;loc++){
-    //     if(loc==0){laymax==4;}
-    //     else{laymax==3;}
-    //         for(int lay = 0;lay<laymax;lay++){
-    // 	    pAnalysis->TString::Format("extrapolposx%d%d",loc,lay)[jk]=-1000000;
-    // 	    pAnalysis->TString::Format("extrapolposy%d%d",loc,lay)[jk]=-1000000;
-    // pAnalysis->TString::Format("extrapolposz%d%d",loc,lay)[jk]=-1000000;
-
-    //   pAnalysis->TString::Format("cmvhittrueposx%d%d",loc,lay)[jk]=-1000000;
-    // pAnalysis->TString::Format("cmvhittrueposy%d%d",loc,lay)[jk]=-1000000;
-    // pAnalysis->TString::Format("cmvhittrueposz%d%d",loc,lay)[jk]=-1000000;
-
-
-    //   pAnalysis->TString::Format("cmvhitrecoposx%d%d",loc,lay)[jk]=-1000000;
-    // pAnalysis->TString::Format("cmvhitrecoposy%d%d",loc,lay)[jk]=-1000000;
-    // pAnalysis->TString::Format("cmvhitrecoposz%d%d",loc,lay)[jk]=-1000000;
-
-
-    //   pAnalysis->TString::Format("cmvhitrecoposxerr%d%d",loc,lay)[jk]=-1000000;
-    // pAnalysis->TString::Format("cmvhitrecoposyerr%d%d",loc,lay)[jk]=-1000000;
-    // pAnalysis->TString::Format("cmvhitrecoposzerr%d%d",loc,lay)[jk]=-1000000;
-
-
-
-    //   pAnalysis->TString::Format("extrapolposxerr%d%d",loc,lay)[jk]=-1000000;
-    // pAnalysis->TString::Format("extrapolposyerr%d%d",loc,lay)[jk]=-1000000;
-    // pAnalysis->TString::Format("extrapolposzerr%d%d",loc,lay)[jk]=-1000000;
-
-
-
-    //   }
-    //   }
-
-
-    pAnalysis->extrapolposx20[jk]=-1000000; pAnalysis->extrapolposy21[jk]=-1000000; pAnalysis->extrapolposz21[jk]=-1000000;      pAnalysis->cmvhitrecoposx21[jk]=-1000000; pAnalysis->cmvhitrecoposy21[jk]=-1000000; pAnalysis->cmvhitrecoposz21[jk]=-1000000;   pAnalysis->cmvhittrueposx21[jk]=-1000000; pAnalysis->cmvhittrueposy21[jk]=-1000000; pAnalysis->cmvhittrueposz21[jk]=-1000000;      pAnalysis->cmvhitrecoposxerr21[jk]=-1000000; pAnalysis->cmvhitrecoposyerr21[jk]=-1000000; pAnalysis->cmvhitrecoposzerr21[jk]=-1000000;         pAnalysis->extrapolposxerr21[jk]=-1000000; pAnalysis->extrapolposyerr21[jk]=-1000000; pAnalysis->extrapolposzerr21[jk]=-1000000;
-    
-    pAnalysis->extrapolposx22[jk]=-1000000; pAnalysis->extrapolposy22[jk]=-1000000; pAnalysis->extrapolposz22[jk]=-1000000;      pAnalysis->cmvhitrecoposx22[jk]=-1000000; pAnalysis->cmvhitrecoposy22[jk]=-1000000; pAnalysis->cmvhitrecoposz22[jk]=-1000000;   pAnalysis->cmvhittrueposx22[jk]=-1000000; pAnalysis->cmvhittrueposy22[jk]=-1000000; pAnalysis->cmvhittrueposz22[jk]=-1000000;      pAnalysis->cmvhitrecoposxerr22[jk]=-1000000; pAnalysis->cmvhitrecoposyerr22[jk]=-1000000; pAnalysis->cmvhitrecoposzerr22[jk]=-1000000;         pAnalysis->extrapolposxerr22[jk]=-1000000; pAnalysis->extrapolposyerr22[jk]=-1000000; pAnalysis->extrapolposzerr22[jk]=-1000000;          pAnalysis->extrapolposx30[jk]=-1000000; pAnalysis->extrapolposy30[jk]=-1000000; pAnalysis->extrapolposz30[jk]=-1000000;      pAnalysis->cmvhitrecoposx30[jk]=-1000000; pAnalysis->cmvhitrecoposy30[jk]=-1000000; pAnalysis->cmvhitrecoposz30[jk]=-1000000;   pAnalysis->cmvhittrueposx30[jk]=-1000000; pAnalysis->cmvhittrueposy30[jk]=-1000000; pAnalysis->cmvhittrueposz30[jk]=-1000000;      pAnalysis->cmvhitrecoposxerr30[jk]=-1000000; pAnalysis->cmvhitrecoposyerr30[jk]=-1000000; pAnalysis->cmvhitrecoposzerr30[jk]=-1000000;         pAnalysis->extrapolposxerr30[jk]=-1000000; pAnalysis->extrapolposyerr30[jk]=-1000000; pAnalysis->extrapolposzerr30[jk]=-1000000;           pAnalysis->extrapolposx31[jk]=-1000000; pAnalysis->extrapolposy31[jk]=-1000000; pAnalysis->extrapolposz31[jk]=-1000000;      pAnalysis->cmvhitrecoposx31[jk]=-1000000; pAnalysis->cmvhitrecoposy31[jk]=-1000000; pAnalysis->cmvhitrecoposz31[jk]=-1000000;   pAnalysis->cmvhittrueposx31[jk]=-1000000; pAnalysis->cmvhittrueposy31[jk]=-1000000; pAnalysis->cmvhittrueposz31[jk]=-1000000;      pAnalysis->cmvhitrecoposxerr31[jk]=-1000000; pAnalysis->cmvhitrecoposyerr31[jk]=-1000000; pAnalysis->cmvhitrecoposzerr31[jk]=-1000000;         pAnalysis->extrapolposxerr31[jk]=-1000000; pAnalysis->extrapolposyerr31[jk]=-1000000; pAnalysis->extrapolposzerr31[jk]=-1000000;                pAnalysis->extrapolposx32[jk]=-1000000; pAnalysis->extrapolposy32[jk]=-1000000; pAnalysis->extrapolposz32[jk]=-1000000;      pAnalysis->cmvhitrecoposx32[jk]=-1000000; pAnalysis->cmvhitrecoposy32[jk]=-1000000; pAnalysis->cmvhitrecoposz32[jk]=-1000000;   pAnalysis->cmvhittrueposx32[jk]=-1000000; pAnalysis->cmvhittrueposy32[jk]=-1000000; pAnalysis->cmvhittrueposz32[jk]=-1000000;      pAnalysis->cmvhitrecoposxerr32[jk]=-1000000; pAnalysis->cmvhitrecoposyerr32[jk]=-1000000; pAnalysis->cmvhitrecoposzerr32[jk]=-1000000;         pAnalysis->extrapolposxerr32[jk]=-1000000; pAnalysis->extrapolposyerr32[jk]=-1000000; pAnalysis->extrapolposzerr32[jk]=-1000000;  
- 
-
-
-    pAnalysis->extrapolposx40[jk]=-1000000; pAnalysis->extrapolposy40[jk]=-1000000; pAnalysis->extrapolposz40[jk]=-1000000;      pAnalysis->cmvhitrecoposx40[jk]=-1000000; pAnalysis->cmvhitrecoposy40[jk]=-1000000; pAnalysis->cmvhitrecoposz40[jk]=-1000000;   pAnalysis->cmvhittrueposx40[jk]=-1000000; pAnalysis->cmvhittrueposy40[jk]=-1000000; pAnalysis->cmvhittrueposz40[jk]=-1000000;      pAnalysis->cmvhitrecoposxerr40[jk]=-1000000; pAnalysis->cmvhitrecoposyerr40[jk]=-1000000; pAnalysis->cmvhitrecoposzerr40[jk]=-1000000;         pAnalysis->extrapolposxerr40[jk]=-1000000; pAnalysis->extrapolposyerr40[jk]=-1000000; pAnalysis->extrapolposzerr40[jk]=-1000000;           pAnalysis->extrapolposx41[jk]=-1000000; pAnalysis->extrapolposy41[jk]=-1000000; pAnalysis->extrapolposz41[jk]=-1000000;      pAnalysis->cmvhitrecoposx41[jk]=-1000000; pAnalysis->cmvhitrecoposy41[jk]=-1000000; pAnalysis->cmvhitrecoposz41[jk]=-1000000;   pAnalysis->cmvhittrueposx41[jk]=-1000000; pAnalysis->cmvhittrueposy41[jk]=-1000000; pAnalysis->cmvhittrueposz41[jk]=-1000000;      pAnalysis->cmvhitrecoposxerr41[jk]=-1000000; pAnalysis->cmvhitrecoposyerr41[jk]=-1000000; pAnalysis->cmvhitrecoposzerr41[jk]=-1000000;         pAnalysis->extrapolposxerr41[jk]=-1000000; pAnalysis->extrapolposyerr41[jk]=-1000000; pAnalysis->extrapolposzerr41[jk]=-1000000;                pAnalysis->extrapolposx42[jk]=-1000000; pAnalysis->extrapolposy42[jk]=-1000000; pAnalysis->extrapolposz42[jk]=-1000000;      pAnalysis->cmvhitrecoposx42[jk]=-1000000; pAnalysis->cmvhitrecoposy42[jk]=-1000000; pAnalysis->cmvhitrecoposz42[jk]=-1000000;   pAnalysis->cmvhittrueposx42[jk]=-1000000; pAnalysis->cmvhittrueposy42[jk]=-1000000; pAnalysis->cmvhittrueposz42[jk]=-1000000;      pAnalysis->cmvhitrecoposxerr42[jk]=-1000000; pAnalysis->cmvhitrecoposyerr42[jk]=-1000000; pAnalysis->cmvhitrecoposzerr42[jk]=-1000000;         pAnalysis->extrapolposxerr42[jk]=-1000000; pAnalysis->extrapolposyerr42[jk]=-1000000; pAnalysis->extrapolposzerr42[jk]=-1000000;
-
-
-
-
-
-    pAnalysis->extrapolposx50[jk]=-1000000; pAnalysis->extrapolposy50[jk]=-1000000; pAnalysis->extrapolposz50[jk]=-1000000;      pAnalysis->cmvhitrecoposx50[jk]=-1000000; pAnalysis->cmvhitrecoposy50[jk]=-1000000; pAnalysis->cmvhitrecoposz50[jk]=-1000000;   pAnalysis->cmvhittrueposx50[jk]=-1000000; pAnalysis->cmvhittrueposy50[jk]=-1000000; pAnalysis->cmvhittrueposz50[jk]=-1000000;      pAnalysis->cmvhitrecoposxerr50[jk]=-1000000; pAnalysis->cmvhitrecoposyerr50[jk]=-1000000; pAnalysis->cmvhitrecoposzerr50[jk]=-1000000;         pAnalysis->extrapolposxerr50[jk]=-1000000; pAnalysis->extrapolposyerr50[jk]=-1000000; pAnalysis->extrapolposzerr50[jk]=-1000000;           pAnalysis->extrapolposx51[jk]=-1000000; pAnalysis->extrapolposy51[jk]=-1000000; pAnalysis->extrapolposz51[jk]=-1000000;      pAnalysis->cmvhitrecoposx51[jk]=-1000000; pAnalysis->cmvhitrecoposy51[jk]=-1000000; pAnalysis->cmvhitrecoposz51[jk]=-1000000;   pAnalysis->cmvhittrueposx51[jk]=-1000000; pAnalysis->cmvhittrueposy51[jk]=-1000000; pAnalysis->cmvhittrueposz51[jk]=-1000000;      pAnalysis->cmvhitrecoposxerr51[jk]=-1000000; pAnalysis->cmvhitrecoposyerr51[jk]=-1000000; pAnalysis->cmvhitrecoposzerr51[jk]=-1000000;         pAnalysis->extrapolposxerr51[jk]=-1000000; pAnalysis->extrapolposyerr51[jk]=-1000000; pAnalysis->extrapolposzerr51[jk]=-1000000;                pAnalysis->extrapolposx52[jk]=-1000000; pAnalysis->extrapolposy52[jk]=-1000000; pAnalysis->extrapolposz52[jk]=-1000000;      pAnalysis->cmvhitrecoposx52[jk]=-1000000; pAnalysis->cmvhitrecoposy52[jk]=-1000000; pAnalysis->cmvhitrecoposz52[jk]=-1000000;   pAnalysis->cmvhittrueposx52[jk]=-1000000; pAnalysis->cmvhittrueposy52[jk]=-1000000; pAnalysis->cmvhittrueposz52[jk]=-1000000;      pAnalysis->cmvhitrecoposxerr52[jk]=-1000000; pAnalysis->cmvhitrecoposyerr52[jk]=-1000000; pAnalysis->cmvhitrecoposzerr52[jk]=-1000000;         pAnalysis->extrapolposxerr52[jk]=-1000000; pAnalysis->extrapolposyerr52[jk]=-1000000; pAnalysis->extrapolposzerr52[jk]=-1000000;  
-
-
-    pAnalysis->extrapolposx60[jk]=-1000000; pAnalysis->extrapolposy60[jk]=-1000000; pAnalysis->extrapolposz60[jk]=-1000000;      pAnalysis->cmvhitrecoposx60[jk]=-1000000; pAnalysis->cmvhitrecoposy60[jk]=-1000000; pAnalysis->cmvhitrecoposz60[jk]=-1000000;   pAnalysis->cmvhittrueposx60[jk]=-1000000; pAnalysis->cmvhittrueposy60[jk]=-1000000; pAnalysis->cmvhittrueposz60[jk]=-1000000;      pAnalysis->cmvhitrecoposxerr60[jk]=-1000000; pAnalysis->cmvhitrecoposyerr60[jk]=-1000000; pAnalysis->cmvhitrecoposzerr60[jk]=-1000000;         pAnalysis->extrapolposxerr60[jk]=-1000000; pAnalysis->extrapolposyerr60[jk]=-1000000; pAnalysis->extrapolposzerr60[jk]=-1000000;           pAnalysis->extrapolposx61[jk]=-1000000; pAnalysis->extrapolposy61[jk]=-1000000; pAnalysis->extrapolposz61[jk]=-1000000;      pAnalysis->cmvhitrecoposx61[jk]=-1000000; pAnalysis->cmvhitrecoposy61[jk]=-1000000; pAnalysis->cmvhitrecoposz61[jk]=-1000000;   pAnalysis->cmvhittrueposx61[jk]=-1000000; pAnalysis->cmvhittrueposy61[jk]=-1000000; pAnalysis->cmvhittrueposz61[jk]=-1000000;      pAnalysis->cmvhitrecoposxerr61[jk]=-1000000; pAnalysis->cmvhitrecoposyerr61[jk]=-1000000; pAnalysis->cmvhitrecoposzerr61[jk]=-1000000;         pAnalysis->extrapolposxerr61[jk]=-1000000; pAnalysis->extrapolposyerr61[jk]=-1000000; pAnalysis->extrapolposzerr61[jk]=-1000000;                pAnalysis->extrapolposx62[jk]=-1000000; pAnalysis->extrapolposy62[jk]=-1000000; pAnalysis->extrapolposz62[jk]=-1000000;      pAnalysis->cmvhitrecoposx62[jk]=-1000000; pAnalysis->cmvhitrecoposy62[jk]=-1000000; pAnalysis->cmvhitrecoposz62[jk]=-1000000;   pAnalysis->cmvhittrueposx62[jk]=-1000000; pAnalysis->cmvhittrueposy62[jk]=-1000000; pAnalysis->cmvhittrueposz62[jk]=-1000000;      pAnalysis->cmvhitrecoposxerr62[jk]=-1000000; pAnalysis->cmvhitrecoposyerr62[jk]=-1000000; pAnalysis->cmvhitrecoposzerr62[jk]=-1000000;         pAnalysis->extrapolposxerr62[jk]=-1000000; pAnalysis->extrapolposyerr62[jk]=-1000000; pAnalysis->extrapolposzerr62[jk]=-1000000;  
-    
-    pAnalysis->LeTime00[jk] = -1000000;
-    pAnalysis->RiTime00[jk] = -1000000;
-    pAnalysis->LePulse00[jk] = -1000000;
-    pAnalysis->RiPulse00[jk] = -1000000;
-     
-    pAnalysis->LeTime01[jk] = -1000000;
-    pAnalysis->RiTime01[jk] = -1000000;
-    pAnalysis->LePulse01[jk] = -1000000;
-    pAnalysis->RiPulse01[jk] = -1000000;
-
-    pAnalysis->LeTime02[jk] = -1000000;
-    pAnalysis->RiTime02[jk] = -1000000;
-    pAnalysis->LePulse02[jk] = -1000000;
-    pAnalysis->RiPulse02[jk] = -1000000;
-
-    pAnalysis->LeTime03[jk] = -1000000;
-    pAnalysis->RiTime03[jk] = -1000000;
-    pAnalysis->LePulse03[jk] = -1000000;
-    pAnalysis->RiPulse03[jk] = -1000000;
-
-
-
-
-    pAnalysis->LeTime10[jk] = -1000000;
-    pAnalysis->RiTime10[jk] = -1000000;
-    pAnalysis->LePulse10[jk] = -1000000;
-    pAnalysis->RiPulse10[jk] = -1000000;
-     
-    pAnalysis->LeTime11[jk] = -1000000;
-    pAnalysis->RiTime11[jk] = -1000000;
-    pAnalysis->LePulse11[jk] = -1000000;
-    pAnalysis->RiPulse11[jk] = -1000000;
-
-    pAnalysis->LeTime12[jk] = -1000000;
-    pAnalysis->RiTime12[jk] = -1000000;
-    pAnalysis->LePulse12[jk] = -1000000;
-    pAnalysis->RiPulse12[jk] = -1000000;
-
-
-    pAnalysis->LeTime20[jk] = -1000000;
-    pAnalysis->RiTime20[jk] = -1000000;
-    pAnalysis->LePulse20[jk] = -1000000;
-    pAnalysis->RiPulse20[jk] = -1000000;
-     
-    pAnalysis->LeTime21[jk] = -1000000;
-    pAnalysis->RiTime21[jk] = -1000000;
-    pAnalysis->LePulse21[jk] = -1000000;
-    pAnalysis->RiPulse21[jk] = -1000000;
-
-    pAnalysis->LeTime22[jk] = -1000000;
-    pAnalysis->RiTime22[jk] = -1000000;
-    pAnalysis->LePulse22[jk] = -1000000;
-    pAnalysis->RiPulse22[jk] = -1000000;
-
-
-
-
-    pAnalysis->LeTime30[jk] = -1000000;
-    pAnalysis->RiTime30[jk] = -1000000;
-    pAnalysis->LePulse30[jk] = -1000000;
-    pAnalysis->RiPulse30[jk] = -1000000;
-     
-    pAnalysis->LeTime31[jk] = -1000000;
-    pAnalysis->RiTime31[jk] = -1000000;
-    pAnalysis->LePulse31[jk] = -1000000;
-    pAnalysis->RiPulse31[jk] = -1000000;
-
-    pAnalysis->LeTime32[jk] = -1000000;
-    pAnalysis->RiTime32[jk] = -1000000;
-    pAnalysis->LePulse32[jk] = -1000000;
-    pAnalysis->RiPulse32[jk] = -1000000;
-
-
-    pAnalysis->LeTime40[jk] = -1000000;
-    pAnalysis->RiTime40[jk] = -1000000;
-    pAnalysis->LePulse40[jk] = -1000000;
-    pAnalysis->RiPulse40[jk] = -1000000;
-     
-    pAnalysis->LeTime41[jk] = -1000000;
-    pAnalysis->RiTime41[jk] = -1000000;
-    pAnalysis->LePulse41[jk] = -1000000;
-    pAnalysis->RiPulse41[jk] = -1000000;
-
-    pAnalysis->LeTime42[jk] = -1000000;
-    pAnalysis->RiTime42[jk] = -1000000;
-    pAnalysis->LePulse42[jk] = -1000000;
-    pAnalysis->RiPulse42[jk] = -1000000;
-
-
-    pAnalysis->LeTime50[jk] = -1000000;
-    pAnalysis->RiTime50[jk] = -1000000;
-    pAnalysis->LePulse50[jk] = -1000000;
-    pAnalysis->RiPulse50[jk] = -1000000;
-     
-    pAnalysis->LeTime51[jk] = -1000000;
-    pAnalysis->RiTime51[jk] = -1000000;
-    pAnalysis->LePulse51[jk] = -1000000;
-    pAnalysis->RiPulse51[jk] = -1000000;
-
-    pAnalysis->LeTime52[jk] = -1000000;
-    pAnalysis->RiTime52[jk] = -1000000;
-    pAnalysis->LePulse52[jk] = -1000000;
-    pAnalysis->RiPulse52[jk] = -1000000;
-
-
-    pAnalysis->LeTime60[jk] = -1000000;
-    pAnalysis->RiTime60[jk] = -1000000;
-    pAnalysis->LePulse60[jk] = -1000000;
-    pAnalysis->RiPulse60[jk] = -1000000;
-     
-    pAnalysis->LeTime61[jk] = -1000000;
-    pAnalysis->RiTime61[jk] = -1000000;
-    pAnalysis->LePulse61[jk] = -1000000;
-    pAnalysis->RiPulse61[jk] = -1000000;
-
-    pAnalysis->LeTime62[jk] = -1000000;
-    pAnalysis->RiTime62[jk] = -1000000;
-    pAnalysis->LePulse62[jk] = -1000000;
-    pAnalysis->RiPulse62[jk] = -1000000;
-
-
-
-    cout<<"clustersize initialization: " <<pAnalysis->clustersize00[jk]<<" "<< pAnalysis->cmv_locno00[jk]<<" "<<endl ;
-    cout<<pAnalysis->clustersize01[jk]<<" "<< pAnalysis->cmv_locno01[jk]<<" "<<endl;
-    cout<<  pAnalysis->clustersize02[jk]<<" "<< pAnalysis->cmv_locno02[jk]<<" "<<endl;
-    cout<<  pAnalysis->clustersize03[jk]<<" "<< pAnalysis->cmv_locno03[jk]<<" "<<endl;
-    cout<<  pAnalysis->clustersize10[jk]<<" "<< pAnalysis->cmv_locno10[jk]<<" "<<endl;
-    cout<<  pAnalysis->clustersize11[jk]<<" "<< pAnalysis->cmv_locno11[jk]<<" "<<endl;
-    cout<<pAnalysis->clustersize12[jk]<<" "<< pAnalysis->cmv_locno12[jk]<<" "<<endl;
-    cout<<pAnalysis->clustersize20[jk]<<" "<< pAnalysis->cmv_locno20[jk]<<" "<<endl;
-    cout<<pAnalysis->clustersize21[jk]<<" "<< pAnalysis->cmv_locno21[jk]<<" "<<endl;
-    cout<<  pAnalysis->clustersize22[jk]<<" "<< pAnalysis->cmv_locno22[jk]<<" "<<endl;
-    cout<<pAnalysis->clustersize30[jk]<<" "<< pAnalysis->cmv_locno30[jk]<<" "<<endl;
-    cout<<  pAnalysis->clustersize31[jk]<<" "<< pAnalysis->cmv_locno31[jk]<<" "<<endl;
-    cout<<  pAnalysis->clustersize32[jk]<<" "<< pAnalysis->cmv_locno32[jk]<<" "<<endl;
-    cout<<  pAnalysis->clustersize42[jk]<<" "<< pAnalysis->cmv_locno42[jk]<<" "<<endl;
-    cout<<  pAnalysis->clustersize52[jk]<<" "<< pAnalysis->cmv_locno52[jk]<<" "<<endl;
-    cout<<  pAnalysis->clustersize62[jk]<<" "<< pAnalysis->cmv_locno62[jk]<<" "<<endl;
-    //      cout<<  pAanlysis->chisq[jk]<<" "<< pAnalysis->chisq2[jk]<<endl;
-    //      cout<<  pAnalysis->posxvx[jk]<<" "<<  pAnalysis->poszvx[jk]<<" "<<  pAnalysis->posyvx[jk] <<endl;
-
-
-
-  
-    // pAnalysis->ellip_diff0[jk] = -10000000;  
-    // pAnalysis->ellip_diff1[jk] = -1000000;  
-    // pAnalysis->ellip_diff2[jk] = -1000000;  
-    // pAnalysis->ellip_diff3[jk] = -1000000; 
-    
 
     //convert theta and phi to dxdz and dydz
     
@@ -493,7 +271,7 @@ void micalEventAction::CMVD_Extrapolation(){
       for(int ij=0;ij<ijmax;ij++){//layer loop
 	double diffmx=1000000;
 	cout<<" Layer No. "<<ij<<endl;
-	cout<<ijk<<" "<<ij<<endl;
+	//	cout<<ijk<<" "<<ij<<endl;
 	G4double Plane[6]={PhyVolGlPos[ijk][ij][0], PhyVolGlPos[ijk][ij][1], PhyVolGlPos[ijk][ij][2],xhat,yhat,zhat};
 
         cout<<"Plane: "<<Plane[0]<<" "<<Plane[1]<<" "<<Plane[2]<<" "<<Plane[3]<<" "<<Plane[4]<<" "<<Plane[5]<<endl;
@@ -519,9 +297,9 @@ void micalEventAction::CMVD_Extrapolation(){
 
 
 		
-	cout<<"Loc_no: "<<ijk<<" layhalflength "<<layhalflength<<"layhalfbreadth  "<<layhalfbreadth<<endl;
+	//	cout<<"Loc_no: "<<ijk<<" layhalflength "<<layhalflength<<"layhalfbreadth  "<<layhalfbreadth<<endl;
 
-        cout<<"Point: "<<G_Point[0]<<" "<<G_Point[1]<<" "<<G_Point[2]<<endl;
+	// cout<<"Point: "<<G_Point[0]<<" "<<G_Point[1]<<" "<<G_Point[2]<<endl;
 	vector <double> edge[4];
     
 	if(ijk==0){
@@ -583,98 +361,76 @@ void micalEventAction::CMVD_Extrapolation(){
 		
 		  
 	}
-	// for (unsigned int ix=0; ix<CmvStrip_pointer->CmvStrip_list.size(); ix++) {
-	//   CmvStrip* strip = CmvStrip_pointer->CmvStrip_list[ix];//#
-	//   int plane = strip->GetPlane();
-	//   int layer = strip->GetLayer();
-	  
-	//   cout<<"eventaction time "<<plane<<" "<<layer<<" "<<strip->GetTime()<<endl;
-	//   if (plane==2 && layer==2){ // 2,4 && 2
-	   
-	//     pAnalysis->atim[jk]=strip->GetTime();
-	//   }
 
-	// }
-	// cout<<  pAnalysis->atim[jk]<<endl;
-	//	pAnalysis->hist55->Fill(pAnalysis->atim[jk]);
+	// CmvLayExtra* layexp = new CmvLayExtra(); //GMA Memory leakages ??
 
-	//
-	 CmvLayExtra* layexp = new CmvLayExtra(); //GMA Memory leakages ??
+	     layid = ijk+1;
+	     layid<<=2;
+	     layid+=ij;
 
-	 layid = ijk+1;
-	    layid<<=2;
-	    layid+=ij;
-
-	    cout<<"layid: "<<layid<<endl;
-	    layexp->SetId(layid);
-	    layid = ijk+1;
-	    layid<<=2;
-	    layid+=ij;
-
-	    cout<<"layid: "<<layid<<endl;
-	    layexp->SetId(layid);
+	     cout<<"layid: "<<layid<<endl;
+	//     layexp->SetId(layid);
 	 
         if(pl2){
-	  ////  CmvLayExtra* layexp = new CmvLayExtra(); //GMA Memory leakages ??
-
+        
 	  cout<<"---Intersection with Plane found---"<<endl;
 	 
 	  bool isInside= false;
 	  int delta = 0;// 100cm
-	  cout<<"checkkk: "<<G_Point[2]<<" "<<PhyVolGlPos[ijk][ij][2]<<endl;
+	  //  cout<<"checkkk: "<<G_Point[2]<<" "<<PhyVolGlPos[ijk][ij][2]<<endl;
 	    
 	  switch (ijk){
 	    //  cout<<"checkkk: "<<G_Point[2]<<PhyVolGlPos[ijk][ij][2]<<endl;
           case 0: isInside = ( (G_Point[0])<  (PhyVolGlPos[ijk][ij][0]+layhalflength+delta) &&  (G_Point[0])>  (PhyVolGlPos[ijk][ij][0]-layhalflength-delta) &&  (G_Point[1])<  (PhyVolGlPos[ijk][ij][1]+layhalfbreadth+delta) &&  (G_Point[1])>  (PhyVolGlPos[ijk][ij][1]-layhalfbreadth-delta)    && abs(G_Point[2]-PhyVolGlPos[ijk][ij][2])<1.e-10 );
-	    cout<<"case 0"<<endl;
+	    // cout<<"case 0"<<endl;
 	    //	    cout<<fixed<<G_Point[2]<<" "<<fixed<<PhyVolGlPos[ijk][ij][2]<<endl;
-	    cout<<"0"<<PhyVolGlPos[ijk][ij][0]<<" "<<PhyVolGlPos[ijk][ij][1]<<" "<<PhyVolGlPos[ijk][ij][2]<<" "<<layhalflength<<" "<<layhalfbreadth<<endl;
+	    // cout<<"0"<<PhyVolGlPos[ijk][ij][0]<<" "<<PhyVolGlPos[ijk][ij][1]<<" "<<PhyVolGlPos[ijk][ij][2]<<" "<<layhalflength<<" "<<layhalfbreadth<<endl;
 	    
-	    cout<<"   (PhyVolGlPos[ijk][ij][1])+layhalfbreadth    "<<    (PhyVolGlPos[ijk][ij][1])+layhalfbreadth    <<endl;
-	    cout<<"    (PhyVolGlPos[ijk][ij][1])-layhalfbreadth   "<<     (PhyVolGlPos[ijk][ij][1])-layhalfbreadth   <<endl;
-	    cout<<"   (PhyVolGlPos[ijk][ij][0])+layhalflength   "<<    (PhyVolGlPos[ijk][ij][0])+layhalflength   <<endl;
-	    cout<<"    (PhyVolGlPos[ijk][ij][0])-layhalflength     "<<     (PhyVolGlPos[ijk][ij][0])-layhalflength   <<endl;
+	    // cout<<"   (PhyVolGlPos[ijk][ij][1])+layhalfbreadth    "<<    (PhyVolGlPos[ijk][ij][1])+layhalfbreadth    <<endl;
+	    //	    cout<<"    (PhyVolGlPos[ijk][ij][1])-layhalfbreadth   "<<     (PhyVolGlPos[ijk][ij][1])-layhalfbreadth   <<endl;
+	    //	    cout<<"   (PhyVolGlPos[ijk][ij][0])+layhalflength   "<<    (PhyVolGlPos[ijk][ij][0])+layhalflength   <<endl;
+	    //	    cout<<"    (PhyVolGlPos[ijk][ij][0])-layhalflength     "<<     (PhyVolGlPos[ijk][ij][0])-layhalflength   <<endl;
 
    
 	    
             break;
 	    
           case 1: isInside = (  (G_Point[1])<  (PhyVolGlPos[ijk][ij][1]+layhalfbreadth+delta) &&  (G_Point[1])>  (PhyVolGlPos[ijk][ij][1]-layhalfbreadth-delta) &&  (G_Point[2])<  (PhyVolGlPos[ijk][ij][2]+layhalflength+delta) &&  (G_Point[2])>  (PhyVolGlPos[ijk][ij][2]-layhalflength-delta)       &&     abs(G_Point[0]-PhyVolGlPos[ijk][ij][0])<1.e-10  );
-	    cout<<"case 1"<<endl;
+	    //	    cout<<"case 1"<<endl;
 	    
-	    cout<<"1"<<PhyVolGlPos[ijk][ij][1]<<" "<<PhyVolGlPos[ijk][ij][2]<<" "<<layhalflength<<" "<<layhalfbreadth<<endl;
+	    //	    cout<<"1"<<PhyVolGlPos[ijk][ij][1]<<" "<<PhyVolGlPos[ijk][ij][2]<<" "<<layhalflength<<" "<<layhalfbreadth<<endl;
 	    
-	    cout<<"   (PhyVolGlPos[ijk][ij][1])+layhalfbreadth    "<<    (PhyVolGlPos[ijk][ij][1])+layhalfbreadth    <<endl;
-	    cout<<"    (PhyVolGlPos[ijk][ij][1])-layhalfbreadth   "<<     (PhyVolGlPos[ijk][ij][1])-layhalfbreadth   <<endl;
-	    cout<<"   (PhyVolGlPos[ijk][ij][2])+layhalflength   "<<    (PhyVolGlPos[ijk][ij][2])+layhalflength   <<endl;
-	    cout<<"    (PhyVolGlPos[ijk][ij][2])-layhalflength     "<<     (PhyVolGlPos[ijk][ij][2])-layhalflength   <<endl;
+	    //	    cout<<"   (PhyVolGlPos[ijk][ij][1])+layhalfbreadth    "<<    (PhyVolGlPos[ijk][ij][1])+layhalfbreadth    <<endl;
+	    //	    cout<<"    (PhyVolGlPos[ijk][ij][1])-layhalfbreadth   "<<     (PhyVolGlPos[ijk][ij][1])-layhalfbreadth   <<endl;
+	    //	    cout<<"   (PhyVolGlPos[ijk][ij][2])+layhalflength   "<<    (PhyVolGlPos[ijk][ij][2])+layhalflength   <<endl;
+	    //	    cout<<"    (PhyVolGlPos[ijk][ij][2])-layhalflength     "<<     (PhyVolGlPos[ijk][ij][2])-layhalflength   <<endl;
 
    
 	    
 	    break;
 	    
 	  case 2: isInside = ( (G_Point[1])<  (PhyVolGlPos[ijk][ij][1]+layhalfbreadth+delta) &&  (G_Point[1])>  (PhyVolGlPos[ijk][ij][1]-layhalfbreadth-delta) &&  (G_Point[2])<  (PhyVolGlPos[ijk][ij][2]+layhalflength+delta) &&  (G_Point[2])>  (PhyVolGlPos[ijk][ij][2]-layhalflength-delta)   &&   abs(G_Point[0] -  PhyVolGlPos[ijk][ij][0])<1.e-10  );
-	    cout<<"case 2"<<endl;
+	    //	    cout<<"case 2"<<endl;
 
-	    cout<<"2 "<<PhyVolGlPos[ijk][ij][1]<<" "<<PhyVolGlPos[ijk][ij][2]<<" "<<layhalflength<<" "<<layhalfbreadth<<endl;
+	    //	    cout<<"2 "<<PhyVolGlPos[ijk][ij][1]<<" "<<PhyVolGlPos[ijk][ij][2]<<" "<<layhalflength<<" "<<layhalfbreadth<<endl;
 	    
-	    cout<<"   (PhyVolGlPos[ijk][ij][1])+layhalfbreadth    "<<    (PhyVolGlPos[ijk][ij][1])+layhalfbreadth    <<endl;
-	    cout<<"    (PhyVolGlPos[ijk][ij][1])-layhalfbreadth   "<<     (PhyVolGlPos[ijk][ij][1])-layhalfbreadth   <<endl;
-	    cout<<"   (PhyVolGlPos[ijk][ij][2])+layhalflength   "<<    (PhyVolGlPos[ijk][ij][2])+layhalflength   <<endl;
-	    cout<<"    (PhyVolGlPos[ijk][ij][2])-layhalflength     "<<     (PhyVolGlPos[ijk][ij][2])-layhalflength   <<endl;
+	    //	    cout<<"   (PhyVolGlPos[ijk][ij][1])+layhalfbreadth    "<<    (PhyVolGlPos[ijk][ij][1])+layhalfbreadth    <<endl;
+	    //	    cout<<"    (PhyVolGlPos[ijk][ij][1])-layhalfbreadth   "<<     (PhyVolGlPos[ijk][ij][1])-layhalfbreadth   <<endl;
+	    //	    cout<<"   (PhyVolGlPos[ijk][ij][2])+layhalflength   "<<    (PhyVolGlPos[ijk][ij][2])+layhalflength   <<endl;
+	    //	    cout<<"    (PhyVolGlPos[ijk][ij][2])-layhalflength     "<<     (PhyVolGlPos[ijk][ij][2])-layhalflength   <<endl;
 
 	    break;
 	    
 	  case 3: isInside = (  abs(G_Point[0]-PhyVolGlPos[ijk][ij][0])<layhalfbreadth+delta  /* (G_Point[0])<  (PhyVolGlPos[ijk][ij][0]+layhalfbreadth+delta) &&  (G_Point[0])>  (PhyVolGlPos[ijk][ij][0]-layhalfbreadth-delta) &&  (G_Point[2])<  (PhyVolGlPos[ijk][ij][2]+layhalflength+delta) &&  (G_Point[2])> (PhyVolGlPos[ijk][ij][2]-layhalflength-delta)     &&  abs(G_Point[1] -PhyVolGlPos[ijk][ij][1])<1.e-10*/ );
-	    cout<<"case 3:: "<<endl;
+	    //	    cout<<"case 3:: "<<endl;
 
 
-	    cout<<"3"<<PhyVolGlPos[ijk][ij][0]<<" "<<PhyVolGlPos[ijk][ij][1]<<" "<<PhyVolGlPos[ijk][ij][2]<<" "<<layhalflength<<" "<<layhalfbreadth<<" "<<G_Point[0]<<endl;
+	    //	    cout<<"3"<<PhyVolGlPos[ijk][ij][0]<<" "<<PhyVolGlPos[ijk][ij][1]<<" "<<PhyVolGlPos[ijk][ij][2]<<" "<<layhalflength<<" "<<layhalfbreadth<<" "<<G_Point[0]<<endl;
 	    
-	    cout<<"   (PhyVolGlPos[ijk][ij][0])+layhalfbreadth    "<<    (PhyVolGlPos[ijk][ij][0])+layhalfbreadth    <<endl;
-	    cout<<"    (PhyVolGlPos[ijk][ij][0])-layhalfbreadth   "<<     (PhyVolGlPos[ijk][ij][0])-layhalfbreadth   <<endl;
-	    cout<<"   (PhyVolGlPos[ijk][ij][2])+layhalflength   "<<    (PhyVolGlPos[ijk][ij][2])+layhalflength   <<endl;
-	    cout<<"    (PhyVolGlPos[ijk][ij][2])-layhalflength     "<<     (PhyVolGlPos[ijk][ij][2])-layhalflength   <<endl;
+	    //	    cout<<"   (PhyVolGlPos[ijk][ij][0])+layhalfbreadth    "<<    (PhyVolGlPos[ijk][ij][0])+layhalfbreadth    <<endl;
+	    //	    cout<<"    (PhyVolGlPos[ijk][ij][0])-layhalfbreadth   "<<     (PhyVolGlPos[ijk][ij][0])-layhalfbreadth   <<endl;
+	    //	    cout<<"   (PhyVolGlPos[ijk][ij][2])+layhalflength   "<<    (PhyVolGlPos[ijk][ij][2])+layhalflength   <<endl;
+	    //	    cout<<"    (PhyVolGlPos[ijk][ij][2])-layhalflength     "<<     (PhyVolGlPos[ijk][ij][2])-layhalflength   <<endl;
 
 
 
@@ -686,14 +442,14 @@ void micalEventAction::CMVD_Extrapolation(){
 
 
 	  case 5: isInside = (  (G_Point[1])<  (PhyVolGlPos[ijk][ij][1]+layhalflength+delta) &&  (G_Point[1])>  (PhyVolGlPos[ijk][ij][1]-layhalflength-delta) &&  (G_Point[2])<  (PhyVolGlPos[ijk][ij][2]+layhalfbreadth+delta) &&  (G_Point[2])>  (PhyVolGlPos[ijk][ij][2]-layhalfbreadth-delta)  &&     abs(G_Point[0]-  PhyVolGlPos[ijk][ij][0])<1.e-10  );
-	    cout<<"case 1"<<endl;
+	    //	    cout<<"case 1"<<endl;
 	    
-	    cout<<"1"<<PhyVolGlPos[ijk][ij][1]<<" "<<PhyVolGlPos[ijk][ij][2]<<" "<<layhalflength<<" "<<layhalfbreadth<<endl;
+	    //	    cout<<"1"<<PhyVolGlPos[ijk][ij][1]<<" "<<PhyVolGlPos[ijk][ij][2]<<" "<<layhalflength<<" "<<layhalfbreadth<<endl;
 	    
-	    cout<<"   (PhyVolGlPos[ijk][ij][1])+layhalflength    "<<    (PhyVolGlPos[ijk][ij][1])+layhalflength    <<endl;
-	    cout<<"    (PhyVolGlPos[ijk][ij][1])-layhalflength   "<<     (PhyVolGlPos[ijk][ij][1])-layhalflength   <<endl;
-	    cout<<"   (PhyVolGlPos[ijk][ij][2])+layhalfbreadth   "<<    (PhyVolGlPos[ijk][ij][2])+layhalfbreadth   <<endl;
-	    cout<<"    (PhyVolGlPos[ijk][ij][2])-layhalfbreadth     "<<     (PhyVolGlPos[ijk][ij][2])-layhalfbreadth   <<endl;
+	    //	    cout<<"   (PhyVolGlPos[ijk][ij][1])+layhalflength    "<<    (PhyVolGlPos[ijk][ij][1])+layhalflength    <<endl;
+	    //	    cout<<"    (PhyVolGlPos[ijk][ij][1])-layhalflength   "<<     (PhyVolGlPos[ijk][ij][1])-layhalflength   <<endl;
+	    //	    cout<<"   (PhyVolGlPos[ijk][ij][2])+layhalfbreadth   "<<    (PhyVolGlPos[ijk][ij][2])+layhalfbreadth   <<endl;
+	    //	    cout<<"    (PhyVolGlPos[ijk][ij][2])-layhalfbreadth     "<<     (PhyVolGlPos[ijk][ij][2])-layhalfbreadth   <<endl;
 
    
 	    
@@ -702,14 +458,14 @@ void micalEventAction::CMVD_Extrapolation(){
 
 
 	  case 6: isInside = (  (G_Point[1])<  (PhyVolGlPos[ijk][ij][1]+layhalflength+delta) &&  (G_Point[1])>  (PhyVolGlPos[ijk][ij][1]-layhalflength-delta) &&  (G_Point[2])<  (PhyVolGlPos[ijk][ij][2]+layhalfbreadth+delta) &&  (G_Point[2])>  (PhyVolGlPos[ijk][ij][2]-layhalfbreadth-delta)       &&     abs(G_Point[0]-  PhyVolGlPos[ijk][ij][0])<1.e-10  );
-	    cout<<"case 1"<<endl;
+	    //	    cout<<"case 1"<<endl;
 	    
-	    cout<<"1"<<PhyVolGlPos[ijk][ij][1]<<" "<<PhyVolGlPos[ijk][ij][2]<<" "<<layhalflength<<" "<<layhalfbreadth<<endl;
+	    //	    cout<<"1"<<PhyVolGlPos[ijk][ij][1]<<" "<<PhyVolGlPos[ijk][ij][2]<<" "<<layhalflength<<" "<<layhalfbreadth<<endl;
 	    
-	    cout<<"   (PhyVolGlPos[ijk][ij][1])+layhalflength    "<<    (PhyVolGlPos[ijk][ij][1])+layhalflength    <<endl;
-	    cout<<"    (PhyVolGlPos[ijk][ij][1])-layhalflength   "<<     (PhyVolGlPos[ijk][ij][1])-layhalflength   <<endl;
-	    cout<<"   (PhyVolGlPos[ijk][ij][2])+layhalfbreadth   "<<    (PhyVolGlPos[ijk][ij][2])+layhalfbreadth   <<endl;
-	    cout<<"    (PhyVolGlPos[ijk][ij][2])-layhalfbreadth     "<<     (PhyVolGlPos[ijk][ij][2])-layhalfbreadth   <<endl;
+	    //	    cout<<"   (PhyVolGlPos[ijk][ij][1])+layhalflength    "<<    (PhyVolGlPos[ijk][ij][1])+layhalflength    <<endl;
+	    //	    cout<<"    (PhyVolGlPos[ijk][ij][1])-layhalflength   "<<     (PhyVolGlPos[ijk][ij][1])-layhalflength   <<endl;
+	    //	    cout<<"   (PhyVolGlPos[ijk][ij][2])+layhalfbreadth   "<<    (PhyVolGlPos[ijk][ij][2])+layhalfbreadth   <<endl;
+	    //	    cout<<"    (PhyVolGlPos[ijk][ij][2])-layhalfbreadth     "<<     (PhyVolGlPos[ijk][ij][2])-layhalfbreadth   <<endl;
 
    
 	    
@@ -717,64 +473,32 @@ void micalEventAction::CMVD_Extrapolation(){
 
 	    
           default :isInside=false;
-	    cout<<"default case"<<endl;
+	    //	    cout<<"default case"<<endl;
 	    break;
           }
 
 	  double trg =0;
-	  cout<<"isinside: "<<isInside<<endl;
+	  	  cout<<"isinside: "<<isInside<<endl;
 
 	
-	  bool hitpresent = false;
+	  // bool hitpresent = false;
 
-	    // layid = ijk+1;
-	    // layid<<=2;
-	    // layid+=ij;
+	  // layexp->SetExtXPos(G_Point[0]);
+	  // layexp->SetExtYPos(G_Point[1]);
+	  // layexp->SetExtZPos(G_Point[2]);
+	  // layexp->SetUsed(true);
+	  // layexp->Print();
 
-	    // cout<<"layid: "<<layid<<endl;
-	    // layexp->SetId(layid);
-	    // layid = ijk+1;
-	    // layid<<=2;
-	    // layid+=ij;
+	  G4ThreeVector extposvec;
+	  G4ThreeVector tmphtvec;
+	  G4ThreeVector truehtvec;    
 
-	    // cout<<"layid: "<<layid<<endl;
-	    // layexp->SetId(layid);
-  layexp->SetExtXPos(G_Point[0]);
-	    layexp->SetExtYPos(G_Point[1]);
-	    layexp->SetExtZPos(G_Point[2]);
-	    layexp->SetUsed(true);
-	    layexp->Print();
-	  
           if(isInside) {
+	    
+	    cout<<"Extrapolation inside the detector boundary"<<endl;
 
-	    cout<<"Extrapolation inside the detector boundary +1m"<<endl;
-	    //
-	    if(ijk==0 && ij==0){
-	      pAnalysis->Trig00[jk] = 1;
-	    }
 
-	    else 	  if(ijk==0 && ij==1){
-	      pAnalysis->Trig01[jk] = 1;
-	    }
-		  
-	    else 	  if(ijk==0 && ij==2){
-	      pAnalysis->Trig02[jk] = 1;
-	    }
-	    else 	  if(ijk==0 && ij==3){
-	      pAnalysis->Trig03[jk] = 1;
-	    }
-
-	    //
-		  
-	    // // time extrapolation
-	    // //slope and intersept are calulated in meters and nanosec.
-	    // double extrapolatim = (G_Point[2]*0.001*atimslope)+atiminter;
-	    // cout<<"extrapolatim"<<atimslope<<" "<<atiminter<<" "<<extrapolatim<<" " << PhyVolGlPos[ijk][ij][2]<<" "<<G_Point[2]     <<endl;
-	    // pAnalysis->extrapolatim[jk]=extrapolatim;
-	  
-	  
-	    // pAnalysis->hist44->Fill(extrapolatim);
-
+	    
 	    //error calculation
 	    if(ijk==0){ //top wall
 	      Ptxerr = sqrt((xxerr*xxerr)+pow((G_Point[2]-posz),2)*txerr*txerr+2*(G_Point[2]-posz)*xxtxerr);
@@ -793,184 +517,138 @@ void micalEventAction::CMVD_Extrapolation(){
 	      Ptyerr =sqrt((yyerr*yyerr)+pow((G_Point[0]-posx)*tyerr/dxdz,2)+ pow(((G_Point[0]-posx)*dydz*txerr)/(dxdz*dxdz),2)+pow((dydz*xxerr)/dxdz,2)          + 2*((G_Point[0]-posx)*yytyerr)/dxdz- 2*(dydz*xxtyerr)/dxdz -  2*pow((G_Point[0]-posx),2)*dydz*txtyerr/pow(dxdz,3)-2*((G_Point[0]-posx)*dydz*xxtyerr)/(dxdz*dxdz)+2*(G_Point[0]-posx)*dydz*dydz*xxtxerr/pow(dxdz,3) - 2*(G_Point[0]-posx)*dydz*yytxerr/pow(dxdz,2));
 	      Ptzerr =sqrt(pow((G_Point[0]-posx)*txerr/(dxdz*dxdz),2) +pow((xxerr/dxdz),2) +2* ((G_Point[0]-posx)*xxtxerr)/pow(dxdz,3)) ;
 	    }
-	    cout<<"Ptxerr "<<Ptxerr<<" Ptyerr "<<Ptyerr<<"Ptzerr "<<Ptzerr<<endl;
+	    // cout<<"Ptxerr "<<Ptxerr<<" Ptyerr "<<Ptyerr<<"Ptzerr "<<Ptzerr<<endl;
 
 		  
 
 	   
-	    cout<<"Point inside the detector boundary"<<endl;
+	    // cout<<"Point inside the detector boundary"<<endl;
+
+	   
+
+
+	    extposvec.setX(G_Point[0]);
+	    extposvec.setY(G_Point[1]);
+	    extposvec.setZ(G_Point[2]);
+ 
 	    
-            G4ThreeVector extposvec(G_Point[0], G_Point[1], G_Point[2]);
-	    cout<<"Point:"<<extposvec<<endl;
-	    G4ThreeVector tmphtvec;
-	    G4ThreeVector truehtvec;
-	    int clustersize;
-	    double ellip_max[4][4];
+	     cout<<"Point:"<<extposvec<<endl;
+	     cout<<" CmvClusterBank[ijk][ij].size() "<<CmvClusterBank[ijk][ij].size()<<endl;
+	    if(CmvClusterBank[ijk][ij].size()>0){
+	      cout<<"..check.."<<endl;
+            for (unsigned int ix=0; ix<CmvClusterBank[ijk][ij].size(); ix++) {
 
-	    for(int ab=0;ab<4;ab++){
-	      for(int cd=0;cd<4;cd++){
-		ellip_max[ab][cd]  = 1000000;
-
-	      }
-	    }
-
-	    // layexp->SetExtXPos(G_Point[0]);
-	    // layexp->SetExtYPos(G_Point[1]);
-	    // layexp->SetExtZPos(G_Point[2]);
-	    // layexp->SetUsed(true);
-	    // layexp->Print();
-	 
-	
-            for (unsigned int ix=0; ix<CmvCluster_pointer->CmvCluster_list.size(); ix++) {
-
-	      CmvCluster* tmpcluster = CmvCluster_pointer->CmvCluster_list[ix];    //#
-	      //  tmpcluster->Print();
-	      cout<<"## "<<tmpcluster->GetPlane()-1<<" "<<tmpcluster->GetLayer()<<endl;
-	      if (tmpcluster->GetPlane()-1==ijk && tmpcluster->GetLayer()==ij) {//#plane  we have stored from 1 and in loop it is from 0
-	        
-		//	clustersize = tmpcluster->GetClustersize();
-
-		tmpcluster->Print();
+	      cout<<"## "<<CmvClusterBank[ijk][ij][ix]->GetPlane()-1<<" "<<CmvClusterBank[ijk][ij][ix]->GetLayer()<<" "<<ijk<<" "<<ij<<" "<<ix<<endl;
+	      
+                
+        
+		CmvClusterBank[ijk][ij][ix]->Print();
 
 
 	     	
-		cout<<"tmpcluster inside loop "<<tmpcluster->GetPlane()<<" "<<tmpcluster->GetLayer()<<endl;
-		tmphtvec.setX(tmpcluster->GetRecoPosX());
-		tmphtvec.setY(tmpcluster->GetRecoPosY());
-		tmphtvec.setZ(tmpcluster->GetRecoPosZ());
+		//		cout<<"CmvClusterBank[ijk][ij][ix] inside loop "<<CmvClusterBank[ijk][ij][ix]->GetPlane()<<" "<<CmvClusterBank[ijk][ij][ix]->GetLayer()<<endl;
+		tmphtvec.setX(CmvClusterBank[ijk][ij][ix]->GetRecoPosX());
+		tmphtvec.setY(CmvClusterBank[ijk][ij][ix]->GetRecoPosY());
+		tmphtvec.setZ(CmvClusterBank[ijk][ij][ix]->GetRecoPosZ());
 
-		cout<<"recohtvec: "<<tmphtvec<<endl;
+		//		cout<<"recohtvec: "<<tmphtvec<<endl;
         	double difx = (extposvec-tmphtvec).mag();
 
-		truehtvec.setX(tmpcluster->GetTruePosX());
-		truehtvec.setY(tmpcluster->GetTruePosY());
-		truehtvec.setZ(tmpcluster->GetTruePosZ());
+		truehtvec.setX(CmvClusterBank[ijk][ij][ix]->GetTruePosX());
+		truehtvec.setY(CmvClusterBank[ijk][ij][ix]->GetTruePosY());
+		truehtvec.setZ(CmvClusterBank[ijk][ij][ix]->GetTruePosZ());
+		//		cout<<" truehtvvec: "<<truehtvec<<endl;
+		//Store the differences in three
+
+
+		//For multiple clusters in a layer consider one with minimum difx
+		if (difx < diffmx) {
+
+		  diffmx = difx;
+		  //		  cout<<" Diff "<<difx<<endl;
+                
+	
+     		
+
+		  cout<<" Extrapolated position "<<G_Point[0]<<" "<<G_Point[1]<<" "<<G_Point[2]<<endl;
+		  cout<<" Reconstructed position "<<tmphtvec.x()<<" "<<tmphtvec.y()<<" "<<tmphtvec.z()<<endl;
+		  cout<<" True Position "<<truehtvec.x()<<" "<<truehtvec.y()<<" "<<truehtvec.z()<<endl;
+
+		  cout<<" Reco-Extrap: "<<  tmphtvec.x()-G_Point[0]<<" "<<  tmphtvec.y()-G_Point[1]<<" "    <<tmphtvec.z()-G_Point[2]<<endl;
+		  cout<<" True-Extra: "<<truehtvec.x()-G_Point[0]<<" " << truehtvec.y()-G_Point[1]<<" " << truehtvec.z()-G_Point[2] <<endl;
+    
+
+
+		  
+		  pAnalysis->CMVDTruePosX[layid] = CmvClusterBank[ijk][ij][ix]->GetTruePosX();
+		  pAnalysis->CMVDTruePosY[layid] = CmvClusterBank[ijk][ij][ix]->GetTruePosY();
+		  pAnalysis->CMVDTruePosZ[layid] = CmvClusterBank[ijk][ij][ix]->GetTruePosZ();
+
+		  
+		  pAnalysis->CMVDRecoPosX[layid] = CmvClusterBank[ijk][ij][ix]->GetRecoPosX();
+		  pAnalysis->CMVDRecoPosY[layid] = CmvClusterBank[ijk][ij][ix]->GetRecoPosY();
+		  pAnalysis->CMVDRecoPosZ[layid] = CmvClusterBank[ijk][ij][ix]->GetRecoPosZ();
+
+
+		  pAnalysis->CMVDWRecoPosX[layid] = CmvClusterBank[ijk][ij][ix]->GetWRecoPosX();
+		  pAnalysis->CMVDWRecoPosY[layid] = CmvClusterBank[ijk][ij][ix]->GetWRecoPosY();
+		  pAnalysis->CMVDWRecoPosZ[layid] = CmvClusterBank[ijk][ij][ix]->GetWRecoPosZ();
+
+
+		   
+		  pAnalysis->CMVDExpnHit[layid] = 3;		  
+		 		  
+	  
+		}//difx
+		
+	      
+
+		
+            }//for
+	    }//if
+	   
+	    else{
+	      pAnalysis->CMVDExpnHit[layid] = 2;
+	    }
+          }//isinside
+
+
+	  else{
+	    cout<<"..Extrapolated point outside.."<<endl;
+
+	    if(CmvClusterBank[ijk][ij].size()>0){
+
+	      cout<<"But Hit Present"<<endl;
+	      for (unsigned int ix=0; ix<CmvClusterBank[ijk][ij].size(); ix++) {
+		
+		//		cout<<"## "<<CmvClusterBank[ijk][ij][ix]->GetPlane()-1<<" "<<CmvClusterBank[ijk][ij][ix]->GetLayer()<<endl;
+	      
+                
+        
+		CmvClusterBank[ijk][ij][ix]->Print();
+
+
+	     	
+		//		cout<<"CmvClusterBank[ijk][ij] inside loop "<<CmvClusterBank[ijk][ij][ix]->GetPlane()<<" "<<CmvClusterBank[ijk][ij][ix]->GetLayer()<<endl;
+		tmphtvec.setX(CmvClusterBank[ijk][ij][ix]->GetRecoPosX());
+		tmphtvec.setY(CmvClusterBank[ijk][ij][ix]->GetRecoPosY());
+		tmphtvec.setZ(CmvClusterBank[ijk][ij][ix]->GetRecoPosZ());
+
+		//		cout<<"recohtvec: "<<tmphtvec<<endl;
+        	 double difx = (extposvec-tmphtvec).mag();
+
+		truehtvec.setX(CmvClusterBank[ijk][ij][ix]->GetTruePosX());
+		truehtvec.setY(CmvClusterBank[ijk][ij][ix]->GetTruePosY());
+		truehtvec.setZ(CmvClusterBank[ijk][ij][ix]->GetTruePosZ());
 		cout<<" truehtvvec: "<<truehtvec<<endl;
 		//Store the differences in three
 
-		//	double difx = (extposvec-truehtvec).mag();
 
-		
-	       
-		/*
-		//ellip_diff	
-
-		  
-		// bool largerr = true;
-		bool largerr = false;
-
-		   
-		//  double ellip_diff = pow( (G_Point[0]-tmphtvec.x()),2)/(Ptxerr*Ptxerr+tmpcluster->GetPosXErr()*tmpcluster->GetPosXErr()) + pow( (G_Point[1]-tmphtvec.y()),2)/(Ptyerr*Ptyerr+tmpcluster->GetPosYErr()*tmpcluster->GetPosYErr());
-
-
-
-		if(ijk==0){
-		ellip_diff[ijk][ij] = pow( (G_Point[0]-tmphtvec.x()),2)/(Ptxerr*Ptxerr+tmpcluster->GetPosXErr()*tmpcluster->GetPosXErr());
-
-
-		erralgstrplen[ijk][ij] =  pow( (G_Point[1]-tmphtvec.y()),2)/(Ptyerr*Ptyerr+tmpcluster->GetPosYErr()*tmpcluster->GetPosYErr());
-
-		}
-		else{
-
-		ellip_diff[ijk][ij] = pow( (G_Point[2]-tmphtvec.z()),2)/(Ptzerr*Ptzerr+tmpcluster->GetPosZErr()*tmpcluster->GetPosZErr());
-
-		if(ijk==2 || ijk==3){
-		erralgstrplen[ijk][ij] =  pow( (G_Point[0]-tmphtvec.x()),2)/(Ptxerr*Ptxerr+tmpcluster->GetPosXErr()*tmpcluster->GetPosXErr());
-
-		}
-		else
-		erralgstrplen[ijk][ij] =  pow( (G_Point[1]-tmphtvec.y()),2)/(Ptyerr*Ptyerr+tmpcluster->GetPosYErr()*tmpcluster->GetPosYErr());
-
-		}
-
-
-
-		 
-
-		if(largerr==true){ellip_diff[ijk][ij]+=erralgstrplen[ijk][ij];}
-		cout<<"ellip_diff "<<ijk<<" "<<ij<<" "<<ellip_diff[ijk][ij]<<" "<<ellip_max[ijk][ij]<< endl;
-		cout<<"layer ellip: "<<ij<<endl;
-			
-		if( ellip_diff[ijk][ij]<ellip_max[ijk][ij]){
-		cout<<ellip_max[ijk][ij]<<endl;
-		ellip_max[ijk][ij] = ellip_diff[ijk][ij];
-		cout<<ellip_max[ijk][ij]<<endl;
-		}
-			
-		// else if(ij == 1 && ellip_diff<ellip_max1){
-		//   cout<<ellip_max1<<endl;
-		//   ellip_max1 = ellip_diff;
-		//   cout<<ellip_max1<<endl;
-
-		// }
-			
-		// else if(ij == 2 && ellip_diff<ellip_max2){
-		//   cout<<ellip_max2<<endl;
-		//   ellip_max2 = ellip_diff;
-		//   cout<<ellip_max2<<endl;
-		// }
-			
-			
-		// else if(ij == 3 && ellip_diff<ellip_max3){
-		//   cout<<ellip_max3<<endl;
-		//   ellip_max3 = ellip_diff;
-		//   cout<<ellip_max3<<endl;
-		// }
-
-
-		// pAnalysis->hist_ellip0 ->Fill(ellip_max0);
-		// pAnalysis->hist_ellip1 ->Fill(ellip_max1);
-		// pAnalysis->hist_ellip2 ->Fill(ellip_max2);
-		// pAnalysis->hist_ellip3 ->Fill(ellip_max3);
-		cout<<"elliii: "<<ellip_max[ijk][ij]<<endl;
-	
-		// if(ij==0){	pAnalysis->ellip_diff0[jk] = ellip_max[ijk][ij];}
-		// else if (ij==1){
-		//   pAnalysis->ellip_diff1[jk] = ellip_max[ijk][ij];}
-		// else if(ij==2){
-		//   pAnalysis->ellip_diff2[jk] = ellip_max[ijk][ij]; } 
-		// else {
-		//   pAnalysis->ellip_diff3[jk] = ellip_max[ijk][ij];  
-		// }
-
-
-		// cout<<"	pAnalysis->ellip_diff0[jk]"<<	pAnalysis->ellip_diff0[jk]<<endl;
-		// cout<<"	pAnalysis->ellip_diff1[jk]"<<	pAnalysis->ellip_diff1[jk]<<endl;
-		// cout<<"	pAnalysis->ellip_diff2[jk]"<<	pAnalysis->ellip_diff2[jk]<<endl;
-		// cout<<"	pAnalysis->ellip_diff3[jk]"<<	pAnalysis->ellip_diff3[jk]<<endl;
-
-
-		
-		//	}//	if(ijk==0){
-
-		//
-
-		*/
-		
-		// if (difx < pAnalysis->extra_diff1[jk]) {
-		//   pAnalysis->extra_diff3[jk] = pAnalysis->extra_diff2[jk];
-		//   pAnalysis->extra_diff2[jk] = pAnalysis->extra_diff1[jk];
-		//   pAnalysis->extra_diff1[jk] = difx;
-		// } else if (difx < pAnalysis->extra_diff2[jk]) {
-		//   pAnalysis->extra_diff3[jk] = pAnalysis->extra_diff2[jk];
-		//   pAnalysis->extra_diff2[jk] = difx;
-		// } else if (difx < pAnalysis->extra_diff3[jk]) {
-		//   pAnalysis->extra_diff3[jk] = difx;
-		// }
-								
-		//	cout<<"check3"<<endl;
+		//For multiple clusters in a layer consider one with minimum difx
 		if (difx < diffmx) {
 
-
-		  pAnalysis->cmv_lay[jk]=ij;
-		  cout<<"Loc_no "<<ijk<<" layer no: "<<ij<<endl;
-		
-		  pAnalysis->cmv_stripno[jk]=tmpcluster->GetStrip();
-
-
 		  diffmx = difx;
-		  cout<<" Diff "<<difx<<endl;
+		  //cout<<" Diff "<<difx<<endl;
                 
 	
      		
@@ -983,1445 +661,90 @@ void micalEventAction::CMVD_Extrapolation(){
 		  cout<<"True-Extra: "<<truehtvec.x()-G_Point[0]<<" " << truehtvec.y()-G_Point[1]<<" " << truehtvec.z()-G_Point[2] <<endl;
     
 
-		    
-        
-		  // time extrapolation
-		  //slope and intersept are calulated in meters and nanosec.
+
 		  
-		  double extrapolatim;
-		  extrapolatim = (G_Point[2]*0.001*dZdT)+ztinter;
-		  cout<<"extrapolatim"<<atimslope<<" "<<atiminter<<" "<<extrapolatim<<" " << PhyVolGlPos[ijk][ij][2]<<" "<<G_Point[2]     <<endl;
-		  //		    if(extrapolatim<0) extrapolatim=0;
-		  cout<<"extrapolatim"<<atimslope<<" "<<atiminter<<" "<<extrapolatim<<" " << PhyVolGlPos[ijk][ij][2]<<" "<<G_Point[2]     <<endl;
+		  pAnalysis->CMVDTruePosX[layid] = CmvClusterBank[ijk][ij][ix]->GetTruePosX();
+		  pAnalysis->CMVDTruePosY[layid] = CmvClusterBank[ijk][ij][ix]->GetTruePosY();
+		  pAnalysis->CMVDTruePosZ[layid] = CmvClusterBank[ijk][ij][ix]->GetTruePosZ();
 
-		  //13 differernt branches to store the data for all 13 walls of cmvd
-		  //  if(abs(truehtvec.x()-G_Point[0])<100 && abs(truehtvec.y()-G_Point[1])<100 ){
-		  //		  if(abs(tmphtvec.x()-G_Point[0])<100 /* && abs(tmphtvec.y()-G_Point[1])<100*/ ){
-		    
-		  if(ijk==0 && ij==0){
-
-		 
-		    pAnalysis->extrapolatim00[jk]=extrapolatim;
-	  
-		    pAnalysis->cmv_locno00[jk]=1;//locno starts from 1
-		      
-		    pAnalysis->clustersize00[jk]=tmpcluster->GetClusterSize();
-		    pAnalysis->extrapolposx00[jk]=G_Point[0];
-		    pAnalysis->extrapolposy00[jk]=G_Point[1];
-		    pAnalysis->extrapolposz00[jk]=G_Point[2];
 		  
-		    pAnalysis->cmvhitrecoposx00[jk]=tmphtvec.x();
-		    pAnalysis->cmvhitrecoposy00[jk]=tmphtvec.y();
-		    pAnalysis->cmvhitrecoposz00[jk]=tmphtvec.z();
+		  pAnalysis->CMVDRecoPosX[layid] = CmvClusterBank[ijk][ij][ix]->GetRecoPosX();
+		  pAnalysis->CMVDRecoPosY[layid] = CmvClusterBank[ijk][ij][ix]->GetRecoPosY();
+		  pAnalysis->CMVDRecoPosZ[layid] = CmvClusterBank[ijk][ij][ix]->GetRecoPosZ();
 
 
-		    pAnalysis->cmvhittrueposx00[jk]=truehtvec.x();
-		    pAnalysis->cmvhittrueposy00[jk]=truehtvec.y();
-		    pAnalysis->cmvhittrueposz00[jk]=truehtvec.z();
-		  
-		    pAnalysis->cmvhitrecoposxerr00[jk]=tmpcluster->GetPosXErr();
-		    pAnalysis->cmvhitrecoposyerr00[jk]=tmpcluster->GetPosYErr();
-		    pAnalysis->cmvhitrecoposzerr00[jk]=tmpcluster->GetPosZErr();
-
-	
-		  
-		    pAnalysis->extrapolposxerr00[jk]=Ptxerr;
-		    pAnalysis->extrapolposyerr00[jk]=Ptyerr;
-		    pAnalysis->extrapolposzerr00[jk]=Ptzerr;
+		  pAnalysis->CMVDWRecoPosX[layid] = CmvClusterBank[ijk][ij][ix]->GetWRecoPosX();
+		  pAnalysis->CMVDWRecoPosY[layid] = CmvClusterBank[ijk][ij][ix]->GetWRecoPosY();
+		  pAnalysis->CMVDWRecoPosZ[layid] = CmvClusterBank[ijk][ij][ix]->GetWRecoPosZ();
 
 
-
-		    // pAnalysis->LeTime00[jk] = tmpcluster->GetLeTime();
-		    // pAnalysis->RiTime00[jk] = tmpcluster->GetRiTime();
-
-		    // pAnalysis->LePulse00[jk] = tmpcluster->GetLePulse();
-		    // pAnalysis->RiPulse00[jk] = tmpcluster->GetRiPulse();
 		   
- 
-		    pAnalysis->ellip_diff00[jk]= ellip_max[ijk][ij];
-		  
-		  }
+		  pAnalysis->CMVDExpnHit[layid] = 1;		  
+		 		  
+	  
+		}//difx
+		
+	      
+
+		
+	      }
+	    }
+	    else{
+	    pAnalysis->CMVDExpnHit[layid] = 0;// exp point is outside and no hit is there
+	    }
+
+	  }
 
 
-		  else	  if(ijk==0 && ij==1){
-		    pAnalysis->cmv_locno01[jk]=1;//locno starts from 1
-		    
-		    pAnalysis->clustersize01[jk]=tmpcluster->GetClusterSize();
-
-		    pAnalysis->extrapolatim01[jk]=extrapolatim;
-		    
-		    pAnalysis->extrapolposx01[jk]=G_Point[0];
-		    pAnalysis->extrapolposy01[jk]=G_Point[1];
-		    pAnalysis->extrapolposz01[jk]=G_Point[2];
-		  
-		    pAnalysis->cmvhitrecoposx01[jk]=tmphtvec.x();
-		    pAnalysis->cmvhitrecoposy01[jk]=tmphtvec.y();
-		    pAnalysis->cmvhitrecoposz01[jk]=tmphtvec.z();
-
-
-		    pAnalysis->cmvhittrueposx01[jk]=truehtvec.x();
-		    pAnalysis->cmvhittrueposy01[jk]=truehtvec.y();
-		    pAnalysis->cmvhittrueposz01[jk]=truehtvec.z();
-		  
-		    pAnalysis->cmvhitrecoposxerr01[jk]=tmpcluster->GetPosXErr();
-		    pAnalysis->cmvhitrecoposyerr01[jk]=tmpcluster->GetPosYErr();
-		    pAnalysis->cmvhitrecoposzerr01[jk]=tmpcluster->GetPosZErr();
-
-	
-		  
-		    pAnalysis->extrapolposxerr01[jk]=Ptxerr;
-		    pAnalysis->extrapolposyerr01[jk]=Ptyerr;
-		    pAnalysis->extrapolposzerr01[jk]=Ptzerr;
-
-
-		    pAnalysis->ellip_diff01[jk]= ellip_max[ijk][ij];
-
-
-		    // pAnalysis->LeTime01[jk] = tmpcluster->GetLeTime();
-		    // pAnalysis->RiTime01[jk] = tmpcluster->GetRiTime();
-
-		    // pAnalysis->LePulse01[jk] = tmpcluster->GetLePulse();
-		    // pAnalysis->RiPulse01[jk] = tmpcluster->GetRiPulse();
-		    
-		    
-		  }
-
-
-
-		  else	  if(ijk==0 && ij==2){
-
-
-		    pAnalysis->extrapolatim02[jk]=extrapolatim;
-		    pAnalysis->cmv_locno02[jk]=1;//locno starts from 1
-		    pAnalysis->clustersize02[jk]=tmpcluster->GetClusterSize();
-		    pAnalysis->extrapolposx02[jk]=G_Point[0];
-		    pAnalysis->extrapolposy02[jk]=G_Point[1];
-		    pAnalysis->extrapolposz02[jk]=G_Point[2];
-		  
-		    pAnalysis->cmvhitrecoposx02[jk]=tmphtvec.x();
-		    pAnalysis->cmvhitrecoposy02[jk]=tmphtvec.y();
-		    pAnalysis->cmvhitrecoposz02[jk]=tmphtvec.z();
-
-
-		    pAnalysis->cmvhittrueposx02[jk]=truehtvec.x();
-		    pAnalysis->cmvhittrueposy02[jk]=truehtvec.y();
-		    pAnalysis->cmvhittrueposz02[jk]=truehtvec.z();
-		  
-		    pAnalysis->cmvhitrecoposxerr02[jk]=tmpcluster->GetPosXErr();
-		    pAnalysis->cmvhitrecoposyerr02[jk]=tmpcluster->GetPosYErr();
-		    pAnalysis->cmvhitrecoposzerr02[jk]=tmpcluster->GetPosZErr();
-
-	
-		  
-		    pAnalysis->extrapolposxerr02[jk]=Ptxerr;
-		    pAnalysis->extrapolposyerr02[jk]=Ptyerr;
-		    pAnalysis->extrapolposzerr02[jk]=Ptzerr;
-
-
-		    pAnalysis->ellip_diff02[jk]= ellip_max[ijk][ij];
-
-
-
-		    // pAnalysis->LeTime02[jk] = tmpcluster->GetLeTime();
-		    // pAnalysis->RiTime02[jk] = tmpcluster->GetRiTime();
-
-		    // pAnalysis->LePulse02[jk] = tmpcluster->GetLePulse();
-		    // pAnalysis->RiPulse02[jk] = tmpcluster->GetRiPulse();
-		    
-
-
-		    
-		  }
-
-
-		  else	  if(ijk==0 && ij==3){
-
-
-		    pAnalysis->cmv_locno03[jk]=1;//locno starts from 1
-
-		    pAnalysis->clustersize03[jk]=tmpcluster->GetClusterSize();
-		    pAnalysis->extrapolatim03[jk]=extrapolatim;
-		    pAnalysis->extrapolposx03[jk]=G_Point[0];
-		    pAnalysis->extrapolposy03[jk]=G_Point[1];
-		    pAnalysis->extrapolposz03[jk]=G_Point[2];
-		  
-		    pAnalysis->cmvhitrecoposx03[jk]=tmphtvec.x();
-		    pAnalysis->cmvhitrecoposy03[jk]=tmphtvec.y();
-		    pAnalysis->cmvhitrecoposz03[jk]=tmphtvec.z();
-
-
-		    pAnalysis->cmvhittrueposx03[jk]=truehtvec.x();
-		    pAnalysis->cmvhittrueposy03[jk]=truehtvec.y();
-		    pAnalysis->cmvhittrueposz03[jk]=truehtvec.z();
-		  
-		    pAnalysis->cmvhitrecoposxerr03[jk]=tmpcluster->GetPosXErr();
-		    pAnalysis->cmvhitrecoposyerr03[jk]=tmpcluster->GetPosYErr();
-		    pAnalysis->cmvhitrecoposzerr03[jk]=tmpcluster->GetPosZErr();
-
-	
-		  
-		    pAnalysis->extrapolposxerr03[jk]=Ptxerr;
-		    pAnalysis->extrapolposyerr03[jk]=Ptyerr;
-		    pAnalysis->extrapolposzerr03[jk]=Ptzerr;
-
-
-		    pAnalysis->ellip_diff03[jk]= ellip_max[ijk][ij];
-
-
-
-		    // pAnalysis->LeTime03[jk] = tmpcluster->GetLeTime();
-		    // pAnalysis->RiTime03[jk] = tmpcluster->GetRiTime();
-
-		    // pAnalysis->LePulse03[jk] = tmpcluster->GetLePulse();
-		    // pAnalysis->RiPulse03[jk] = tmpcluster->GetRiPulse();
-		    
-
-
-
-
-
-		    
-		  }
-
-
-		  
+		  pAnalysis->CMVDExpPosX[layid] = G_Point[0];
+		  pAnalysis->CMVDExpPosY[layid] = G_Point[1];
+		  pAnalysis->CMVDExpPosZ[layid] = G_Point[2];
 
         
-        	  if(ijk==1 && ij==0){
 
-		    pAnalysis->cmv_locno10[jk]=1;//locno starts from 1
-		    pAnalysis->clustersize10[jk]=tmpcluster->GetClusterSize();
-       
-	    
-		    pAnalysis->cmvhittrueposx10[jk]=tmpcluster->GetTruePosX() ;
-		    pAnalysis->cmvhittrueposy10[jk]=truehtvec.y();
-		    pAnalysis->cmvhittrueposz10[jk]=   tmpcluster->GetTruePosZ()       ;
-
-		    //  pAnalysis->debug[jk]= tmpcluster->GetTruePosX();
-
-		    
-		    pAnalysis->extrapolposx10[jk]=G_Point[0];
-		    pAnalysis->extrapolposy10[jk]=G_Point[1];
-		    pAnalysis->extrapolposz10[jk]=G_Point[2];
-		  
-		    pAnalysis->cmvhitrecoposx10[jk]=tmphtvec.x();
-		    pAnalysis->cmvhitrecoposy10[jk]=tmphtvec.y();
-		    pAnalysis->cmvhitrecoposz10[jk]=tmphtvec.z();
-		    
-	   
-		    pAnalysis->cmvhitrecoposxerr10[jk]=tmpcluster->GetPosXErr();
-		    pAnalysis->cmvhitrecoposyerr10[jk]=tmpcluster->GetPosYErr();
-		    pAnalysis->cmvhitrecoposzerr10[jk]=tmpcluster->GetPosZErr();
-
-	
-		  
-		    pAnalysis->extrapolposxerr10[jk]=Ptxerr;
-		    pAnalysis->extrapolposyerr10[jk]=Ptyerr;
-		    pAnalysis->extrapolposzerr10[jk]=Ptzerr;
-
-		    pAnalysis->ellip_diff10[jk]= ellip_max[ijk][ij];
-
-
-
-		    // pAnalysis->LeTime10[jk] = tmpcluster->GetLeTime();
-		    // pAnalysis->RiTime10[jk] = tmpcluster->GetRiTime();
-
-		    // pAnalysis->LePulse10[jk] = tmpcluster->GetLePulse();
-		    // pAnalysis->RiPulse10[jk] = tmpcluster->GetRiPulse();
-
-
-
-
-
-		    
-		  }
-
-
-		  if(ijk==1 && ij==1){
-
-		    pAnalysis->cmv_locno11[jk]=1;//locno starts from 1
-		    pAnalysis->clustersize11[jk]=tmpcluster->GetClusterSize();
-			    
-		    pAnalysis->extrapolposx11[jk]=G_Point[0];
-		    pAnalysis->extrapolposy11[jk]=G_Point[1];
-		    pAnalysis->extrapolposz11[jk]=G_Point[2];
-		  
-		    pAnalysis->cmvhitrecoposx11[jk]=tmphtvec.x();
-		    pAnalysis->cmvhitrecoposy11[jk]=tmphtvec.y();
-		    pAnalysis->cmvhitrecoposz11[jk]=tmphtvec.z();
-
-
-		    pAnalysis->cmvhittrueposx11[jk]=truehtvec.x();
-		    pAnalysis->cmvhittrueposy11[jk]=truehtvec.y();
-		    pAnalysis->cmvhittrueposz11[jk]=truehtvec.z();
-		  
-		    pAnalysis->cmvhitrecoposxerr11[jk]=tmpcluster->GetPosXErr();
-		    pAnalysis->cmvhitrecoposyerr11[jk]=tmpcluster->GetPosYErr();
-		    pAnalysis->cmvhitrecoposzerr11[jk]=tmpcluster->GetPosZErr();
-
-	
-		  
-		    pAnalysis->extrapolposxerr11[jk]=Ptxerr;
-		    pAnalysis->extrapolposyerr11[jk]=Ptyerr;
-		    pAnalysis->extrapolposzerr11[jk]=Ptzerr;
-
-
-
-		    pAnalysis->ellip_diff11[jk]= ellip_max[ijk][ij];
-
-
-		    // pAnalysis->LeTime11[jk] = tmpcluster->GetLeTime();
-		    // pAnalysis->RiTime11[jk] = tmpcluster->GetRiTime();
-
-		    // pAnalysis->LePulse11[jk] = tmpcluster->GetLePulse();
-		    // pAnalysis->RiPulse11[jk] = tmpcluster->GetRiPulse();
-
-
-		    
-		  }
-
-
-		  if(ijk==1 && ij==2){
-
-		    pAnalysis->cmv_locno12[jk]=1;//locno starts from 1
-		    pAnalysis->clustersize12[jk]=tmpcluster->GetClusterSize();
-			    
-		    pAnalysis->extrapolposx12[jk]=G_Point[0];
-		    pAnalysis->extrapolposy12[jk]=G_Point[1];
-		    pAnalysis->extrapolposz12[jk]=G_Point[2];
-		  
-		    pAnalysis->cmvhitrecoposx12[jk]=tmphtvec.x();
-		    pAnalysis->cmvhitrecoposy12[jk]=tmphtvec.y();
-		    pAnalysis->cmvhitrecoposz12[jk]=tmphtvec.z();
-
-
-		    pAnalysis->cmvhittrueposx12[jk]=truehtvec.x();
-		    pAnalysis->cmvhittrueposy12[jk]=truehtvec.y();
-		    pAnalysis->cmvhittrueposz12[jk]=truehtvec.z();
-		  
-		    pAnalysis->cmvhitrecoposxerr12[jk]=tmpcluster->GetPosXErr();
-		    pAnalysis->cmvhitrecoposyerr12[jk]=tmpcluster->GetPosYErr();
-		    pAnalysis->cmvhitrecoposzerr12[jk]=tmpcluster->GetPosZErr();
-
-	
-		  
-		    pAnalysis->extrapolposxerr12[jk]=Ptxerr;
-		    pAnalysis->extrapolposyerr12[jk]=Ptyerr;
-		    pAnalysis->extrapolposzerr12[jk]=Ptzerr;
-
-
-		    pAnalysis->ellip_diff12[jk]= ellip_max[ijk][ij];
-
-
-		    // pAnalysis->LeTime12[jk] = tmpcluster->GetLeTime();
-		    // pAnalysis->RiTime12[jk] = tmpcluster->GetRiTime();
-
-		    // pAnalysis->LePulse12[jk] = tmpcluster->GetLePulse();
-		    // pAnalysis->RiPulse12[jk] = tmpcluster->GetRiPulse();
-		    
-		  }
-	     
-        	  if(ijk==2 && ij==0){
-
-		    pAnalysis->cmv_locno20[jk]=1;//locno starts from 1
-		    pAnalysis->clustersize20[jk]=tmpcluster->GetClusterSize();
-		    pAnalysis->extrapolposx20[jk]=G_Point[0];
-		    pAnalysis->extrapolposy20[jk]=G_Point[1];
-		    pAnalysis->extrapolposz20[jk]=G_Point[2];
-		  
-		    pAnalysis->cmvhitrecoposx20[jk]=tmphtvec.x();
-		    pAnalysis->cmvhitrecoposy20[jk]=tmphtvec.y();
-		    pAnalysis->cmvhitrecoposz20[jk]=tmphtvec.z();
-
-
-		    pAnalysis->cmvhittrueposx20[jk]=truehtvec.x();
-		    pAnalysis->cmvhittrueposy20[jk]=truehtvec.y();
-		    pAnalysis->cmvhittrueposz20[jk]=truehtvec.z();
-		  
-		    pAnalysis->cmvhitrecoposxerr20[jk]=tmpcluster->GetPosXErr();
-		    pAnalysis->cmvhitrecoposyerr20[jk]=tmpcluster->GetPosYErr();
-		    pAnalysis->cmvhitrecoposzerr20[jk]=tmpcluster->GetPosZErr();
-
-	
-		  
-		    pAnalysis->extrapolposxerr20[jk]=Ptxerr;
-		    pAnalysis->extrapolposyerr20[jk]=Ptyerr;
-		    pAnalysis->extrapolposzerr20[jk]=Ptzerr;
-
-
-
-		    pAnalysis->ellip_diff20[jk]= ellip_max[ijk][ij];
-
-		    // pAnalysis->LeTime20[jk] = tmpcluster->GetLeTime();
-		    // pAnalysis->RiTime20[jk] = tmpcluster->GetRiTime();
-
-		    // pAnalysis->LePulse20[jk] = tmpcluster->GetLePulse();
-		    // pAnalysis->RiPulse20[jk] = tmpcluster->GetRiPulse();
-		    
-		  }
-
-		  if(ijk==2 && ij==1){
-
-		    pAnalysis->cmv_locno21[jk]=1;//locno starts from 1
-		    pAnalysis->clustersize21[jk]=tmpcluster->GetClusterSize();
-		    pAnalysis->extrapolposx21[jk]=G_Point[0];
-		    pAnalysis->extrapolposy21[jk]=G_Point[1];
-		    pAnalysis->extrapolposz21[jk]=G_Point[2];
-		  
-		    pAnalysis->cmvhitrecoposx21[jk]=tmphtvec.x();
-		    pAnalysis->cmvhitrecoposy21[jk]=tmphtvec.y();
-		    pAnalysis->cmvhitrecoposz21[jk]=tmphtvec.z();
-
-
-		    pAnalysis->cmvhittrueposx21[jk]=truehtvec.x();
-		    pAnalysis->cmvhittrueposy21[jk]=truehtvec.y();
-		    pAnalysis->cmvhittrueposz21[jk]=truehtvec.z();
-		  
-		    pAnalysis->cmvhitrecoposxerr21[jk]=tmpcluster->GetPosXErr();
-		    pAnalysis->cmvhitrecoposyerr21[jk]=tmpcluster->GetPosYErr();
-		    pAnalysis->cmvhitrecoposzerr21[jk]=tmpcluster->GetPosZErr();
-
-	
-		  
-		    pAnalysis->extrapolposxerr21[jk]=Ptxerr;
-		    pAnalysis->extrapolposyerr21[jk]=Ptyerr;
-		    pAnalysis->extrapolposzerr21[jk]=Ptzerr;
-
-		    pAnalysis->ellip_diff21[jk]= ellip_max[ijk][ij];
-
-
-
-		    // pAnalysis->LeTime21[jk] = tmpcluster->GetLeTime();
-		    // pAnalysis->RiTime21[jk] = tmpcluster->GetRiTime();
-
-		    // pAnalysis->LePulse21[jk] = tmpcluster->GetLePulse();
-		    // pAnalysis->RiPulse21[jk] = tmpcluster->GetRiPulse();
-		    
-
-
-
-		    
-		  }
-
-
-        	  if(ijk==2 && ij==2){
-
-		    pAnalysis->cmv_locno22[jk]=1;//locno starts from 1
-		    pAnalysis->clustersize22[jk]=tmpcluster->GetClusterSize();
-		    
-		    pAnalysis->extrapolposx22[jk]=G_Point[0];
-		    pAnalysis->extrapolposy22[jk]=G_Point[1];
-		    pAnalysis->extrapolposz22[jk]=G_Point[2];
-		  
-		    pAnalysis->cmvhitrecoposx22[jk]=tmphtvec.x();
-		    pAnalysis->cmvhitrecoposy22[jk]=tmphtvec.y();
-		    pAnalysis->cmvhitrecoposz22[jk]=tmphtvec.z();
-
-
-		    pAnalysis->cmvhittrueposx22[jk]=truehtvec.x();
-		    pAnalysis->cmvhittrueposy22[jk]=truehtvec.y();
-		    pAnalysis->cmvhittrueposz22[jk]=truehtvec.z();
-		  
-		    pAnalysis->cmvhitrecoposxerr22[jk]=tmpcluster->GetPosXErr();
-		    pAnalysis->cmvhitrecoposyerr22[jk]=tmpcluster->GetPosYErr();
-		    pAnalysis->cmvhitrecoposzerr22[jk]=tmpcluster->GetPosZErr();
-
-	
-		  
-		    pAnalysis->extrapolposxerr22[jk]=Ptxerr;
-		    pAnalysis->extrapolposyerr22[jk]=Ptyerr;
-		    pAnalysis->extrapolposzerr22[jk]=Ptzerr;
-
-
-		    pAnalysis->ellip_diff22[jk]= ellip_max[ijk][ij];
-
-
-		    // pAnalysis->LeTime22[jk] = tmpcluster->GetLeTime();
-		    // pAnalysis->RiTime22[jk] = tmpcluster->GetRiTime();
-
-		    // pAnalysis->LePulse22[jk] = tmpcluster->GetLePulse();
-		    // pAnalysis->RiPulse22[jk] = tmpcluster->GetRiPulse();
-
-		    
-		    
-		  }
-
-
-		  if(ijk==3 && ij==0){
-
-		    pAnalysis->cmv_locno30[jk]=1;//locno starts from 1
-		    pAnalysis->clustersize30[jk]=tmpcluster->GetClusterSize();
-	    
-		    pAnalysis->extrapolposx30[jk]=G_Point[0];
-		    pAnalysis->extrapolposy30[jk]=G_Point[1];
-		    pAnalysis->extrapolposz30[jk]=G_Point[2];
-		  
-		    pAnalysis->cmvhitrecoposx30[jk]=tmphtvec.x();
-		    pAnalysis->cmvhitrecoposy30[jk]=tmphtvec.y();
-		    pAnalysis->cmvhitrecoposz30[jk]=tmphtvec.z();
-
-
-		    pAnalysis->cmvhittrueposx30[jk]=truehtvec.x();
-		    pAnalysis->cmvhittrueposy30[jk]=truehtvec.y();
-		    pAnalysis->cmvhittrueposz30[jk]=truehtvec.z();
-		  
-		    pAnalysis->cmvhitrecoposxerr30[jk]=tmpcluster->GetPosXErr();
-		    pAnalysis->cmvhitrecoposyerr30[jk]=tmpcluster->GetPosYErr();
-		    pAnalysis->cmvhitrecoposzerr30[jk]=tmpcluster->GetPosZErr();
-
-	
-		  
-		    pAnalysis->extrapolposxerr30[jk]=Ptxerr;
-		    pAnalysis->extrapolposyerr30[jk]=Ptyerr;
-		    pAnalysis->extrapolposzerr30[jk]=Ptzerr;
-
-		    pAnalysis->ellip_diff30[jk]= ellip_max[ijk][ij];
-
-
-
-		    // pAnalysis->LeTime30[jk] = tmpcluster->GetLeTime();
-		    // pAnalysis->RiTime30[jk] = tmpcluster->GetRiTime();
-
-		    // pAnalysis->LePulse30[jk] = tmpcluster->GetLePulse();
-		    // pAnalysis->RiPulse30[jk] = tmpcluster->GetRiPulse();
-
-
-
-
-
-		    
-		  }
-
-
-
-
-		  if(ijk==3 && ij==1){
-
-		    pAnalysis->cmv_locno31[jk]=1;//locno starts from 1
-		    pAnalysis->clustersize31[jk]=tmpcluster->GetClusterSize();
-			    
-		    pAnalysis->extrapolposx31[jk]=G_Point[0];
-		    pAnalysis->extrapolposy31[jk]=G_Point[1];
-		    pAnalysis->extrapolposz31[jk]=G_Point[2];
-		  
-		    pAnalysis->cmvhitrecoposx31[jk]=tmphtvec.x();
-		    pAnalysis->cmvhitrecoposy31[jk]=tmphtvec.y();
-		    pAnalysis->cmvhitrecoposz31[jk]=tmphtvec.z();
-
-
-		    pAnalysis->cmvhittrueposx31[jk]=truehtvec.x();
-		    pAnalysis->cmvhittrueposy31[jk]=truehtvec.y();
-		    pAnalysis->cmvhittrueposz31[jk]=truehtvec.z();
-		  
-		    pAnalysis->cmvhitrecoposxerr31[jk]=tmpcluster->GetPosXErr();
-		    pAnalysis->cmvhitrecoposyerr31[jk]=tmpcluster->GetPosYErr();
-		    pAnalysis->cmvhitrecoposzerr31[jk]=tmpcluster->GetPosZErr();
-
-	
-		  
-		    pAnalysis->extrapolposxerr31[jk]=Ptxerr;
-		    pAnalysis->extrapolposyerr31[jk]=Ptyerr;
-		    pAnalysis->extrapolposzerr31[jk]=Ptzerr;
-
-
-		    pAnalysis->ellip_diff31[jk]= ellip_max[ijk][ij];
-
-
-		    // pAnalysis->LeTime31[jk] = tmpcluster->GetLeTime();
-		    // pAnalysis->RiTime31[jk] = tmpcluster->GetRiTime();
-
-		    // pAnalysis->LePulse31[jk] = tmpcluster->GetLePulse();
-		    // pAnalysis->RiPulse31[jk] = tmpcluster->GetRiPulse();
-
-
-
-
-
-		    
-		  }
-
-
-
-        	  if(ijk==3 && ij==2){
-		    pAnalysis->cmv_locno32[jk]=1;//locno starts from 1
-		    pAnalysis->clustersize32[jk]=tmpcluster->GetClusterSize();
-
-
-		    
-		    pAnalysis->extrapolposx32[jk]=G_Point[0];
-		    pAnalysis->extrapolposy32[jk]=G_Point[1];
-		    pAnalysis->extrapolposz32[jk]=G_Point[2];
-		  
-		    pAnalysis->cmvhitrecoposx32[jk]=tmphtvec.x();
-		    pAnalysis->cmvhitrecoposy32[jk]=tmphtvec.y();
-		    pAnalysis->cmvhitrecoposz32[jk]=tmphtvec.z();
-
-
-		    pAnalysis->cmvhittrueposx32[jk]=truehtvec.x();
-		    pAnalysis->cmvhittrueposy32[jk]=truehtvec.y();
-		    pAnalysis->cmvhittrueposz32[jk]=truehtvec.z();
-		  
-		    pAnalysis->cmvhitrecoposxerr32[jk]=tmpcluster->GetPosXErr();
-		    pAnalysis->cmvhitrecoposyerr32[jk]=tmpcluster->GetPosYErr();
-		    pAnalysis->cmvhitrecoposzerr32[jk]=tmpcluster->GetPosZErr();
-
-	
-		  
-		    pAnalysis->extrapolposxerr32[jk]=Ptxerr;
-		    pAnalysis->extrapolposyerr32[jk]=Ptyerr;
-		    pAnalysis->extrapolposzerr32[jk]=Ptzerr;
-
-
-
-		    pAnalysis->ellip_diff32[jk]= ellip_max[ijk][ij]; 
-
-		    // pAnalysis->LeTime32[jk] = tmpcluster->GetLeTime();
-		    // pAnalysis->RiTime32[jk] = tmpcluster->GetRiTime(); 
-		    // pAnalysis->LePulse32[jk] = tmpcluster->GetLePulse();
-		    // pAnalysis->RiPulse32[jk] = tmpcluster->GetRiPulse();
-
-
-
-		  }
-		  //110222
-
-
-		  if(ijk==4 && ij==0){
-
-		    pAnalysis->cmv_locno40[jk]=1;//locno starts from 1
-		    pAnalysis->clustersize40[jk]=tmpcluster->GetClusterSize();
-	    
-		    pAnalysis->extrapolposx40[jk]=G_Point[0];
-		    pAnalysis->extrapolposy40[jk]=G_Point[1];
-		    pAnalysis->extrapolposz40[jk]=G_Point[2];
-		  
-		    pAnalysis->cmvhitrecoposx40[jk]=tmphtvec.x();
-		    pAnalysis->cmvhitrecoposy40[jk]=tmphtvec.y();
-		    pAnalysis->cmvhitrecoposz40[jk]=tmphtvec.z();
-
-
-		    pAnalysis->cmvhittrueposx40[jk]=truehtvec.x();
-		    pAnalysis->cmvhittrueposy40[jk]=truehtvec.y();
-		    pAnalysis->cmvhittrueposz40[jk]=truehtvec.z();
-		  
-		    pAnalysis->cmvhitrecoposxerr40[jk]=tmpcluster->GetPosXErr();
-		    pAnalysis->cmvhitrecoposyerr40[jk]=tmpcluster->GetPosYErr();
-		    pAnalysis->cmvhitrecoposzerr40[jk]=tmpcluster->GetPosZErr();
-
-	
-		  
-		    pAnalysis->extrapolposxerr40[jk]=Ptxerr;
-		    pAnalysis->extrapolposyerr40[jk]=Ptyerr;
-		    pAnalysis->extrapolposzerr40[jk]=Ptzerr;
-
-		    // pAnalysis->ellip_diff40[jk]= ellip_max[ijk][ij];
-
-
-
-		    // pAnalysis->LeTime40[jk] = tmpcluster->GetLeTime();
-		    // pAnalysis->RiTime40[jk] = tmpcluster->GetRiTime();
-
-		    // pAnalysis->LePulse40[jk] = tmpcluster->GetLePulse();
-		    // pAnalysis->RiPulse40[jk] = tmpcluster->GetRiPulse();
-
-
-
-
-
-		    
-		  }
-
-
-
-
-		  if(ijk==4 && ij==1){
-
-		    pAnalysis->cmv_locno41[jk]=1;//locno starts from 1
-		    pAnalysis->clustersize41[jk]=tmpcluster->GetClusterSize();
-			    
-		    pAnalysis->extrapolposx41[jk]=G_Point[0];
-		    pAnalysis->extrapolposy41[jk]=G_Point[1];
-		    pAnalysis->extrapolposz41[jk]=G_Point[2];
-		  
-		    pAnalysis->cmvhitrecoposx41[jk]=tmphtvec.x();
-		    pAnalysis->cmvhitrecoposy41[jk]=tmphtvec.y();
-		    pAnalysis->cmvhitrecoposz41[jk]=tmphtvec.z();
-
-
-		    pAnalysis->cmvhittrueposx41[jk]=truehtvec.x();
-		    pAnalysis->cmvhittrueposy41[jk]=truehtvec.y();
-		    pAnalysis->cmvhittrueposz41[jk]=truehtvec.z();
-		  
-		    pAnalysis->cmvhitrecoposxerr41[jk]=tmpcluster->GetPosXErr();
-		    pAnalysis->cmvhitrecoposyerr41[jk]=tmpcluster->GetPosYErr();
-		    pAnalysis->cmvhitrecoposzerr41[jk]=tmpcluster->GetPosZErr();
-
-	
-		  
-		    pAnalysis->extrapolposxerr41[jk]=Ptxerr;
-		    pAnalysis->extrapolposyerr41[jk]=Ptyerr;
-		    pAnalysis->extrapolposzerr41[jk]=Ptzerr;
-
-
-		    //  pAnalysis->ellip_diff41[jk]= ellip_max[ijk][ij];
-
-
-		    // pAnalysis->LeTime41[jk] = tmpcluster->GetLeTime();
-		    // pAnalysis->RiTime41[jk] = tmpcluster->GetRiTime();
-
-		    // pAnalysis->LePulse41[jk] = tmpcluster->GetLePulse();
-		    // pAnalysis->RiPulse41[jk] = tmpcluster->GetRiPulse();
-
-
-
-
-
-		    
-		  }
-
-
-
-        	  if(ijk==4 && ij==2){
-		    pAnalysis->cmv_locno42[jk]=1;//locno starts from 1
-		    pAnalysis->clustersize42[jk]=tmpcluster->GetClusterSize();
-
-
-		    
-		    pAnalysis->extrapolposx42[jk]=G_Point[0];
-		    pAnalysis->extrapolposy42[jk]=G_Point[1];
-		    pAnalysis->extrapolposz42[jk]=G_Point[2];
-		  
-		    pAnalysis->cmvhitrecoposx42[jk]=tmphtvec.x();
-		    pAnalysis->cmvhitrecoposy42[jk]=tmphtvec.y();
-		    pAnalysis->cmvhitrecoposz42[jk]=tmphtvec.z();
-
-
-		    pAnalysis->cmvhittrueposx42[jk]=truehtvec.x();
-		    pAnalysis->cmvhittrueposy42[jk]=truehtvec.y();
-		    pAnalysis->cmvhittrueposz42[jk]=truehtvec.z();
-		  
-		    pAnalysis->cmvhitrecoposxerr42[jk]=tmpcluster->GetPosXErr();
-		    pAnalysis->cmvhitrecoposyerr42[jk]=tmpcluster->GetPosYErr();
-		    pAnalysis->cmvhitrecoposzerr42[jk]=tmpcluster->GetPosZErr();
-
-	
-		  
-		    pAnalysis->extrapolposxerr42[jk]=Ptxerr;
-		    pAnalysis->extrapolposyerr42[jk]=Ptyerr;
-		    pAnalysis->extrapolposzerr42[jk]=Ptzerr;
-
-
-
-		    // pAnalysis->ellip_diff42[jk]= ellip_max[ijk][ij]; 
-
-		    // pAnalysis->LeTime42[jk] = tmpcluster->GetLeTime();
-		    // pAnalysis->RiTime42[jk] = tmpcluster->GetRiTime(); 
-		    // pAnalysis->LePulse42[jk] = tmpcluster->GetLePulse();
-		    // pAnalysis->RiPulse42[jk] = tmpcluster->GetRiPulse();
-
-
-
-		  }
-		  
-		  if(ijk==5 && ij==0){
-
-		    pAnalysis->cmv_locno50[jk]=1;//locno starts from 1
-		    pAnalysis->clustersize50[jk]=tmpcluster->GetClusterSize();
-	    
-		    pAnalysis->extrapolposx50[jk]=G_Point[0];
-		    pAnalysis->extrapolposy50[jk]=G_Point[1];
-		    pAnalysis->extrapolposz50[jk]=G_Point[2];
-		  
-		    pAnalysis->cmvhitrecoposx50[jk]=tmphtvec.x();
-		    pAnalysis->cmvhitrecoposy50[jk]=tmphtvec.y();
-		    pAnalysis->cmvhitrecoposz50[jk]=tmphtvec.z();
-
-
-		    pAnalysis->cmvhittrueposx50[jk]=truehtvec.x();
-		    pAnalysis->cmvhittrueposy50[jk]=truehtvec.y();
-		    pAnalysis->cmvhittrueposz50[jk]=truehtvec.z();
-		  
-		    pAnalysis->cmvhitrecoposxerr50[jk]=tmpcluster->GetPosXErr();
-		    pAnalysis->cmvhitrecoposyerr50[jk]=tmpcluster->GetPosYErr();
-		    pAnalysis->cmvhitrecoposzerr50[jk]=tmpcluster->GetPosZErr();
-
-	
-		  
-		    pAnalysis->extrapolposxerr50[jk]=Ptxerr;
-		    pAnalysis->extrapolposyerr50[jk]=Ptyerr;
-		    pAnalysis->extrapolposzerr50[jk]=Ptzerr;
-
-		    // pAnalysis->ellip_diff50[jk]= ellip_max[ijk][ij];
-
-
-
-		    // pAnalysis->LeTime50[jk] = tmpcluster->GetLeTime();
-		    // pAnalysis->RiTime50[jk] = tmpcluster->GetRiTime();
-
-		    // pAnalysis->LePulse50[jk] = tmpcluster->GetLePulse();
-		    // pAnalysis->RiPulse50[jk] = tmpcluster->GetRiPulse();
-
-
-
-
-
-		    
-		  }
-
-
-
-
-		  if(ijk==5 && ij==1){
-
-		    pAnalysis->cmv_locno51[jk]=1;//locno starts from 1
-		    pAnalysis->clustersize51[jk]=tmpcluster->GetClusterSize();
-			    
-		    pAnalysis->extrapolposx51[jk]=G_Point[0];
-		    pAnalysis->extrapolposy51[jk]=G_Point[1];
-		    pAnalysis->extrapolposz51[jk]=G_Point[2];
-		  
-		    pAnalysis->cmvhitrecoposx51[jk]=tmphtvec.x();
-		    pAnalysis->cmvhitrecoposy51[jk]=tmphtvec.y();
-		    pAnalysis->cmvhitrecoposz51[jk]=tmphtvec.z();
-
-
-		    pAnalysis->cmvhittrueposx51[jk]=truehtvec.x();
-		    pAnalysis->cmvhittrueposy51[jk]=truehtvec.y();
-		    pAnalysis->cmvhittrueposz51[jk]=truehtvec.z();
-		  
-		    pAnalysis->cmvhitrecoposxerr51[jk]=tmpcluster->GetPosXErr();
-		    pAnalysis->cmvhitrecoposyerr51[jk]=tmpcluster->GetPosYErr();
-		    pAnalysis->cmvhitrecoposzerr51[jk]=tmpcluster->GetPosZErr();
-
-	
-		  
-		    pAnalysis->extrapolposxerr51[jk]=Ptxerr;
-		    pAnalysis->extrapolposyerr51[jk]=Ptyerr;
-		    pAnalysis->extrapolposzerr51[jk]=Ptzerr;
-
-
-		    // pAnalysis->ellip_diff51[jk]= ellip_max[ijk][ij];
-
-
-		    // pAnalysis->LeTime51[jk] = tmpcluster->GetLeTime();
-		    // pAnalysis->RiTime51[jk] = tmpcluster->GetRiTime();
-
-		    // pAnalysis->LePulse51[jk] = tmpcluster->GetLePulse();
-		    // pAnalysis->RiPulse51[jk] = tmpcluster->GetRiPulse();
-
-
-
-
-
-		    
-		  }
-
-
-
-        	  if(ijk==5 && ij==2){
-		    pAnalysis->cmv_locno52[jk]=1;//locno starts from 1
-		    pAnalysis->clustersize52[jk]=tmpcluster->GetClusterSize();
-
-
-		    
-		    pAnalysis->extrapolposx52[jk]=G_Point[0];
-		    pAnalysis->extrapolposy52[jk]=G_Point[1];
-		    pAnalysis->extrapolposz52[jk]=G_Point[2];
-		  
-		    pAnalysis->cmvhitrecoposx52[jk]=tmphtvec.x();
-		    pAnalysis->cmvhitrecoposy52[jk]=tmphtvec.y();
-		    pAnalysis->cmvhitrecoposz52[jk]=tmphtvec.z();
-
-
-		    pAnalysis->cmvhittrueposx52[jk]=truehtvec.x();
-		    pAnalysis->cmvhittrueposy52[jk]=truehtvec.y();
-		    pAnalysis->cmvhittrueposz52[jk]=truehtvec.z();
-		  
-		    pAnalysis->cmvhitrecoposxerr52[jk]=tmpcluster->GetPosXErr();
-		    pAnalysis->cmvhitrecoposyerr52[jk]=tmpcluster->GetPosYErr();
-		    pAnalysis->cmvhitrecoposzerr52[jk]=tmpcluster->GetPosZErr();
-
-	
-		  
-		    pAnalysis->extrapolposxerr52[jk]=Ptxerr;
-		    pAnalysis->extrapolposyerr52[jk]=Ptyerr;
-		    pAnalysis->extrapolposzerr52[jk]=Ptzerr;
-
-
-
-		    //	    pAnalysis->ellip_diff52[jk]= ellip_max[ijk][ij]; 
-
-		    // pAnalysis->LeTime52[jk] = tmpcluster->GetLeTime();
-		    // pAnalysis->RiTime52[jk] = tmpcluster->GetRiTime(); 
-		    // pAnalysis->LePulse52[jk] = tmpcluster->GetLePulse();
-		    // pAnalysis->RiPulse52[jk] = tmpcluster->GetRiPulse();
-
-
-
-		  }
-		  
-		  if(ijk==6 && ij==0){
-
-		    pAnalysis->cmv_locno60[jk]=1;//locno starts from 1
-		    pAnalysis->clustersize60[jk]=tmpcluster->GetClusterSize();
-	    
-		    pAnalysis->extrapolposx60[jk]=G_Point[0];
-		    pAnalysis->extrapolposy60[jk]=G_Point[1];
-		    pAnalysis->extrapolposz60[jk]=G_Point[2];
-		  
-		    pAnalysis->cmvhitrecoposx60[jk]=tmphtvec.x();
-		    pAnalysis->cmvhitrecoposy60[jk]=tmphtvec.y();
-		    pAnalysis->cmvhitrecoposz60[jk]=tmphtvec.z();
-
-
-		    pAnalysis->cmvhittrueposx60[jk]=truehtvec.x();
-		    pAnalysis->cmvhittrueposy60[jk]=truehtvec.y();
-		    pAnalysis->cmvhittrueposz60[jk]=truehtvec.z();
-		  
-		    pAnalysis->cmvhitrecoposxerr60[jk]=tmpcluster->GetPosXErr();
-		    pAnalysis->cmvhitrecoposyerr60[jk]=tmpcluster->GetPosYErr();
-		    pAnalysis->cmvhitrecoposzerr60[jk]=tmpcluster->GetPosZErr();
-
-	
-		  
-		    pAnalysis->extrapolposxerr60[jk]=Ptxerr;
-		    pAnalysis->extrapolposyerr60[jk]=Ptyerr;
-		    pAnalysis->extrapolposzerr60[jk]=Ptzerr;
-
-		    //  pAnalysis->ellip_diff60[jk]= ellip_max[ijk][ij];
-
-
-
-		    // pAnalysis->LeTime60[jk] = tmpcluster->GetLeTime();
-		    // pAnalysis->RiTime60[jk] = tmpcluster->GetRiTime();
-
-		    // pAnalysis->LePulse60[jk] = tmpcluster->GetLePulse();
-		    // pAnalysis->RiPulse60[jk] = tmpcluster->GetRiPulse();
-
-
-
-
-
-		    
-		  }
-
-
-
-
-		  if(ijk==6 && ij==1){
-
-		    pAnalysis->cmv_locno61[jk]=1;//locno starts from 1
-		    pAnalysis->clustersize61[jk]=tmpcluster->GetClusterSize();
-			    
-		    pAnalysis->extrapolposx61[jk]=G_Point[0];
-		    pAnalysis->extrapolposy61[jk]=G_Point[1];
-		    pAnalysis->extrapolposz61[jk]=G_Point[2];
-		  
-		    pAnalysis->cmvhitrecoposx61[jk]=tmphtvec.x();
-		    pAnalysis->cmvhitrecoposy61[jk]=tmphtvec.y();
-		    pAnalysis->cmvhitrecoposz61[jk]=tmphtvec.z();
-
-
-		    pAnalysis->cmvhittrueposx61[jk]=truehtvec.x();
-		    pAnalysis->cmvhittrueposy61[jk]=truehtvec.y();
-		    pAnalysis->cmvhittrueposz61[jk]=truehtvec.z();
-		  
-		    pAnalysis->cmvhitrecoposxerr61[jk]=tmpcluster->GetPosXErr();
-		    pAnalysis->cmvhitrecoposyerr61[jk]=tmpcluster->GetPosYErr();
-		    pAnalysis->cmvhitrecoposzerr61[jk]=tmpcluster->GetPosZErr();
-
-	
-		  
-		    pAnalysis->extrapolposxerr61[jk]=Ptxerr;
-		    pAnalysis->extrapolposyerr61[jk]=Ptyerr;
-		    pAnalysis->extrapolposzerr61[jk]=Ptzerr;
-
-
-		    //   pAnalysis->ellip_diff61[jk]= ellip_max[ijk][ij];
-
-
-		    // pAnalysis->LeTime61[jk] = tmpcluster->GetLeTime();
-		    // pAnalysis->RiTime61[jk] = tmpcluster->GetRiTime();
-
-		    // pAnalysis->LePulse61[jk] = tmpcluster->GetLePulse();
-		    // pAnalysis->RiPulse61[jk] = tmpcluster->GetRiPulse();
-
-
-
-
-
-		    
-		  }
-
-
-
-        	  if(ijk==6 && ij==2){
-		    pAnalysis->cmv_locno62[jk]=1;//locno starts from 1
-		    pAnalysis->clustersize62[jk]=tmpcluster->GetClusterSize();
-
-
-		    
-		    pAnalysis->extrapolposx62[jk]=G_Point[0];
-		    pAnalysis->extrapolposy62[jk]=G_Point[1];
-		    pAnalysis->extrapolposz62[jk]=G_Point[2];
-		  
-		    pAnalysis->cmvhitrecoposx62[jk]=tmphtvec.x();
-		    pAnalysis->cmvhitrecoposy62[jk]=tmphtvec.y();
-		    pAnalysis->cmvhitrecoposz62[jk]=tmphtvec.z();
-
-
-		    pAnalysis->cmvhittrueposx62[jk]=truehtvec.x();
-		    pAnalysis->cmvhittrueposy62[jk]=truehtvec.y();
-		    pAnalysis->cmvhittrueposz62[jk]=truehtvec.z();
-		  
-		    pAnalysis->cmvhitrecoposxerr62[jk]=tmpcluster->GetPosXErr();
-		    pAnalysis->cmvhitrecoposyerr62[jk]=tmpcluster->GetPosYErr();
-		    pAnalysis->cmvhitrecoposzerr62[jk]=tmpcluster->GetPosZErr();
-
-	
-		  
-		    pAnalysis->extrapolposxerr62[jk]=Ptxerr;
-		    pAnalysis->extrapolposyerr62[jk]=Ptyerr;
-		    pAnalysis->extrapolposzerr62[jk]=Ptzerr;
-
-
-
-		    //		    pAnalysis->ellip_diff62[jk]= ellip_max[ijk][ij]; 
-
-		    // pAnalysis->LeTime62[jk] = tmpcluster->GetLeTime();
-		    // pAnalysis->RiTime62[jk] = tmpcluster->GetRiTime(); 
-		    // pAnalysis->LePulse62[jk] = tmpcluster->GetLePulse();
-		    // pAnalysis->RiPulse62[jk] = tmpcluster->GetRiPulse();
-
-
-
-		  }
-		  
-
-
-		  //
-
-
-		  // }
-		  // else{
-		  //   cout<<"deltaX and deltaY >=20"<<endl;
-		  // }
+	}
+	else{
+	  cout<<"..No Line PLane Intersection.."<<endl;
 
 
 
 
 		  
-		 	  
-		  //	  
-		}//difx
-		//
-	      }
+		  pAnalysis->CMVDTruePosX[layid] = -10000;
+		  pAnalysis->CMVDTruePosY[layid] = -10000;
+		  pAnalysis->CMVDTruePosZ[layid] = -10000;
+
+		  
+		  pAnalysis->CMVDRecoPosX[layid] = -10000;
+		  pAnalysis->CMVDRecoPosY[layid] = -10000;
+		  pAnalysis->CMVDRecoPosZ[layid] = -10000;
 
 
-	      else{
-
-		cout<<"Extrapolated in Side "<<ijk<< " and Layer no  " <<ij<<" but no hits found in records."<<endl;
-			 
-
-	      }
-
-
-
+		  pAnalysis->CMVDWRecoPosX[layid] = -10000;
+		  pAnalysis->CMVDWRecoPosY[layid] = -10000;
+		  pAnalysis->CMVDWRecoPosZ[layid] = -10000;
 
 
 
-		      
-            } //for (unsigned int ix=0; ix<CmvHit_pointer->CmvHit_list.size(); ix++)
-
-	 
-	    
-
-	    
-          } //isInside
-	  else {
-	    //  else if(hitpresent == true){ //200522
-	    // layid = ijk+1;
-	    // 	    layid<<=2;
-	    // 	    layid+=ij;
-
-	    // 	    cout<<"layid: "<<layid<<endl;
-	    // 	layexp->SetId(layid);
-
-	    
-	    //    for (unsigned iji=0; iji<CmvCluster_pointer->CmvCluster_list.size(); iji++) {
-	    //     CmvCluster* tmpcluster = CmvCluster_pointer->CmvCluster_list[iji];
-	    //   if (tmpcluster->GetPlane()-1==ijk && tmpcluster->GetLayer()==ij) {
-	    // find distance between  line and edges:
-
-	    //each layer has 4 edges
-	    // Find minium distance of line from all the 4 edges
-	    // consider minimum of all these..
-		
- 	    //23032022
-	    //cout<<"No extrapolation but hit present in: "<<ijk<<" "<<ij<<endl;
-	    cout<<".......Finding distance of closest approach...."<<endl;
-	       
-	    
-	    //   double edge[4][6];
-	     
-	    double closdist[4];
-
-	    for(int zx=0;zx<4;zx++){
-	      for(int ik=0;ik<6;ik++){	
-		//	  cout<<edge[zx][ik]<<" " <<endl;
-	      }
-	      //	double a1a2 = Line[3]*edge[zx][3] + Line[4]*edge[zx][4] + Line[5]*edge[zx][5];
-	 
-	      double rvec[3] ={ -Line[0]+edge[zx][0],-Line[1]+edge[zx][1],-Line[2]+edge[zx][2] };
-	      cout<<"rvec: "<<rvec[0]<<" "<<rvec[1]<<" "<<rvec[2]<<endl;
-	      // double ra1 =  Line[3]*rvec[0] + Line[4]*rvec[1] + Line[5]*rvec[2];
-	      // double ra2 =  edge[zx][3]*rvec[0] + edge[zx][4]*rvec[1] + edge[zx][5]*rvec[2];
-	 
-	      // double t1 = (-ra2-(ra1*a1a2))/(1-pow(a1a2,2));
-	      // double t2 = ((ra1*a1a2)-ra2)/(1-pow(a1a2,2));
-
-	      // cout<<"t1 t2 "<<t1<<" "<<t2<<endl;
-	      // double closdistvec[3];
-	 
-	      // closdistvec[0] = rvec[0]+edge[zx][3]*t2-Line[3]*t1;
-	      // closdistvec[1] = rvec[1]+edge[zx][4]*t2-Line[4]*t1;
-	      // closdistvec[2] = rvec[2]+edge[zx][5]*t2-Line[5]*t1;
-
-	      // double closdist = sqrt(pow(closdistvec[0],2)+pow(closdistvec[1],2)+pow(closdistvec[2],2));
-	      //	 cout<<"dist of closest approach to the edge"<<zx<<" is: "<<closdist<<endl;
-	      //23032022
-
-	      //formula: d = (a1 x a2). (r1-r2)/|a1 x a2|
-	      double a1xa2[3] = {edge[zx][4]*Line[5]-edge[zx][5]*Line[4], -edge[zx][3]*Line[5]+edge[zx][5]*Line[3],  edge[zx][3]*Line[4]-edge[zx][4]*Line[3] }; 
-
-	      double maga1xa2 = sqrt( pow(a1xa2[0],2) + pow(a1xa2[1],2)+ pow(a1xa2[2],2) );
-	      closdist[zx] = abs(rvec[0]*a1xa2[0]+rvec[1]*a1xa2[1]+rvec[2]*a1xa2[2])/(maga1xa2);
+		  pAnalysis->CMVDExpPosX[layid] = -10000;
+		  pAnalysis->CMVDExpPosY[layid] = -10000;
+		  pAnalysis->CMVDExpPosZ[layid] = -10000;
 
 
-	      cout<<"dist of closest approach to the edge"<<zx<<" is: "<<closdist[zx]<<endl;
-	 
-	    }//   for(int zx=0;zx<4;zx++){
+		   
+		  pAnalysis->CMVDExpnHit[layid] = -10000;		  
+		 		  
 
+	}
 
-	      
-	    double minclosdist=100000;
-	    int minedge;
-	    for(int zxy=0;zxy<4;zxy++){
-	      if(	 closdist[zxy]<minclosdist){
-   
-		minclosdist = 	 closdist[zxy];
-		minedge=zxy;
-	      }
-	    }
-
-	    cout<<"minimum closest dis from the 4 edges is: "<<minclosdist<< " miniedge: "<< minedge<<endl;
-
-	    double distlineedge[4]={1000000,1000000,1000000,1000000};
-	    double GOnLine[4][3];//4: four edge
-	    double GOnedge[4][3];
-	    double POnLine[3];
-	    double POnedge[3];
-
-	    
-	    for(int miniedge=0;miniedge<4;miniedge++){
-	      
-   //	    const int miniedge = minedge;
-
-	      if(ijk>0 && miniedge==2)continue;//exclusing bottomside edge of all side walls..
-
-	      cout<<"Now Finding the points on Line And Edge where min d exists "<<miniedge<<endl;
-	    //.. To find points on line and edge where this dist of clos app is found. //23072022
-	    //A1 Line, A2 Edge
-	    //Line: Lamda = x-x1/a1 = y-y1/b1 = z-z1/c1; x is point on Line where u get min clos app
-	    //Edge: mu = xx-x2/a2 = yy-y2/b2 = zz-z2/c2; xx is point on ege where you get min clos dist
-	    // X-XX is vector joining X and XX whose length is mini and is perpendicular to but Line and edge.
-	    // (X-XX).A1 = 0 && (X-XX).A2=0
-	    //Solving this we get Lamda and Mu..
- 
-	    // double rveccloseedge[3] ={ -Line[0]+edge[miniedge][0],-Line[1]+edge[miniedge][1],-Line[2]+edge[miniedge][2] };
-	    // cout<<"rveccloseedge: "<<rveccloseedge[0]<<" "<<rveccloseedge[1]<<" "<<rveccloseedge[2]<<endl;
- 
-	    // double A1dotA2 = Line[3]*edge[miniedge][3]+Line[4]*edge[miniedge][4]+Line[5]*edge[miniedge][5];
-	    // double A1dotrvec =Line[3]*rveccloseedge[0]+Line[4]*rveccloseedge[1]+Line[5]*rveccloseedge[2];
-	    // double A2dotrvec = edge[miniedge][3]*rveccloseedge[0]+edge[miniedge][4]*rveccloseedge[1]+edge[miniedge][5]*rveccloseedge[2];  
- 
-	    // double lambda = (A1dotrvec - A2dotrvec*(A1dotA2))/(1-pow(A1dotA2,2));
-	    // double mu = lambda*A1dotA2 - A2dotrvec;
-	       
-	    // //	    cout<<mu<<" "<<lambda<<endl;
-	    // GOnLine[miniedge][0] = {Line[0]+lambda*Line[3]};
-	    // GOnLine[miniedge][1] = {Line[1]+lambda*Line[4]};
-	    // GOnLine[miniedge][2] = {Line[2]+lambda*Line[5]};
-	    
-	    // // cout<<edge[miniedge][0]<<" "<<mu<<" "<<edge[miniedge][3]<<" "<<miniedge<<" "<<edge[miniedge][0]+mu*edge[miniedge][3]<<endl;
-	    // GOnedge[miniedge][0] = {edge[miniedge][0]+mu*edge[miniedge][3]};
-	    // GOnedge[miniedge][1] = {edge[miniedge][1]+mu*edge[miniedge][4]};
-	    // GOnedge[miniedge][2] = {edge[miniedge][2]+mu*edge[miniedge][5]};  
-	      bool pl3 = ClosDistbtwLineEdge(Line,Plane,edge[miniedge],POnLine,POnedge);
-	      cout<<"pl3: "<<pl3<<endl;
-	      if(pl3){
-
-		for(int qw=0;qw<3;qw++){
-		  cout<<POnLine[qw]<<" "<<POnedge[qw]<<endl;
-		}
-		
-		GOnLine[miniedge][0] = POnLine[0];
-		GOnLine[miniedge][1] = POnLine[1];
-		GOnLine[miniedge][2] = POnLine[2];
-		
-		GOnedge[miniedge][0] = POnedge[0];
-		GOnedge[miniedge][1] = POnedge[1];
-		GOnedge[miniedge][2] = POnedge[2];
-		
-	    for(int qw=0;qw<3;qw++){
-	      cout<<"GOnLine["<<miniedge<<"]["<<qw<<"] "<<GOnLine[miniedge][qw] <<" GOnedge["<<miniedge<<"]["<<qw<<"] "<<GOnedge[miniedge][qw]<<endl;
-	    }
-	    //    cout<<"mindist Re-check"<<sqrt( pow(GOnLine[0]-GOnedge[0],2) + pow(GOnLine[1]-GOnedge[1],2)+ pow(GOnLine[2]-GOnedge[2],2) ) <<endl;
- 
-	     bool Onedge = false;
-	     if(ijk==0){ //top wall
-	       switch(miniedge){
-	       case 0: Onedge =  ( (GOnedge[miniedge][0])<  (PhyVolGlPos[ijk][ij][0]+layhalflength+delta) &&  (GOnedge[miniedge][0])>  (PhyVolGlPos[ijk][ij][0]-layhalflength-delta) && abs(GOnedge[miniedge][1]-PhyVolGlPos[ijk][ij][1]-layhalfbreadth)<1.e-10  && abs(GOnedge[miniedge][2]-PhyVolGlPos[ijk][ij][2])<1.e-10 );//backside edge
-		 break;
-	       case 1: Onedge =  ( (GOnedge[miniedge][1])<  (PhyVolGlPos[ijk][ij][1]+layhalfbreadth+delta) &&  (GOnedge[miniedge][1])>  (PhyVolGlPos[ijk][ij][1]-layhalfbreadth-delta) && abs(GOnedge[miniedge][0]-PhyVolGlPos[ijk][ij][0]+layhalflength)<1.e-10  && abs(GOnedge[miniedge][2]-PhyVolGlPos[ijk][ij][2])<1.e-10 );//leftside edge
-		 	 break;
-	       case 2: Onedge =  ( (GOnedge[miniedge][0])<  (PhyVolGlPos[ijk][ij][0]+layhalflength+delta) &&  (GOnedge[miniedge][0])>  (PhyVolGlPos[ijk][ij][0]-layhalflength-delta) && abs(GOnedge[miniedge][1]-PhyVolGlPos[ijk][ij][1]+layhalfbreadth)<1.e-10  && abs(GOnedge[miniedge][2]-PhyVolGlPos[ijk][ij][2])<1.e-10 );//frontside edge
-		 	 break;
-
-	       case 3: Onedge =  ( (GOnedge[miniedge][1])<  (PhyVolGlPos[ijk][ij][1]+layhalfbreadth+delta) &&  (GOnedge[miniedge][1])>  (PhyVolGlPos[ijk][ij][1]-layhalfbreadth-delta) && abs(GOnedge[miniedge][0]-PhyVolGlPos[ijk][ij][0]-layhalflength)<1.e-10  && abs(GOnedge[miniedge][2]-PhyVolGlPos[ijk][ij][2])<1.e-10 );//rightside edge
-		 	 break;
-	        
-	   
-	       }
-	       
-	     }
-	     else if(ijk==1){ //left wall
-	       switch(miniedge){
-	          case 0: Onedge =  ( (GOnedge[miniedge][1])<  (PhyVolGlPos[ijk][ij][1]+layhalfbreadth+delta) &&  (GOnedge[miniedge][1])>  (PhyVolGlPos[ijk][ij][1]-layhalfbreadth-delta) && abs(GOnedge[miniedge][2]-PhyVolGlPos[ijk][ij][2]-layhalflength)<1.e-10  && abs(GOnedge[miniedge][0]-PhyVolGlPos[ijk][ij][0])<1.e-10 );//topside edge
-	 break;
-	       
-	          case 1: Onedge =  ( (GOnedge[miniedge][2])<  (PhyVolGlPos[ijk][ij][2]+layhalflength+delta) &&  (GOnedge[miniedge][2])>  (PhyVolGlPos[ijk][ij][2]-layhalflength-delta) && abs(GOnedge[miniedge][1]-PhyVolGlPos[ijk][ij][1]-layhalfbreadth)<1.e-10  && abs(GOnedge[miniedge][0]-PhyVolGlPos[ijk][ij][0])<1.e-10 );//backside edge
-	 break;
-		    
-	          case 2: Onedge =  ( (GOnedge[miniedge][1])<  (PhyVolGlPos[ijk][ij][1]+layhalfbreadth+delta) &&  (GOnedge[miniedge][1])>  (PhyVolGlPos[ijk][ij][1]-layhalfbreadth-delta) && abs(GOnedge[miniedge][2]-PhyVolGlPos[ijk][ij][2]+layhalflength)<1.e-10  && abs(GOnedge[miniedge][0]-PhyVolGlPos[ijk][ij][0])<1.e-10 );//bottomside edge
-	 break;
-	 
-  case 3: Onedge =  ( (GOnedge[miniedge][2])<  (PhyVolGlPos[ijk][ij][2]+layhalflength+delta) &&  (GOnedge[miniedge][2])>  (PhyVolGlPos[ijk][ij][2]-layhalflength-delta) && abs(GOnedge[miniedge][1]-PhyVolGlPos[ijk][ij][1]+layhalfbreadth)<1.e-10  && abs(GOnedge[miniedge][0]-PhyVolGlPos[ijk][ij][0])<1.e-10 );//frontside edge
-	 break;
-	       }
-	       
-	     }
-
-	     else if(ijk==2){ //right wall
-
-  switch(miniedge){
-	          case 0: Onedge =  ( (GOnedge[miniedge][1])<  (PhyVolGlPos[ijk][ij][1]+layhalfbreadth+delta) &&  (GOnedge[miniedge][1])>  (PhyVolGlPos[ijk][ij][1]-layhalfbreadth-delta) && abs(GOnedge[miniedge][2]-PhyVolGlPos[ijk][ij][2]-layhalflength)<1.e-10  && abs(GOnedge[miniedge][0]-PhyVolGlPos[ijk][ij][0])<1.e-10 );//topside edge
-	 break;
-	       
-	          case 1: Onedge =  ( (GOnedge[miniedge][2])<  (PhyVolGlPos[ijk][ij][2]+layhalflength+delta) &&  (GOnedge[miniedge][2])>  (PhyVolGlPos[ijk][ij][2]-layhalflength-delta) && abs(GOnedge[miniedge][1]-PhyVolGlPos[ijk][ij][1]+layhalfbreadth)<1.e-10  && abs(GOnedge[miniedge][0]-PhyVolGlPos[ijk][ij][0])<1.e-10 );//frontside edge
-	 break;
-		    
-	          case 2: Onedge =  ( (GOnedge[miniedge][1])<  (PhyVolGlPos[ijk][ij][1]+layhalfbreadth+delta) &&  (GOnedge[miniedge][1])>  (PhyVolGlPos[ijk][ij][1]-layhalfbreadth-delta) && abs(GOnedge[miniedge][2]-PhyVolGlPos[ijk][ij][2]+layhalflength)<1.e-10  && abs(GOnedge[miniedge][0]-PhyVolGlPos[ijk][ij][0])<1.e-10 );//bottomside edge
-	 break;
-	 
-  case 3: Onedge =  ( (GOnedge[miniedge][2])<  (PhyVolGlPos[ijk][ij][2]+layhalflength+delta) &&  (GOnedge[miniedge][2])>  (PhyVolGlPos[ijk][ij][2]-layhalflength-delta) && abs(GOnedge[miniedge][1]-PhyVolGlPos[ijk][ij][1]-layhalfbreadth)<1.e-10  && abs(GOnedge[miniedge][0]-PhyVolGlPos[ijk][ij][0])<1.e-10 );//backside edge
-	 break;
-	 
-	       }
-
-	       
-
-	     }
-
-	     else if(ijk==3){ //back
-	       switch(miniedge){
- case 0: Onedge =  ( (GOnedge[miniedge][0])<  (PhyVolGlPos[ijk][ij][0]+layhalfbreadth+delta) &&  (GOnedge[miniedge][0])>  (PhyVolGlPos[ijk][ij][0]-layhalfbreadth-delta) && abs(GOnedge[miniedge][2]-PhyVolGlPos[ijk][ij][2]-layhalflength)<1.e-10  && abs(GOnedge[miniedge][1]-PhyVolGlPos[ijk][ij][1])<1.e-10 );//topside edge
-	 break;
-	 
- case 1: Onedge =  ( (GOnedge[miniedge][2])<  (PhyVolGlPos[ijk][ij][2]+layhalflength+delta) &&  (GOnedge[miniedge][2])>  (PhyVolGlPos[ijk][ij][2]-layhalflength-delta) && abs(GOnedge[miniedge][0]-PhyVolGlPos[ijk][ij][0]-layhalfbreadth)<1.e-10  && abs(GOnedge[miniedge][1]-PhyVolGlPos[ijk][ij][1])<1.e-10 );//rightside edge
-	 break;
-	 
-
- case 2: Onedge =  ( (GOnedge[miniedge][0])<  (PhyVolGlPos[ijk][ij][0]+layhalfbreadth+delta) &&  (GOnedge[miniedge][0])>  (PhyVolGlPos[ijk][ij][0]-layhalfbreadth-delta) && abs(GOnedge[miniedge][2]-PhyVolGlPos[ijk][ij][2]+layhalflength)<1.e-10  && abs(GOnedge[miniedge][1]-PhyVolGlPos[ijk][ij][1])<1.e-10 );//bottomside edge
-	 break;
-	 
- case 3: Onedge =  ( (GOnedge[miniedge][2])<  (PhyVolGlPos[ijk][ij][2]+layhalflength+delta) &&  (GOnedge[miniedge][2])>  (PhyVolGlPos[ijk][ij][2]-layhalflength-delta) && abs(GOnedge[miniedge][0]-PhyVolGlPos[ijk][ij][0]+layhalfbreadth)<1.e-10  && abs(GOnedge[miniedge][1]-PhyVolGlPos[ijk][ij][1])<1.e-10 );//leftside edge
-	 break;
-	 
-
-
-	       }
-
-
-	       
-
-	     }
-
-	     else if(ijk==5){//miniLeft
-
-	           switch(miniedge){
-	          case 0: Onedge =  ( (GOnedge[miniedge][1])<  (PhyVolGlPos[ijk][ij][1]+layhalflength+delta) &&  (GOnedge[miniedge][1])>  (PhyVolGlPos[ijk][ij][1]-layhalflength-delta) && abs(GOnedge[miniedge][2]-PhyVolGlPos[ijk][ij][2]-layhalfbreadth)<1.e-10  && abs(GOnedge[miniedge][0]-PhyVolGlPos[ijk][ij][0])<1.e-10 );//topside edge
-	 break;
-	 
-	       
-	          case 1: Onedge =  ( (GOnedge[miniedge][2])<  (PhyVolGlPos[ijk][ij][2]+layhalfbreadth+delta) &&  (GOnedge[miniedge][2])>  (PhyVolGlPos[ijk][ij][2]-layhalfbreadth-delta) && abs(GOnedge[miniedge][1]-PhyVolGlPos[ijk][ij][1]-layhalflength)<1.e-10  && abs(GOnedge[miniedge][0]-PhyVolGlPos[ijk][ij][0])<1.e-10 );//backside edge
-	 break;
-	 
-		    
-	          case 2: Onedge =  ( (GOnedge[miniedge][1])<  (PhyVolGlPos[ijk][ij][1]+layhalflength+delta) &&  (GOnedge[miniedge][1])>  (PhyVolGlPos[ijk][ij][1]-layhalflength-delta) && abs(GOnedge[miniedge][2]-PhyVolGlPos[ijk][ij][2]+layhalfbreadth)<1.e-10  && abs(GOnedge[miniedge][0]-PhyVolGlPos[ijk][ij][0])<1.e-10 );//bottomside edge
-	 break;
-	 
-  case 3: Onedge =  ( (GOnedge[miniedge][2])<  (PhyVolGlPos[ijk][ij][2]+layhalfbreadth+delta) &&  (GOnedge[miniedge][2])>  (PhyVolGlPos[ijk][ij][2]-layhalfbreadth-delta) && abs(GOnedge[miniedge][1]-PhyVolGlPos[ijk][ij][1]+layhalflength)<1.e-10  && abs(GOnedge[miniedge][0]-PhyVolGlPos[ijk][ij][0])<1.e-10 );//frontside edge
-	 break;
-	 
-	       }
-
-
-
-	     }	     
-	     else if(ijk==6) {
-     switch(miniedge){
-	          case 0: Onedge =  ( (GOnedge[miniedge][1])<  (PhyVolGlPos[ijk][ij][1]+layhalflength+delta) &&  (GOnedge[miniedge][1])>  (PhyVolGlPos[ijk][ij][1]-layhalflength-delta) && abs(GOnedge[miniedge][2]-PhyVolGlPos[ijk][ij][2]-layhalfbreadth)<1.e-10  && abs(GOnedge[miniedge][0]-PhyVolGlPos[ijk][ij][0])<1.e-10 );//topside edge
-	 break;
-	 
-	       
-	          case 1: Onedge =  ( (GOnedge[miniedge][2])<  (PhyVolGlPos[ijk][ij][2]+layhalfbreadth+delta) &&  (GOnedge[miniedge][2])>  (PhyVolGlPos[ijk][ij][2]-layhalfbreadth-delta) && abs(GOnedge[miniedge][1]-PhyVolGlPos[ijk][ij][1]+layhalflength)<1.e-10  && abs(GOnedge[miniedge][0]-PhyVolGlPos[ijk][ij][0])<1.e-10 );//backside edge
-	 break;
-	 
-		    
-	          case 2: Onedge =  ( (GOnedge[miniedge][1])<  (PhyVolGlPos[ijk][ij][1]+layhalflength+delta) &&  (GOnedge[miniedge][1])>  (PhyVolGlPos[ijk][ij][1]-layhalflength-delta) && abs(GOnedge[miniedge][2]-PhyVolGlPos[ijk][ij][2]+layhalfbreadth)<1.e-10  && abs(GOnedge[miniedge][0]-PhyVolGlPos[ijk][ij][0])<1.e-10 );//bottomside edge
-	 break;
-	 
-  case 3: Onedge =  ( (GOnedge[miniedge][2])<  (PhyVolGlPos[ijk][ij][2]+layhalfbreadth+delta) &&  (GOnedge[miniedge][2])>  (PhyVolGlPos[ijk][ij][2]-layhalfbreadth-delta) && abs(GOnedge[miniedge][1]-PhyVolGlPos[ijk][ij][1]-layhalflength)<1.e-10  && abs(GOnedge[miniedge][0]-PhyVolGlPos[ijk][ij][0])<1.e-10 );//frontside edge
-	 break;
-	 
-	       }
-
-
-	     }
-	     
- 
-	    // layid = ijk+1;//28072022
-	    // layid<<=2;
-	    // layid+=ij;
- 
-	    // cout<<"layid: "<<layid<<endl;
-	    // layexp->SetId(layid);
-	     
-	     if(Onedge){
-	       distlineedge[miniedge]=  sqrt( pow(GOnLine[miniedge][0]-GOnedge[miniedge][0],2) + pow(GOnLine[miniedge][1]-GOnedge[miniedge][1],2)+ pow(GOnLine[miniedge][2]-GOnedge[miniedge][2],2) );
-	     }
-	     else   {distlineedge[miniedge] = 10000;}
-	     cout<<miniedge<<" "<<Onedge<<" "<<distlineedge[miniedge]<<endl;
-
-	     
-	    }//miniedge<4
-
-	       
-	    double miniclosdist=1000000;
-	    int medge;
-	    for(int zxy=0;zxy<4;zxy++){
-	      cout<<zxy<<" "<<distlineedge[zxy]<<endl;
-	      if(distlineedge[zxy]<miniclosdist){
-   
-		miniclosdist = distlineedge[zxy];
-		medge=zxy;
-		
-	      }
-	      
-	    }
-	     
-	    cout<<  " distlineedge "<<medge<<" "<< distlineedge[medge]<<endl; 
-	    layexp->SetClosDist(distlineedge[medge]);
-	    layexp->SetEdge(medge);
-	    layexp->SetDCAXPos(GOnedge[medge][0]);//DCA: dist of closest app
-	    layexp->SetDCAYPos(GOnedge[medge][1]);
-	    layexp->SetDCAZPos(GOnedge[medge][2]);
-	    layexp->Print();
-
-	    }//pl3
-
-	    //	 pAnalysis->distofclosapp[jk]=minclosdist;
-	    //   }//  if (tmpcluster->GetPlane()-1==ijk && tmpcluster->GetLayer()==ij) {
-	    //	 }// for (unsigned iji=0; iji<CmvCluster_pointer->CmvCluster_list.size(); iji++) {
-	    cout<<".....Point outside the boundary...."<<endl;
-	    cout<<"MinCloseDist:  "<<minclosdist<<" "<<hitpresent<<endl;
-	    for (unsigned int ix=0; ix<CmvCluster_pointer->CmvCluster_list.size(); ix++) {
-   
-	      CmvCluster* tmpcluster = CmvCluster_pointer->CmvCluster_list[ix];    //#
-	      //  tmpcluster->Print();
-	      cout<<"## "<<tmpcluster->GetPlane()-1<<" "<<tmpcluster->GetLayer()<<endl;
-	      if (tmpcluster->GetPlane()-1==ijk && tmpcluster->GetLayer()==ij) {//#plane  we have stored from 1 and in loop it is from 0
-		hitpresent =true;
-		cout<<"Extrapolation outside but hit present"<<endl;
-     
-	      }
-   
-	    }
-	    cout<<"MinCloseDist:  "<<minclosdist<<" "<<hitpresent<<endl;
-	    // 	       if(hitpresent==true && abs(minclosdist)<300){//300                 
-	    // cout<<"hithit "<<hitpresent<<endl;
-	    // if(ijk==0 && ij==0){pAnalysis->cmv_locno00[jk]=1; }                                                                       
-	    // if(ijk==0 && ij==1){pAnalysis->cmv_locno01[jk]=1; }                                                                       
-	    // if(ijk==0 && ij==2){pAnalysis->cmv_locno02[jk]=1; }        
-	    // if(ijk==0 && ij==3){pAnalysis->cmv_locno03[jk]=1; }        
-	    // if(ijk==1 && ij==0){pAnalysis->cmv_locno10[jk]=1; }        
-	    // if(ijk==1 && ij==1){pAnalysis->cmv_locno11[jk]=1; }        
-	    // if(ijk==1 && ij==2){pAnalysis->cmv_locno12[jk]=1; }        
-	    // if(ijk==2 && ij==0){pAnalysis->cmv_locno20[jk]=1; }        
-	    // if(ijk==2 && ij==1){pAnalysis->cmv_locno21[jk]=1; }        
-	    // if(ijk==2 && ij==2){pAnalysis->cmv_locno22[jk]=1; }        
-	    // if(ijk==3 && ij==0){pAnalysis->cmv_locno30[jk]=1; }        
-	    // if(ijk==3 && ij==1){pAnalysis->cmv_locno31[jk]=1; }        
-	    // if(ijk==3 && ij==2){pAnalysis->cmv_locno32[jk]=1; }        
-	    // if(ijk==5 && ij==0){pAnalysis->cmv_locno50[jk]=1; }        
-	    // if(ijk==5 && ij==1){pAnalysis->cmv_locno51[jk]=1; }        
-	    // if(ijk==5 && ij==2){pAnalysis->cmv_locno52[jk]=1; }        
-	    // if(ijk==6 && ij==0){pAnalysis->cmv_locno60[jk]=1; }        
-	    // if(ijk==6 && ij==1){pAnalysis->cmv_locno61[jk]=1; }        
-	    // if(ijk==6 && ij==2){pAnalysis->cmv_locno62[jk]=1; }        
-
-
-
-
-
-
-
-	    // 	       }//               if(hitpresent==true && (minclosdist)<100){  
-	       
-	  }//	  else{
-
-	  // CmvLayExtra_pointer->CmvLayExtra_list.push_back(layexp);     
 	  
-        }//pl2
-  CmvLayExtra_pointer->CmvLayExtra_list.push_back(layexp);     
-
-	
       }//layer loop
   
   
     }//loc_no loop
 
-    cout<<"clustersize initialization last " <<pAnalysis->clustersize00[jk]<<" "<< pAnalysis->cmv_locno00[jk]<<" "<<endl ;
-    cout<<pAnalysis->clustersize01[jk]<<" "<< pAnalysis->cmv_locno01[jk]<<" "<<endl;
-    cout<<  pAnalysis->clustersize02[jk]<<" "<< pAnalysis->cmv_locno02[jk]<<" "<<endl;
-    cout<<  pAnalysis->clustersize03[jk]<<" "<< pAnalysis->cmv_locno03[jk]<<" "<<endl;
-    cout<<  pAnalysis->clustersize10[jk]<<" "<< pAnalysis->cmv_locno10[jk]<<" "<<endl;
-    cout<<  pAnalysis->clustersize11[jk]<<" "<< pAnalysis->cmv_locno11[jk]<<" "<<endl;
-    cout<<pAnalysis->clustersize12[jk]<<" "<< pAnalysis->cmv_locno12[jk]<<" "<<endl;
-    cout<<pAnalysis->clustersize20[jk]<<" "<< pAnalysis->cmv_locno20[jk]<<" "<<endl;
-    cout<<pAnalysis->clustersize21[jk]<<" "<< pAnalysis->cmv_locno21[jk]<<" "<<endl;
-    cout<<  pAnalysis->clustersize22[jk]<<" "<< pAnalysis->cmv_locno22[jk]<<" "<<endl;
-    cout<<pAnalysis->clustersize30[jk]<<" "<< pAnalysis->cmv_locno30[jk]<<" "<<endl;
-    cout<<  pAnalysis->clustersize31[jk]<<" "<< pAnalysis->cmv_locno31[jk]<<" "<<endl;
-    cout<<  pAnalysis->clustersize32[jk]<<" "<< pAnalysis->cmv_locno32[jk]<<" "<<endl;
-    cout<<pAnalysis->clustersize50[jk]<<" "<< pAnalysis->cmv_locno50[jk]<<" "<<endl;
-    cout<<  pAnalysis->clustersize51[jk]<<" "<< pAnalysis->cmv_locno51[jk]<<" "<<endl;
-    cout<<  pAnalysis->clustersize52[jk]<<" "<< pAnalysis->cmv_locno52[jk]<<" "<<endl;
-    cout<<pAnalysis->clustersize60[jk]<<" "<< pAnalysis->cmv_locno60[jk]<<" "<<endl;
-    cout<<  pAnalysis->clustersize61[jk]<<" "<< pAnalysis->cmv_locno61[jk]<<" "<<endl;
-    cout<<  pAnalysis->clustersize62[jk]<<" "<< pAnalysis->cmv_locno62[jk]<<" "<<endl;
   }
+
 
 	
 }
@@ -3216,9 +1539,9 @@ void micalEventAction::EndOfEventAction(const G4Event* evt) {
 
     if (pinotrack) {
 
-      double CorrTimeError = pAnalysis->GetCorrTimeError();
-      double  UnCorrTimeError = pAnalysis->GetUnCorrTimeError();
-      double  timeerr=pow((pow(CorrTimeError,2.) + pow(UnCorrTimeError,2.)),0.5);
+       CorrTimeError = pAnalysis->GetCorrTimeError();
+        UnCorrTimeError = pAnalysis->GetUnCorrTimeError();
+        timeerr=pow((pow(CorrTimeError,2.) + pow(UnCorrTimeError,2.)),0.5);
       bool ZIncreasesWithTime = true;
 	
       double szxy=0, sz=0, sxy=0, sn=0, sz2=0;
@@ -3429,38 +1752,21 @@ void micalEventAction::EndOfEventAction(const G4Event* evt) {
     
       InoTrackFitAlg trackfitter;
       if(magfield==0){
+
 	cout<<".......Entered RPC  straight line fit.........."<<endl;
 
-	//   paradef =  micalDetectorParameterDef::AnPointer;
-  
-	//     double ShiftInX = paradef->GetINOroomPos(0) + paradef->GetStackPosInRoom(0) + paradef->GetShiftInX();
-	//     double ShiftInY = paradef->GetINOroomPos(1) + paradef->GetStackPosInRoom(1) + paradef->GetShiftInY();
-	//     double ShiftInZ = paradef->GetINOroomPos(2) + paradef->GetStackPosInRoom(2) + paradef->GetShiftInZ(0);
-	//     double pargas[3];
-	//     double parchm[ij];
-	//   for (int ij=0; ij<3; ij++) {pargas[ij] = paradef->GetPargas(ij);}
-	//     for (int ij=0; ij<3; ij++) {parchm[ij] = paradef->GetParchm(ij);}
 
-	//   double  Xstrwd = paradef->GetXStrwd();
-	// double  Ystrwd = paradef->GetYStrwd();
-
-
-
-	// InoTrackCand_Manager* inoTrackCand_pointer;
-	//  inoTrackCand_pointer = new InoTrackCand_Manager();//deleted at the end of event
 	inoTrackCand_pointer->InoTrackCand_list.clear();
 	double xvtx_parameter[6]={0};
 	InoTrackCand* fTrackCand;
 	cout<<"fTackCand pointer "<<fTrackCand<<endl;
-   
-	//.
-
-   
-	// if(pinotrack){
-	  
-	cout<<"inotrack list size"<<pinotrack->InoTrack_list.size()<<endl;
      
+	cout<<"inotrack list size"<<pinotrack->InoTrack_list.size()<<endl;
+
+	unsigned int itrk=0;
+	 occulyr=-1;
 	for (unsigned int iji=0; iji<pinotrack->InoTrack_list.size() ; iji++) {
+	  if(iji<pAnalysis->ntrkmx){ //ntrkmx is 20
 	  double zcor;
 	  int cluster_size=pinotrack->InoTrack_list[iji]->ClustsInTrack.size();
 
@@ -3468,44 +1774,22 @@ void micalEventAction::EndOfEventAction(const G4Event* evt) {
 	  int nhits1 = pinotrack->InoTrack_list[iji]->GetEntries();
 	  cout<<"nhits1: "<<nhits1<<endl;
 
+	   Xpos[nlayer]={0.0}; 
+	   Xusedpos[nlayer]={0};
+	   for (int ij1=0; ij1<nlayer; ij1++) { Xdev[ij1] = 100; Xpos[ij1]=-5000;}
+	   
 
-
-	  int Nx,Ny;
-	  const int  layfirst =0; //Used first layer in track fitting
-	  const int  laylast =9; //Used last layer in track fitting//9
-	  int occulyr=-1;
-	  occulyr =0;
-	  const int nlayer=10;
-	  const float xyPosDev=3*0.03/sqrt(12); // seven sigma 2.0; //maximum deviation of points from fit line (3 strp units) 3 *3cm = 0.06
-   
-   
-	  double Xpos[nlayer]={0.0}; 
-	  bool Xusedpos[nlayer]={0};
-	  double Xdev[nlayer]; for (int ij1=0; ij1<nlayer; ij1++) { Xdev[ij1] = 100; Xpos[ij1]=-5000;}
-
-
-	  double Ypos[nlayer]={0.0};
-	  bool Yusedpos[nlayer]={0};//=new float[nlayer];
-	  double Ydev[nlayer]; for (int ij2=0; ij2<nlayer; ij2++) { Ydev[ij2] = 100; Ypos[ij2]=-5000.0;}
+	   Ypos[nlayer]={0.0};
+	   Yusedpos[nlayer]={0};//=new float[nlayer];
+	   for (int ij2=0; ij2<nlayer; ij2++) { Ydev[ij2] = 100; Ypos[ij2]=-5000.0;}
 	    
-
-	  double CorrTimeError = pAnalysis->GetCorrTimeError();
-	  double  UnCorrTimeError = pAnalysis->GetUnCorrTimeError();
-	  double  timeerr=pow((pow(CorrTimeError,2.) + pow(UnCorrTimeError,2.)),0.5);
+	   
+	   CorrTimeError = pAnalysis->GetCorrTimeError();
+	   UnCorrTimeError = pAnalysis->GetUnCorrTimeError();
+	   timeerr=pow((pow(CorrTimeError,2.) + pow(UnCorrTimeError,2.)),0.5);
  
    
-	  double errxsq[nlayer], errysq[nlayer];
-   
 
-
-	  double xslope, xinters;
-	  double yslope, yinters;
-  
-	  double xchi2, ychi2;
-	  int nmnhits =5;
-	  int mxchisq =2;
-	  double xerrcst, xerrcov, xerrlin;
-	  double yerrcst, yerrcov, yerrlin;
 
 	  Nx=0;
 	  int nxfail = 0;
@@ -3527,7 +1811,91 @@ void micalEventAction::EndOfEventAction(const G4Event* evt) {
 	  for (int iyy=0; iyy<nlayer; iyy++) { yext[iyy]= yexter[iyy] =yposinstr[iyy] =  100;}
 
 
+	  for (int nlay =0; nlay<nlayer;nlay++) {
+	    ClustsInTrackBank[iji][nlay].clear();
+	      
+	  }
 
+
+	  cout<<"# of Clusters: "<<pinotrack->InoTrack_list[iji]->ClustsInTrack.size()<<endl;
+
+	  for (unsigned int ix=0; ix<pinotrack->InoTrack_list[iji]->ClustsInTrack.size(); ix++) {
+	    InoCluster* clust = pinotrack->InoTrack_list[iji]->ClustsInTrack[ix];
+	    clust->Print();
+	    cout<<"clust->GetZPlane() "<<clust->GetZPlane()<<" "<<ClustsInTrackBank[iji][clust->GetZPlane()].size()<<endl;
+	    ClustsInTrackBank[iji][clust->GetZPlane()].push_back(clust);
+	 
+	  
+	  }// for (unsigned int ix=0; ix<Cluster_pointer->InoStripX_list.size(); ix++) {
+	  cout<<"raj "<<nlayer<<endl;
+	  for (int nlay =0; nlay<nlayer;nlay++) {
+	    cout<<"ClustsInTrackBank[nlay].size() "<<ClustsInTrackBank[iji][nlay].size()<<endl;
+	      
+	  }
+  float errxco[12]={0.288675,0.288675,0.288675,0.288675,0.288675,0.288675,0.288675,0.288675,0.288675,0.288675,0.288675,0.288675};
+  float erryco[12]={0.288675,0.288675,0.288675,0.288675,0.288675,0.288675,0.288675,0.288675,0.288675,0.288675,0.288675,0.288675};
+     
+	  for (int nlay =0; nlay<nlayer;nlay++) {
+        
+	    //Only one clust per layer and that cluster should have less than 5 multiplicity:
+	    //	    cout<<"nxstrip nystrip  "<<ClustsInTrackBank[nlay][0]->GetNXStripsInClust() << " "<< ClustsInTrackBank[nlay][0]->GetNYStripsInClust() <<endl;
+
+	    if(ClustsInTrackBank[iji][nlay].size()>=1){
+	      cout<<"ClustsInTrackBank[iji][nlay].size() "<<ClustsInTrackBank[iji][nlay].size()<<endl;
+		
+	      if (ClustsInTrackBank[iji][nlay].size()==1 &&  ClustsInTrackBank[iji][nlay][0]->GetNXStripsInClust()<5 && ClustsInTrackBank[iji][nlay][0]->GetNYStripsInClust()<5 ){
+		cout<<"nxstrip nystrip  "<<ClustsInTrackBank[iji][nlay][0]->GetNXStripsInClust() << " "<< ClustsInTrackBank[iji][nlay][0]->GetNYStripsInClust() <<endl;
+
+	      
+		zval[nlay]=ClustsInTrackBank[iji][nlay][0]->GetZPos();
+		Xpos[nlay]=ClustsInTrackBank[iji][nlay][0]->GetXPos();
+		Ypos[nlay]=ClustsInTrackBank[iji][nlay][0]->GetYPos();
+		 errxsq[nlay]=ClustsInTrackBank[iji][nlay][0]->GetXPosErr() * ClustsInTrackBank[iji][nlay][0]->GetXPosErr() ;
+		 errysq[nlay]=ClustsInTrackBank[iji][nlay][0]->GetYPosErr() * ClustsInTrackBank[iji][nlay][0]->GetYPosErr() ;
+
+        
+
+		
+		Xusedpos[nlay]=true;
+		Yusedpos[nlay]=true;
+
+
+	      }
+	      else{
+	      
+		zval[nlay]=-5000.0;
+		Xpos[nlay]=-5000.0;
+		Ypos[nlay]=-5000.0;
+		// errxsq[nlay]=5000.0;
+		// errysq[nlay]=5000.0;
+		errxsq[nlay]=errxco[nlay]*errxco[nlay]*0.03*0.03;
+		errysq[nlay]=erryco[nlay]*erryco[nlay]*0.03*0.03;
+
+		Xusedpos[nlay]=false;
+		Yusedpos[nlay]=false;
+	      }  
+	    }
+	      cout<<nlay<<" "<<Xpos[nlay]<<" "<<Ypos[nlay]<<" "<<zval[nlay]<<" "<<Xusedpos[nlay]<<" "<<Yusedpos[nlay]<<" "<<errxsq[nlay]<<" "<<errysq[nlay]<<endl;
+	    
+	 
+	  }//  for (int nlay =0; nlay<10;nlay++) {
+
+	  cout<<"cluster size: "<<cluster_size<<endl;
+	  // for (int jk =0; jk<cluster_size;jk++) {
+	  	
+	  //   zval[jk]=pinotrack->InoTrack_list[iji]->ClustsInTrack[jk]->GetZPos();
+	  //   Xpos[jk]=pinotrack->InoTrack_list[iji]->ClustsInTrack[jk]->GetXPos();
+	  //   Ypos[jk]=pinotrack->InoTrack_list[iji]->ClustsInTrack[jk]->GetYPos();
+	  //   errxsq[jk]=pinotrack->InoTrack_list[iji]->ClustsInTrack[jk]->GetXPosErr() * pinotrack->InoTrack_list[iji]->ClustsInTrack[jk]->GetXPosErr() ;
+	  //   errysq[jk]=pinotrack->InoTrack_list[iji]->ClustsInTrack[jk]->GetYPosErr() * pinotrack->InoTrack_list[iji]->ClustsInTrack[jk]->GetYPosErr() ;
+
+	  //   Xusedpos[jk]=true;
+	  //   Yusedpos[jk]=true;
+	  //   cout<<jk<<" "<<Xpos[jk]<<" "<<Ypos[jk]<<" "<<zval[jk]<<" "<<Xusedpos[jk]<<" "<<Yusedpos[jk]<<" "<<errxsq[jk]<<" "<<errysq[jk]<<endl;
+        
+ 
+	      
+	  // }// for ( unsigned int jk =0; jk<nlayer;jk++) {
 
 
 
@@ -3536,13 +1904,11 @@ void micalEventAction::EndOfEventAction(const G4Event* evt) {
 
 	  double zposmx = 10000;
 	  double topmostlay;
-
-	  for (int jk =0; jk<cluster_size;jk++) {
-	    topmostlay=pinotrack->InoTrack_list[iji]->ClustsInTrack[jk]->GetZPos();
-
+	  for (int jk =0; jk<nlayer;jk++) {
+	    if (Xusedpos[jk]==false || Yusedpos[jk]==false) continue;	  
+	    topmostlay=ClustsInTrackBank[iji][jk][0]->GetZPos();
 	    if(topmostlay<1000){
 	      zposmx = topmostlay;
-	  
 	    }
 	  }
 
@@ -3550,40 +1916,17 @@ void micalEventAction::EndOfEventAction(const G4Event* evt) {
 
 
 
-
-
-
-
-
-
 	  
-	  cout<<"cluster size: "<<cluster_size<<endl;
-	  for (int jk =0; jk<cluster_size;jk++) {
-	    //   cout<<"jk: "<<jk<<endl;
-	   
-	    // if(pinotrack->InoTrack_list[ij]->ClustsInTrack[jk]){
-		
-	    zval[jk]=pinotrack->InoTrack_list[iji]->ClustsInTrack[jk]->GetZPos();
-	    Xpos[jk]=pinotrack->InoTrack_list[iji]->ClustsInTrack[jk]->GetXPos();
-	    Ypos[jk]=pinotrack->InoTrack_list[iji]->ClustsInTrack[jk]->GetYPos();
-	    errxsq[jk]=pinotrack->InoTrack_list[iji]->ClustsInTrack[jk]->GetXPosErr()* pinotrack->InoTrack_list[iji]->ClustsInTrack[jk]->GetXPosErr() ;
-	    errysq[jk]=pinotrack->InoTrack_list[iji]->ClustsInTrack[jk]->GetYPosErr()* pinotrack->InoTrack_list[iji]->ClustsInTrack[jk]->GetYPosErr() ;//3/root12
-
-	    Xusedpos[jk]=true;
-	    Yusedpos[jk]=true;
-	    cout<<jk<<" "<<Xpos[jk]<<" "<<Ypos[jk]<<" "<<zval[jk]<<" "<<Xusedpos[jk]<<" "<<Yusedpos[jk]<<" "<<errxsq[jk]<<" "<<errysq[jk]<<endl;
-        
-	 
- 
-	      
-	  }// for ( unsigned int jk =0; jk<nlayer;jk++) {
-	  //
-
+   
 	  double posresol =true;
 	  if(posresol){
+
+	    itrk++;
 	    cout<<"...Position resolution..."<<endl;
-	    for(int jki=0;jki<cluster_size;jki++){
+	    for(int jki=0;jki<nlayer;jki++){
 	      occulyr = jki;
+
+	      //  if (Xusedpos[jki]==false || Yusedpos[jki]==false) continue;
 	      cout<<"Fitting Excluding Layer:"<<occulyr<<endl;
 
 	      StraightLineFit xposresolfit(1, zval, Xpos,  errxsq, Xusedpos, occulyr, occulyr, layfirst, laylast, xyPosDev);
@@ -3598,29 +1941,55 @@ void micalEventAction::EndOfEventAction(const G4Event* evt) {
 		cout<<"get xz fit values "<<xext[jk]<<" "<<Xpos[jk]<<" "<<valz[jk]<<" "<<Xdev[jk]<<endl;
 	      }
 	      
-  StraightLineFit yposresolfit(1, zval, Ypos,  errysq, Yusedpos, occulyr, occulyr, layfirst, laylast, xyPosDev);
+	      StraightLineFit yposresolfit(1, zval, Ypos,  errysq, Yusedpos, occulyr, occulyr, layfirst, laylast, xyPosDev);
 
-  yposresolfit.GetParameters(nyfail, yinters, yslope);
-  cout<<"Slope and intercept Y  "<<yslope<<" "<<yinters<<endl;
-  yposresolfit.GetError(yerrcst, yerrlin, yerrcov);
-  cout<<"Error in slope and intercept Y "<<yerrcst<<" "<<yerrlin<<endl;
-  yposresolfit.GetChisqure(Ny, ychi2);
-  cout<<"NDOF and chi-square Y "<<Ny<<" "<<ychi2<<endl;
-  yposresolfit.GetFitValues(yext,valz, Ydev, yexter);
-	  for(int jk = 0;jk<nlayer;jk++){
-	    cout<<"get yz fit values "<<yext[jk]<<" "<<Ypos[jk]<<" "<<valz[jk]<<" "<<Ydev[jk]<<endl;
-	  }
+	      yposresolfit.GetParameters(nyfail, yinters, yslope);
+	      cout<<"Slope and intercept Y  "<<yslope<<" "<<yinters<<endl;
+	      yposresolfit.GetError(yerrcst, yerrlin, yerrcov);
+	      cout<<"Error in slope and intercept Y "<<yerrcst<<" "<<yerrlin<<endl;
+	      yposresolfit.GetChisqure(Ny, ychi2);
+	      cout<<"NDOF and chi-square Y "<<Ny<<" "<<ychi2<<endl;
+	      yposresolfit.GetFitValues(yext,valz, Ydev, yexter);
+	      for(int jk = 0;jk<nlayer;jk++){
+		cout<<"get yz fit values "<<yext[jk]<<" "<<Ypos[jk]<<" "<<valz[jk]<<" "<<Ydev[jk]<<endl;
+	      }
 
-	  pAnalysis->XPosdev_exclu[jki] = Xdev[jki]; 
-	  pAnalysis->YPosdev_exclu[jki] =  Ydev[jki];
-
-	  cout<<"pAnalysis->XPosdev_exclu[jki] "<<pAnalysis->XPosdev_exclu[jki]<<" pAnalysis->YPosdev_exclu[jki] "<<pAnalysis->YPosdev_exclu[jki]<<endl;
+	      if (ClustsInTrackBank[iji][jki].size()>=1){
+		pAnalysis->XPosdev_exclu[jki] = Xdev[jki]; 
+		pAnalysis->YPosdev_exclu[jki] =  Ydev[jki];
+		pAnalysis->inPosX[jki] = Xpos[jki];
+		pAnalysis->inPosY[jki] = Ypos[jki];
+		pAnalysis->extPosX[jki] = xext[jki];
+		pAnalysis->extPosY[jki] = yext[jki];
+		pAnalysis->nXStrips[jki] = ClustsInTrackBank[iji][jki][0]->GetNXStripsInClust();
+		pAnalysis->nYStrips[jki] = ClustsInTrackBank[iji][jki][0]->GetNYStripsInClust();
+		
+		pAnalysis->Xchisq[jki] = xchi2;
+		pAnalysis->Ychisq[jki] = ychi2;
+		pAnalysis->Xndof[jki] = Nx-2;
+		pAnalysis->Yndof[jki] = Ny-2;
+		pAnalysis->nXfail[jki] = nxfail;
+		pAnalysis->nYfail[jki] = nyfail;
+	      }
+	  
+	      cout<<"pAnalysis->XPosdev_exclu[jki] "<<pAnalysis->XPosdev_exclu[jki]<<" pAnalysis->YPosdev_xclu[jki] "<<pAnalysis->YPosdev_exclu[jki]<<endl;
 	    }//  for(int jki=0;jki<nLayer;jki++){
 
+
+
+
+
+
+
+
+	    
 	  } // if(posresol){
 
 	  
 	  occulyr = -1;
+	  cout<<"occulyr: "<<occulyr<<endl;
+     
+	    
 	  //............RPC Straight line fit in X-Z plane.............
        
 	  StraightLineFit xposfit(1, zval, Xpos,  errxsq, Xusedpos, occulyr, occulyr, layfirst, laylast, xyPosDev);
@@ -3784,7 +2153,8 @@ void micalEventAction::EndOfEventAction(const G4Event* evt) {
 	      // xvtx_parameter[4] =yslope*(-1.65512)+yinters;//in meters
 	      // //
 	      // xvtx_parameter[5]=-1.65512*1000;//top layer z pos in mm
-
+	      
+	      //	      zposmx = paradef->GetParroom(2); //roof coordinates
 	      xvtx_parameter[3] =xslope*(zposmx)+xinters;//in meters
 	      xvtx_parameter[4] =yslope*(zposmx)+yinters;//in meters
 	      //
@@ -3826,16 +2196,16 @@ void micalEventAction::EndOfEventAction(const G4Event* evt) {
 
 	      fTrackCand->SetChi2(xchi2);
 	      fTrackCand->SetChi22(ychi2);
-
-	        for (int jk =0; jk<cluster_size;jk++) {
-	      pAnalysis->XPosdev[jk] = Xdev[jk];
-	      pAnalysis->YPosdev[jk] = Ydev[jk];
-		}
-
-
-
-
-	   
+	      fTrackCand->SetNDOF(Nx-2);
+	      fTrackCand->SetNDOF2(Ny-2);
+	      
+	      for (int jk =0; jk<nlayer;jk++) {
+   
+		pAnalysis->XPosdev[jk] = Xdev[jk];
+		pAnalysis->YPosdev[jk] = Ydev[jk];
+	      }
+	      
+ 
 	      
  	    }//    if (Nx>=nmnhits/*-ntcor*/ && xchi2/(Nx-2)<mxchisq && nxfail==0) {
 	      
@@ -3846,10 +2216,10 @@ void micalEventAction::EndOfEventAction(const G4Event* evt) {
 	    fTrackCand=0;
 	    cout<<"Pointer is Null "<<fTrackCand<<endl;
 	  }
-       
+	  }//if(iji<pAnalysis->ntrkmx){       
 	}//for (unsigned iji=0; iji<pinotrack->InoTrack_list.size() ; iji++) {
 
-
+	pAnalysis->ntrack = itrk;
 	//
  
 
@@ -3857,6 +2227,7 @@ void micalEventAction::EndOfEventAction(const G4Event* evt) {
 
 
      
+
 	
       }//if(magfield)
       else 
@@ -3919,6 +2290,8 @@ void micalEventAction::EndOfEventAction(const G4Event* evt) {
               pAnalysis->chisq[ij] =  pfitTrack->InoTrackCand_list[jk]->GetChi2();
               pAnalysis->cvalue[ij] = pfitTrack->InoTrackCand_list[jk]->Getcval();
               pAnalysis->chisq2[ij] =  pfitTrack->InoTrackCand_list[jk]->GetChi22(); // for straightline fit
+	      pAnalysis->ndof[ij] =  pfitTrack->InoTrackCand_list[jk]->GetNDOF();
+	      pAnalysis->ndof2[ij] =  pfitTrack->InoTrackCand_list[jk]->GetNDOF2();
 
 	      
               pAnalysis->fc_or_pc[ij] = pfitTrack->InoTrackCand_list[jk]->GetFCPC();
@@ -3965,65 +2338,6 @@ void micalEventAction::EndOfEventAction(const G4Event* evt) {
               
 	      cout<<"....ROOF......."<<      pfitTrack->InoTrackCand_list[jk]->GetRoofPara(3)      <<"  "<<  pfitTrack->InoTrackCand_list[jk]->GetRoofPara(4)<< "  "<<  pfitTrack->InoTrackCand_list[jk]->GetRoofPara(5)<<endl;
 
-
-	      pAnalysis->XdevLay1[ij]   = pfitTrack->InoTrackCand_list[jk]->GetXdevLay1();
-	      pAnalysis->YdevLay1[ij]   = pfitTrack->InoTrackCand_list[jk]->GetYdevLay1();
-
-	      pAnalysis->XdevLay2[ij]   = pfitTrack->InoTrackCand_list[jk]->GetXdevLay2();
-	      pAnalysis->YdevLay2[ij]   = pfitTrack->InoTrackCand_list[jk]->GetYdevLay2();
-
-
-	      pAnalysis->XdevLay3[ij]   = pfitTrack->InoTrackCand_list[jk]->GetXdevLay3();
-	      pAnalysis->YdevLay3[ij]   = pfitTrack->InoTrackCand_list[jk]->GetYdevLay3();
-
-
-
-
-
-
-	      pAnalysis->XdevLay4[ij]   = pfitTrack->InoTrackCand_list[jk]->GetXdevLay4();
-	      pAnalysis->YdevLay4[ij]   = pfitTrack->InoTrackCand_list[jk]->GetYdevLay4();
-
-
-	      pAnalysis->XdevLay5[ij]   = pfitTrack->InoTrackCand_list[jk]->GetXdevLay5();
-	      pAnalysis->YdevLay5[ij]   = pfitTrack->InoTrackCand_list[jk]->GetYdevLay5();
-
-
-
-	      pAnalysis->XdevLay6[ij]   = pfitTrack->InoTrackCand_list[jk]->GetXdevLay6();
-	      pAnalysis->YdevLay6[ij]   = pfitTrack->InoTrackCand_list[jk]->GetYdevLay6();
-
-
-
-	      pAnalysis->XdevLay7[ij]   = pfitTrack->InoTrackCand_list[jk]->GetXdevLay7();
-	      pAnalysis->YdevLay7[ij]   = pfitTrack->InoTrackCand_list[jk]->GetYdevLay7();
-
-
-	      pAnalysis->XdevLay8[ij]   = pfitTrack->InoTrackCand_list[jk]->GetXdevLay8();
-	      pAnalysis->YdevLay8[ij]   = pfitTrack->InoTrackCand_list[jk]->GetYdevLay8();
-
-
-
-	      pAnalysis->XdevLay9[ij]   = pfitTrack->InoTrackCand_list[jk]->GetXdevLay9();
-	      pAnalysis->YdevLay9[ij]   = pfitTrack->InoTrackCand_list[jk]->GetYdevLay9();
-
-
-
-	      pAnalysis->XdevLay10[ij]   = pfitTrack->InoTrackCand_list[jk]->GetXdevLay10();
-	      pAnalysis->YdevLay10[ij]   = pfitTrack->InoTrackCand_list[jk]->GetYdevLay10();
-
-
-	      pAnalysis->XdevLay11[ij]   = pfitTrack->InoTrackCand_list[jk]->GetXdevLay11();
-	      pAnalysis->YdevLay11[ij]   = pfitTrack->InoTrackCand_list[jk]->GetYdevLay11();
-
-
-	      pAnalysis->XdevLay12[ij]   = pfitTrack->InoTrackCand_list[jk]->GetXdevLay12();
-	      pAnalysis->YdevLay12[ij]   = pfitTrack->InoTrackCand_list[jk]->GetYdevLay12();
-
-
-	      
-              ///////////////////////////////////////////////////////////////////////////
-	      
              
 	      
               pAnalysis->momend[ij] = pfitTrack->InoTrackCand_list[jk]->GetEndMomentumCurve();
@@ -5475,37 +3789,37 @@ void micalEventAction::EndOfEventAction(const G4Event* evt) {
 
 
   pAnalysis->pRootFile->cd();
-  pAnalysis->cmv_nexphit = CmvLayExtra_pointer->CmvLayExtra_list.size();
-  cout<<"  CmvLayExtra_pointer->CmvLayExtra_list.size():  "<<  CmvLayExtra_pointer->CmvLayExtra_list.size()<<endl;
-  cout <<"  pAnalysis->cmv_nexpthit "<<  pAnalysis->cmv_nexphit<<endl;
+
+  // pAnalysis->cmv_nexphit = CmvLayExtra_pointer->CmvLayExtra_list.size();
+  // cout<<"  CmvLayExtra_pointer->CmvLayExtra_list.size():  "<<  CmvLayExtra_pointer->CmvLayExtra_list.size()<<endl;
+  // cout <<"  pAnalysis->cmv_nexpthit "<<  pAnalysis->cmv_nexphit<<endl;
 
 
-  if (pAnalysis->cmv_nexphit >pAnalysis->cmv_nexphtmx) pAnalysis->cmv_nexphit =pAnalysis->cmv_nexphtmx;
-  for (unsigned ijj=0; ijj<CmvLayExtra_pointer->CmvLayExtra_list.size()/* && ij<pAnalysis->cmv_nclusthit*/; ijj++) {
+  // if (pAnalysis->cmv_nexphit >pAnalysis->cmv_nexphtmx) pAnalysis->cmv_nexphit =pAnalysis->cmv_nexphtmx;
+  // for (unsigned ijj=0; ijj<CmvLayExtra_pointer->CmvLayExtra_list.size()/* && ij<pAnalysis->cmv_nclusthit*/; ijj++) {
 
-    CmvLayExtra_pointer->CmvLayExtra_list[ijj]->Print();
+  //   CmvLayExtra_pointer->CmvLayExtra_list[ijj]->Print();
 		
-    //pAnalysis->cmv_clustpdgid[ijj] =CmvLayExtra_pointer->CmvLayExtra_list[ijj]->GetpdgId();
+  //   //pAnalysis->cmv_clustpdgid[ijj] =CmvLayExtra_pointer->CmvLayExtra_list[ijj]->GetpdgId();
 
 
-    pAnalysis->cmv_expid[ijj] =CmvLayExtra_pointer->CmvLayExtra_list[ijj]->GetId();
+  //   pAnalysis->cmv_expid[ijj] =CmvLayExtra_pointer->CmvLayExtra_list[ijj]->GetId();
 
-    cout<< pAnalysis->cmv_hitid[ijj]<<endl;
+  //   cout<< pAnalysis->cmv_hitid[ijj]<<endl;
 
 
 	
-    pAnalysis->cmv_Expposx[ijj] =CmvLayExtra_pointer->CmvLayExtra_list[ijj]->GetExtXPos();
-    pAnalysis->cmv_Expposy[ijj] =CmvLayExtra_pointer->CmvLayExtra_list[ijj]->GetExtYPos();
-    pAnalysis->cmv_Expposz[ijj] =CmvLayExtra_pointer->CmvLayExtra_list[ijj]->GetExtZPos();
-    pAnalysis->distofclosapp[ijj]=CmvLayExtra_pointer->CmvLayExtra_list[ijj]->GetClosDist();
-    pAnalysis->planeedge[ijj]=CmvLayExtra_pointer->CmvLayExtra_list[ijj]->GetEdge();
-    pAnalysis->cmv_DCAposx[ijj]=CmvLayExtra_pointer->CmvLayExtra_list[ijj]->GetDCAXPos(); 
-    pAnalysis->cmv_DCAposy[ijj]=CmvLayExtra_pointer->CmvLayExtra_list[ijj]->GetDCAYPos();
-    pAnalysis->cmv_DCAposz[ijj]=CmvLayExtra_pointer->CmvLayExtra_list[ijj]->GetDCAZPos();
-    if (ijj >=pAnalysis->cmv_nexphtmx) break; //redundant
-  }
-  //			pAnalysis->pEventTree->Fill();
-
+  //   pAnalysis->cmv_Expposx[ijj] =CmvLayExtra_pointer->CmvLayExtra_list[ijj]->GetExtXPos();
+  //   pAnalysis->cmv_Expposy[ijj] =CmvLayExtra_pointer->CmvLayExtra_list[ijj]->GetExtYPos();
+  //   pAnalysis->cmv_Expposz[ijj] =CmvLayExtra_pointer->CmvLayExtra_list[ijj]->GetExtZPos();
+  //   pAnalysis->distofclosapp[ijj]=CmvLayExtra_pointer->CmvLayExtra_list[ijj]->GetClosDist();
+  //   pAnalysis->planeedge[ijj]=CmvLayExtra_pointer->CmvLayExtra_list[ijj]->GetEdge();
+  //   pAnalysis->cmv_DCAposx[ijj]=CmvLayExtra_pointer->CmvLayExtra_list[ijj]->GetDCAXPos(); 
+  //   pAnalysis->cmv_DCAposy[ijj]=CmvLayExtra_pointer->CmvLayExtra_list[ijj]->GetDCAYPos();
+  //   pAnalysis->cmv_DCAposz[ijj]=CmvLayExtra_pointer->CmvLayExtra_list[ijj]->GetDCAZPos();
+  //   if (ijj >=pAnalysis->cmv_nexphtmx) break; //redundant
+  // }
+  
 
 
 
@@ -5585,15 +3899,15 @@ void micalEventAction::EndOfEventAction(const G4Event* evt) {
   //
 
 
-  for (unsigned ij=0; ij<CmvLayExtra_pointer->CmvLayExtra_list.size(); ij++) {
-    if (CmvLayExtra_pointer->CmvLayExtra_list[ij]) {
-      //  cout <<"ij "<< ij<<" "<<CmvLayExtra_pointer->CmvLayExtra_list.size()<<endl;
-      delete CmvLayExtra_pointer->CmvLayExtra_list[ij]; CmvLayExtra_pointer->CmvLayExtra_list[ij]=0;
-    }
-  }
+  // for (unsigned ij=0; ij<CmvLayExtra_pointer->CmvLayExtra_list.size(); ij++) {
+  //   if (CmvLayExtra_pointer->CmvLayExtra_list[ij]) {
+  //     //  cout <<"ij "<< ij<<" "<<CmvLayExtra_pointer->CmvLayExtra_list.size()<<endl;
+  //     delete CmvLayExtra_pointer->CmvLayExtra_list[ij]; CmvLayExtra_pointer->CmvLayExtra_list[ij]=0;
+  //   }
+  // }
 
-  CmvLayExtra_pointer->CmvLayExtra_list.clear();
-  if (CmvLayExtra_pointer) {delete CmvLayExtra_pointer; CmvLayExtra_pointer=0;}
+  // CmvLayExtra_pointer->CmvLayExtra_list.clear();
+  // if (CmvLayExtra_pointer) {delete CmvLayExtra_pointer; CmvLayExtra_pointer=0;}
 
 
 
@@ -5653,7 +3967,22 @@ void micalEventAction::EndOfEventAction(const G4Event* evt) {
 
 
   if (inoRPC_pointer) { delete inoRPC_pointer; inoRPC_pointer=0;}
+
+
+
+ for (unsigned int ij=0; ij<7; ++ij) {
+   for (unsigned int jk=0; jk<4; ++jk) {
+    CmvClusterBank[ij][jk].clear();
+   }
+ }
+
+
+
+
+
+
   cout<<"hey"<<endl;
+  
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
   
