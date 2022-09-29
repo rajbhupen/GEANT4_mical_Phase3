@@ -85,36 +85,32 @@ int main(int argc,char** argv) {
   G4cout <<"argc "<<argc<<" "<<argv[0]<<" "<<argv[1]<<" "<<argv[2]<<G4endl;
   // choose the Random engine
   // HepRandom::setTheEngine(new RanecuEngine);
-   long seeds[2]={1327511442, 1202219559};// {12334457,1239075};
-  //// long seeds[2]={567347305, 1202219559};
+  long seeds[2]={1327511442, 1202219559};// {12334457,1239075};
   // GMAA HepRandom::setTheSeeds(seeds);
   //  G4long myseed = 345354;
   //  HepRandom::setTheSeed(myseed);
   
   G4GDMLParser parser;   //GMA14
   // long seeds[2]={12334457,1239075};
-  // <     time_t systime = time(NULL); //GMA230621
-  //<  seeds[0] = (long) systime;
-  //<  seeds[1] = (long) (systime*G4UniformRand());
-  //above three lines were commented earlier to produce 
+  TTimeStamp tttxx;
+  int systime = Long64_t(tttxx.AsDouble()*1e3)%Long64_t(1e9);
+  seeds[0] = systime;
+  seeds[1] = (systime*G4UniformRand());
   
-     TTimeStamp ttxx;
-     UInt_t systime = Long64_t(ttxx*1e4)%Long64_t(1e9);
-     seeds[0] = systime;
-     seeds[1] = (systime*G4UniformRand());
-     ttxx.Set();
-    systime = Long64_t(ttxx*1e4)%Long64_t(1e9);
-    // gRandom->SetSeed(systime*G4UniformRand());
-    gRandom -> SetSeed(350479425);//.
-    cout<<"gRandom Seed "<<gRandom->GetSeed()<<endl;
-    seeds[0] = 567347305;//.
-
-       cout << "seed1: " << seeds[0] << "; seed2: " << seeds[1] << endl;
+  // time_t systime = time(NULL);
+  // seeds[0] = (long) systime;
+  // seeds[1] = (long) (systime*G4UniformRand());
+  
+  cout << "seed1: " << seeds[0] << "; seed2: " << seeds[1] << endl;
   CLHEP::HepRandom::setTheSeeds(seeds);
   CLHEP::HepRandom::showEngineStatus();
-  
-  cout<<"get seeds "<<CLHEP::HepRandom::getTheSeed()<<endl;
   //InoMuRange_Manager* MuRangeManager = new InoMuRange_Manager();
+  
+  TTimeStamp ttxx;		// initialising with system time
+  gRandom->SetSeed(Long64_t(ttxx.AsDouble()*1e3)%Long64_t(1e9)+seeds[1]*G4UniformRand());
+  // gRandom->SetSeed(clock());
+  // cout << "clock "<<clock()<<endl;
+  cout<<"SetSeed main "<<ttxx.AsDouble()<<" "<<(Long64_t(ttxx.AsDouble()*1000)%Long64_t(1e9))<<" "<<gRandom->GetSeed()<<endl;
   
   // my Verbose output class
   G4VSteppingVerbose::SetInstance(new micalSteppingVerbose);
