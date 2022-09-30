@@ -44,6 +44,8 @@ void micalRunAction::BeginOfRunAction(const G4Run* aRun) {
   pAnalysis->isXtermOut=isXtermOut;
   pAnalysis->FirstEvt=FirstEvt;
   pAnalysis->collatedIn=collatedIn;
+  pAnalysis->corr_pos_timeIn=corr_pos_timeIn;
+  G4cout<<"FirstEvt collatedIn corr_pos_timeIn "<<pAnalysis->FirstEvt<<"  "<<pAnalysis->collatedIn<<" "<<pAnalysis->corr_pos_timeIn<<G4endl;
   G4cout << "### RunID "<< aRun->GetRunID() <<" Nevt " <<aRun->GetNumberOfEvent()<<" I/O " <<InputOutput<< G4endl;
   //inform the runManager to save random number seed
   //G4RunManager::GetRunManager()->SetRandomNumberStore(true);
@@ -67,7 +69,7 @@ void micalRunAction::BeginOfRunAction(const G4Run* aRun) {
   }
 
   collated_title = a_dir_title;
-  
+  corr_pos_time_title = a_dir_title;
   input_title.append(a_file_title);
   //input_title.append(runno);
   
@@ -77,6 +79,9 @@ void micalRunAction::BeginOfRunAction(const G4Run* aRun) {
   if(collatedIn) {
     collated_title.append(c_file_title);
   }
+  if(corr_pos_timeIn) {
+     corr_pos_time_title.append(d_file_title);
+   }
   
   //cout<<"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"<<endl;
   if (pAnalysis->InputOutput==0 ||pAnalysis->InputOutput==1 || pAnalysis->InputOutput==2) { 
@@ -93,7 +98,8 @@ void micalRunAction::BeginOfRunAction(const G4Run* aRun) {
   } else if (pAnalysis->InputOutput==2)	{
     output_title.append("_sim");
   }
-  pAnalysis->OpenRootfiles(input_title,output_title,collated_title); //VALGRIND
+ 
+  pAnalysis->OpenRootfiles(input_title,output_title,collated_title,corr_pos_time_title); //VALGRIND
   cout <<"input_title = "<< input_title<<endl;
   cout <<"output_title = "<<output_title<<endl;
   //cout<<"#############################"<<endl;

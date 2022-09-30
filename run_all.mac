@@ -37,14 +37,19 @@
 /mical/gun/firstEvt 0
 #/mical/gun/corsika_file_dir ./
 #/mical/gun/corsika_file corsikadata_4m.root
-
-
-
 /mical/gun/flux_file_dir ./
 /mical/gun/flux_file flux_Pethu_FLUKA_SIBYLL.root
 
+/mical/run/firstEvt 1
+/mical/run/input_dir ./
+
 /mical/run/collated_input 1
 /mical/run/collated_input_file Collated_evtraw_20181120_20210813ai_5of8.root
+
+
+/mical/run/corr_pos_time_input 1
+/mical/run/corr_pos_time_input_file corrections_pos_time_26122018.root
+
 
 
 

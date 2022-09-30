@@ -52,6 +52,11 @@ micalRunActionMessenger::micalRunActionMessenger(micalRunAction* aRunAction)
   CollatedFileCmd->SetParameterName("collated_input_file",true, true);
   CollatedFileCmd->SetDefaultValue("collated_input_file");
 
+    Corr_Pos_TimeFileCmd = new G4UIcmdWithAString("/mical/run/corr_pos_time_input_file",this);
+  Corr_Pos_TimeFileCmd->SetGuidance("Corr_Pos_Time InputFile name");
+  Corr_Pos_TimeFileCmd->SetParameterName("corr_pos_time_input_file",true, true);
+  Corr_Pos_TimeFileCmd->SetDefaultValue("corr_pos_time_input_file");
+  
   FirstEvtCmd = new G4UIcmdWithAnInteger("/mical/run/firstEvt",this);
   FirstEvtCmd->SetGuidance("Starting points at nuance output file");
   FirstEvtCmd->SetParameterName("first_evt",true, true);
@@ -76,6 +81,12 @@ micalRunActionMessenger::micalRunActionMessenger(micalRunAction* aRunAction)
   CollatedCmd->SetGuidance("Collated InputFile name");
   CollatedCmd->SetParameterName("collated_input_file",true, true);
   CollatedCmd->SetDefaultValue(0);
+
+    
+  Corr_Pos_TimeCmd = new G4UIcmdWithAnInteger("/mical/run/corr_pos_time_input",this);
+  Corr_Pos_TimeCmd->SetGuidance("Corr_Pos_Time InputFile name");
+  Corr_Pos_TimeCmd->SetParameterName("corr_pos_time_input_file",true, true);
+  Corr_Pos_TimeCmd->SetDefaultValue(0);
 
 }
 
@@ -107,7 +118,10 @@ void micalRunActionMessenger::SetNewValue(G4UIcommand * command,G4String newValu
 
   if( command == CollatedFileCmd )
     { theRunAction->SetCollatedFile(newValue);} 
-  
+
+  if( command == Corr_Pos_TimeFileCmd )
+   { theRunAction->SetCorr_Pos_TimeFile(newValue);} 
+
   if( command == FirstEvtCmd )
     { theRunAction->SetFirstEvt(FirstEvtCmd->GetNewIntValue(newValue));}
   
@@ -119,6 +133,8 @@ void micalRunActionMessenger::SetNewValue(G4UIcommand * command,G4String newValu
     { theRunAction->SetisXtermOut(isXtermOutCmd->GetNewIntValue(newValue));}
   if( command == CollatedCmd )
     { theRunAction->SetCollatedIn(CollatedCmd->GetNewIntValue(newValue));}
-  
+
+    if( command == Corr_Pos_TimeCmd )
+      { theRunAction->SetCorr_Pos_TimeIn(Corr_Pos_TimeCmd->GetNewIntValue(newValue));}
 }
 

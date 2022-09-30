@@ -46,7 +46,8 @@ class MultiSimAnalysis
 {
   public:
     MultiSimAnalysis(G4String sprefix);
-  void OpenRootfiles(G4String inf, G4String out, G4String colfile);
+    void OpenRootfiles(G4String inf, G4String out, G4String colfile, G4String corrfile);
+
   void CloseRootfiles();
    ~MultiSimAnalysis();
  void SetCorrTimeError(G4double val);
@@ -72,11 +73,20 @@ class MultiSimAnalysis
     G4int       InputOutput;
     G4String    text_inputFile; // input file for ascii output or .inh file
   G4int collatedIn;
-  
+    G4int corr_pos_timeIn;
     TFile *pVisFile;
     TFile *pRootFile;
     TFile *inputRootFile;  
   TFile* collatedRootFile;
+
+
+  //Raj: Added to obtain multiplicity dependent error 
+  TFile* InCorrFile;
+  TH2D*	h_xposerrsq;
+  TH2D*	h_yposerrsq;
+  double xposerrsq[4][12];
+  double yposerrsq[4][12];
+
   
     TTree *pEventTree;
     TTree *inputEventTree;

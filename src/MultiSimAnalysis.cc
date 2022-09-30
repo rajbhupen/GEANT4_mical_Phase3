@@ -142,7 +142,7 @@ MultiSimAnalysis::MultiSimAnalysis(G4String sprefix) {
 
 }
 
-void MultiSimAnalysis::OpenRootfiles(G4String infile,  G4String outfile, G4String collFile) {
+void MultiSimAnalysis::OpenRootfiles(G4String infile,  G4String outfile, G4String collFile, G4String corrFile) {
   // cout<<"void MultiSimAnalysis::OpenRootfiles(G4String infile,  G4String outfile) {..."<<endl;
   cout<<"my infile is "<<infile<<endl;
   //  inputRootFile = new TFile(infile, "read");
@@ -234,18 +234,41 @@ void MultiSimAnalysis::OpenRootfiles(G4String infile,  G4String outfile, G4Strin
       }
     } // for(int iki=0; iki<numberInLA; iki++) { 
 
+ 
+  }
 
-
-
-
-
-
-
-
-
-
+  gDirectory->pwd();
+  cout<<corr_pos_timeIn<<endl;
+  if(corr_pos_timeIn) {
+    cout<<" if(corr_pos_timeIn) {"<<endl;
+    InCorrFile = new TFile(corrFile, "read");
+    if(!InCorrFile) {
+      cout << "Error opening corr_pos_time file !" << endl;
+      exit(-1);
+    }
     
-  } 
+  h_xposerrsq = (TH2D*)InCorrFile->Get("h_xposerrsq");
+  h_yposerrsq = (TH2D*)InCorrFile->Get("h_yposerrsq");
+  
+  
+
+  for(int ij=0; ij<numberInLA; ij++) {
+    for(int jk=0; jk<4; jk++) {
+      xposerrsq[jk][ij]=h_xposerrsq->GetBinContent(jk+1,ij+1);
+      yposerrsq[jk][ij]=h_yposerrsq->GetBinContent(jk+1,ij+1);
+    }
+  }
+
+
+
+  }//  if(corr_pos_timeIn) {
+
+
+  gDirectory->pwd();
+
+
+
+
   
   micalPrimaryGeneratorAction *pgPointer = micalPrimaryGeneratorAction::AnPointer;
   
@@ -1108,7 +1131,21 @@ void MultiSimAnalysis::CloseRootfiles() {
     cout << "No collated histograms !" << endl;
   }
 
-  
+    if (InCorrFile) {
+    InCorrFile->cd();
+
+    delete h_xposerrsq;
+    delete h_yposerrsq;
+    
+    
+    InCorrFile->Close();
+    delete InCorrFile; InCorrFile=0;
+    cout<<"Correction_Pos_Time root file closed."<<endl;
+  } else {
+    cout << "No Correction_Pos_Time histograms !" << endl;
+  }
+
+
   if ( isXtermOut==2&&(InputOutput==0 ||InputOutput==3 || InputOutput==5)) {
     ascii_output.close();
   }

@@ -24,18 +24,19 @@ public:
     G4UIdirectory *             runDirectory;
     G4UIdirectory*              runDir;
     G4UIcommand *               runIDCmd ;
-
-    G4UIcmdWithAString*          InputDirCmd;
-    G4UIcmdWithAString*          OutputDirCmd;
-    G4UIcmdWithAString*          InputFileCmd;
-    G4UIcmdWithAString*          OutputFileCmd;
-  G4UIcmdWithAString*          CollatedFileCmd;
   
-    G4UIcmdWithAnInteger*        FirstEvtCmd;
-    G4UIcmdWithAnInteger*        InputOutputCmd;
-    G4UIcmdWithAnInteger*        isVisOutCmd;
-    G4UIcmdWithAnInteger*        isXtermOutCmd;
-   G4UIcmdWithAnInteger*        CollatedCmd;
+  G4UIcmdWithAString*          InputDirCmd;
+  G4UIcmdWithAString*          OutputDirCmd;
+  G4UIcmdWithAString*          InputFileCmd;
+  G4UIcmdWithAString*          OutputFileCmd;
+  G4UIcmdWithAString*          CollatedFileCmd;
+  G4UIcmdWithAString*          Corr_Pos_TimeFileCmd;
+  G4UIcmdWithAnInteger*        FirstEvtCmd;
+  G4UIcmdWithAnInteger*        InputOutputCmd;
+  G4UIcmdWithAnInteger*        isVisOutCmd;
+  G4UIcmdWithAnInteger*        isXtermOutCmd;
+  G4UIcmdWithAnInteger*        CollatedCmd;
+  G4UIcmdWithAnInteger*        Corr_Pos_TimeCmd;
 };
 
 #endif

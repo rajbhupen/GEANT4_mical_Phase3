@@ -151,7 +151,7 @@ void micalEventAction::CMVD_Extrapolation(){
   //  CmvLayExtra_pointer->CmvLayExtra_list.clear();
 
 
-  int counter=0;
+  //  int counter=0;
 
   
   int ijmax=0;
@@ -252,8 +252,8 @@ void micalEventAction::CMVD_Extrapolation(){
  
 
     unsigned int layid = 0;
-    double ellip_diff[4][4];
-    double erralgstrplen[4][4];
+    //    double ellip_diff[4][4];
+    //    double erralgstrplen[4][4];
     double  xhat=0,yhat=0,zhat=0; //area unit vector of planes
 
     double layhalflength;
@@ -477,8 +477,8 @@ void micalEventAction::CMVD_Extrapolation(){
 	    break;
           }
 
-	  double trg =0;
-	  	  cout<<"isinside: "<<isInside<<endl;
+	
+	  cout<<"isinside: "<<isInside<<endl;
 
 	
 	  // bool hitpresent = false;
@@ -861,12 +861,11 @@ void micalEventAction::CreateCmvHit() {
 
 	    //	    cout<<tmpside2+1<<" "<<tmplayer2<<" "<<isipm2<<endl;
 	    if (tmpstripid !=tmpstripid2) continue; //this continues to next iteration
-	
+	    //	cout<<tmpside2+1<<" "<<tmplayer2<<" "<<isipm2<<endl;
 	    ////	if(tmpside !=tmpside2 || tmplayer !=tmplayer2) continue;
-	    int isipm = SipmHit_pointer->SipmHit_list[jk]->GetSiPM();
-	    //	    cout<<"isipm "<<isipm<<endl;
-            isfoursipm[isipm]=1;
-	    foursipm[isipm] = SipmHit_pointer->SipmHit_list[jk];
+        
+            isfoursipm[isipm2]=1;
+	    foursipm[isipm2] = SipmHit_pointer->SipmHit_list[jk];
 	    SipmHit_pointer->SipmHit_list[jk]->SetUsed(true);
 	  }
 	}
@@ -1767,7 +1766,7 @@ void micalEventAction::EndOfEventAction(const G4Event* evt) {
 	 occulyr=-1;
 	for (unsigned int iji=0; iji<pinotrack->InoTrack_list.size() ; iji++) {
 	  if(iji<pAnalysis->ntrkmx){ //ntrkmx is 20
-	  double zcor;
+	  
 	  int cluster_size=pinotrack->InoTrack_list[iji]->ClustsInTrack.size();
 
 
@@ -1794,14 +1793,14 @@ void micalEventAction::EndOfEventAction(const G4Event* evt) {
 	  Nx=0;
 	  int nxfail = 0;
 	  xchi2 = 1000;
-	  double xresol = 0;
+	  
 	  double zval[nlayer], xext[nlayer], xexter[nlayer], xposinstr[nlayer], valz[nlayer];
 	  for (int ij3=0; ij3<nlayer; ij3++) { zval[ij3] = 0;}
 
 	  Ny=0;
 	  int nyfail = 0;
 	  ychi2 = 1000;
-	  double yresol = 0;
+	 
 	  double yext[nlayer], yexter[nlayer], yposinstr[nlayer];
 
 
@@ -1850,9 +1849,23 @@ void micalEventAction::EndOfEventAction(const G4Event* evt) {
 		zval[nlay]=ClustsInTrackBank[iji][nlay][0]->GetZPos();
 		Xpos[nlay]=ClustsInTrackBank[iji][nlay][0]->GetXPos();
 		Ypos[nlay]=ClustsInTrackBank[iji][nlay][0]->GetYPos();
-		 errxsq[nlay]=ClustsInTrackBank[iji][nlay][0]->GetXPosErr() * ClustsInTrackBank[iji][nlay][0]->GetXPosErr() ;
-		 errysq[nlay]=ClustsInTrackBank[iji][nlay][0]->GetYPosErr() * ClustsInTrackBank[iji][nlay][0]->GetYPosErr() ;
+		//	 errxsq[nlay]=ClustsInTrackBank[iji][nlay][0]->GetXPosErr() * ClustsInTrackBank[iji][nlay][0]->GetXPosErr() ;
+		//		 errysq[nlay]=ClustsInTrackBank[iji][nlay][0]->GetYPosErr() * ClustsInTrackBank[iji][nlay][0]->GetYPosErr() ;
 
+		if(ClustsInTrackBank[iji][nlay][0]->GetNXStripsInClust()>0) {
+	errxsq[nlay] = pAnalysis->xposerrsq[ClustsInTrackBank[iji][nlay][0]->GetNXStripsInClust()-1][nlay]*0.03*0.03;
+		
+	      } else {
+		errxsq[nlay]=errxco[nlay]*errxco[nlay]*0.03*0.03;
+		
+	      }
+	      if(ClustsInTrackBank[iji][nlay][0]->GetNYStripsInClust()>0) {
+		errysq[nlay] = pAnalysis->yposerrsq[ClustsInTrackBank[iji][nlay][0]->GetNYStripsInClust()-1][nlay]*0.03*0.03;
+	        
+	      } else {
+		errysq[nlay]=erryco[nlay]*erryco[nlay]*0.03*0.03;
+	    
+	      }
         
 
 		

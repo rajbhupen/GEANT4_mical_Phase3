@@ -40,6 +40,9 @@ class micalRunAction : public G4UserRunAction
 
   void SetCollatedIn(G4int p) { collatedIn = p; }
   void SetCollatedFile(G4String p) { c_file_title = p; }
+
+   void SetCorr_Pos_TimeIn(G4int p) { corr_pos_timeIn = p; }
+   void SetCorr_Pos_TimeFile(G4String p) { d_file_title = p; }
   
     void SetFirstEvt(G4int p) { FirstEvt = p;}
     void SetInputOutput(G4int p) {InputOutput=p ;}
@@ -65,15 +68,16 @@ class micalRunAction : public G4UserRunAction
     
     
     private:
-    G4String input_title;
-    G4String output_title;
+  G4String input_title;
+  G4String output_title;
   G4String collated_title;
-    G4String a_dir_title;
-    G4String r_dir_title;
-    G4String a_file_title;
-    G4String r_file_title;
+  G4String corr_pos_time_title;
+  G4String a_dir_title;
+  G4String r_dir_title;
+  G4String a_file_title;
+  G4String r_file_title;
   G4String c_file_title;
-
+  G4String d_file_title;
     G4int run_no;
     G4int evt_no;
     G4int run_ID;
@@ -81,6 +85,7 @@ class micalRunAction : public G4UserRunAction
     G4int FirstEvt;
     G4int InputOutput;
   G4int collatedIn;
+  G4int corr_pos_timeIn;
     G4int isVisOut;
     G4int isXtermOut;
     
