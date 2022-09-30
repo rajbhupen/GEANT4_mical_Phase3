@@ -399,8 +399,11 @@ class MultiSimAnalysis
   G4float CMVDExpPosY[cmvdnlayermx];
   G4float CMVDExpPosZ[cmvdnlayermx];
 
-G4float CMVDExpnHit[cmvdnlayermx];
-
+  G4float CMVDExpnHit[cmvdnlayermx];
+  G4int CMVDClustsInLay[cmvdnlayermx];
+  G4int CMVDHitsInLay[cmvdnlayermx];
+  G4int CMVDClusterSize[cmvdnlayermx];
+  
   
   //
 

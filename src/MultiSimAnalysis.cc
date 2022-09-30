@@ -688,31 +688,36 @@ void MultiSimAnalysis::OpenRootfiles(G4String infile,  G4String outfile, G4Strin
 
   pEventTree->Branch("CMVDnLayer", &CMVDnLayer, "CMVDnLayer/i");
 
-  pEventTree->Branch("CMVDTruePosX", CMVDTruePosX, "CMVDTruePosX[CMVDnLayer]/F");
-  pEventTree->Branch("CMVDTruePosY", CMVDTruePosY, "CMVDTruePosY[CMVDnLayer]/F");
-  pEventTree->Branch("CMVDTruePosZ", CMVDTruePosZ, "CMVDTruePosZ[CMVDnLayer]/F");
+  pEventTree->Branch("CMVDTruePosX", CMVDTruePosX, "CMVDTruePosX[32]/F");
+  pEventTree->Branch("CMVDTruePosY", CMVDTruePosY, "CMVDTruePosY[32]/F");
+  pEventTree->Branch("CMVDTruePosZ", CMVDTruePosZ, "CMVDTruePosZ[32]/F");
 
-  pEventTree->Branch("CMVDRecoPosX", CMVDRecoPosX, "CMVDRecoPosX[CMVDnLayer]/F");
-  pEventTree->Branch("CMVDRecoPosY", CMVDRecoPosY, "CMVDRecoPosY[CMVDnLayer]/F");
-  pEventTree->Branch("CMVDRecoPosZ", CMVDRecoPosZ, "CMVDRecoPosZ[CMVDnLayer]/F");
+  pEventTree->Branch("CMVDRecoPosX", CMVDRecoPosX, "CMVDRecoPosX[32]/F");
+  pEventTree->Branch("CMVDRecoPosY", CMVDRecoPosY, "CMVDRecoPosY[32]/F");
+  pEventTree->Branch("CMVDRecoPosZ", CMVDRecoPosZ, "CMVDRecoPosZ[32]/F");
 
 
-  pEventTree->Branch("CMVDWRecoPosX", CMVDWRecoPosX, "CMVDWRecoPosX[CMVDnLayer]/F");
-  pEventTree->Branch("CMVDWRecoPosY", CMVDWRecoPosY, "CMVDWRecoPosY[CMVDnLayer]/F");
-  pEventTree->Branch("CMVDWRecoPosZ", CMVDWRecoPosZ, "CMVDWRecoPosZ[CMVDnLayer]/F");
+  pEventTree->Branch("CMVDWRecoPosX", CMVDWRecoPosX, "CMVDWRecoPosX[32]/F");
+  pEventTree->Branch("CMVDWRecoPosY", CMVDWRecoPosY, "CMVDWRecoPosY[32]/F");
+  pEventTree->Branch("CMVDWRecoPosZ", CMVDWRecoPosZ, "CMVDWRecoPosZ[32]/F");
 
 
   
-  pEventTree->Branch("CMVDExpPosX", CMVDExpPosX, "CMVDExpPosX[CMVDnLayer]/F");
-  pEventTree->Branch("CMVDExpPosY", CMVDExpPosY, "CMVDExpPosY[CMVDnLayer]/F");
-  pEventTree->Branch("CMVDExpPosZ", CMVDExpPosZ, "CMVDExpPosZ[CMVDnLayer]/F");
+  pEventTree->Branch("CMVDExpPosX", CMVDExpPosX, "CMVDExpPosX[32]/F");
+  pEventTree->Branch("CMVDExpPosY", CMVDExpPosY, "CMVDExpPosY[32]/F");
+  pEventTree->Branch("CMVDExpPosZ", CMVDExpPosZ, "CMVDExpPosZ[32]/F");
 
-  pEventTree->Branch("CMVDExpnHit", CMVDExpnHit, "CMVDExpnHit[CMVDnLayer]/F");
+  pEventTree->Branch("CMVDExpnHit", CMVDExpnHit, "CMVDExpnHit[32]/F");
+  pEventTree->Branch("CMVDClusterSize", CMVDClusterSize, "CMVDClusterSize[32]/I");
 
+  
+   
   
     //cmv
 
-   
+   pEventTree->Branch("CMVDClustsInLay", CMVDClustsInLay, "CMVDClustsInLay[32]/I");
+   pEventTree->Branch("CMVDHitsInLay", CMVDHitsInLay, "CMVDHitsInLay[32]/I");
+     
     
     pEventTree->Branch("momend",momend,"momend[ntrkt]/F");
     pEventTree->Branch("theend",theend,"theend[ntrkt]/F");

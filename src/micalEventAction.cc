@@ -145,14 +145,24 @@ void micalEventAction::CMVD_Extrapolation(){
     tmpcluster->Print();
     CmvClusterBank[tmpcluster->GetPlane()-1][tmpcluster->GetLayer()].push_back(tmpcluster);
   }
-
+  cout<<" Fill # of hits and clusters in each layer "<<endl;
+  unsigned int arcnt=0;
+  for(int ij=0;ij<7;ij++){
+    if(ij==4)continue; //Reserved for Front Wall
+    for(int jk=0;jk<4;jk++){
+      if(ij>0 && jk>2) continue; //only 3 layers in side walls
+      arcnt =ij+1;
+      arcnt<<=2;
+      arcnt+=jk;
+      cout<<"arcnt "<<arcnt<<endl;
+      pAnalysis->CMVDHitsInLay[arcnt] = CmvHitBank[ij][jk].size();
+      pAnalysis->CMVDClustsInLay[arcnt] = CmvClusterBank[ij][jk].size();
+      
+      //      cout<<ij<<" "<<jk<<" "<<pAnalysis->CMVDHitsInLay[arcnt]<<" "<<pAnalysis->CMVDClustsInLay[arcnt]<<" "<<CmvHitBank[ij][jk].size()<<" "<<CmvClusterBank[ij][jk].size()<<endl;
+  }
+  }
   
-  //  CmvLayExtra_pointer = new CmvLayExtra_Manager();
-  //  CmvLayExtra_pointer->CmvLayExtra_list.clear();
-
-
-  //  int counter=0;
-
+  
   
   int ijmax=0;
   cout<<"check ab "<<pAnalysis->ntrkt<<endl;
@@ -594,7 +604,7 @@ void micalEventAction::CMVD_Extrapolation(){
 		  pAnalysis->CMVDWRecoPosY[layid] = CmvClusterBank[ijk][ij][ix]->GetWRecoPosY();
 		  pAnalysis->CMVDWRecoPosZ[layid] = CmvClusterBank[ijk][ij][ix]->GetWRecoPosZ();
 
-
+		  pAnalysis->CMVDClusterSize[layid] = CmvClusterBank[ijk][ij][ix]->GetClusterSize();
 		   
 		  pAnalysis->CMVDExpnHit[layid] = 3;		  
 		 		  
@@ -677,7 +687,7 @@ void micalEventAction::CMVD_Extrapolation(){
 		  pAnalysis->CMVDWRecoPosY[layid] = CmvClusterBank[ijk][ij][ix]->GetWRecoPosY();
 		  pAnalysis->CMVDWRecoPosZ[layid] = CmvClusterBank[ijk][ij][ix]->GetWRecoPosZ();
 
-
+		  pAnalysis->CMVDClusterSize[layid] = CmvClusterBank[ijk][ij][ix]->GetClusterSize();
 		   
 		  pAnalysis->CMVDExpnHit[layid] = 1;		  
 		 		  
@@ -730,7 +740,7 @@ void micalEventAction::CMVD_Extrapolation(){
 		  pAnalysis->CMVDExpPosY[layid] = -10000;
 		  pAnalysis->CMVDExpPosZ[layid] = -10000;
 
-
+		  pAnalysis->CMVDClusterSize[layid] = -10000;
 		   
 		  pAnalysis->CMVDExpnHit[layid] = -10000;		  
 		 		  
@@ -976,7 +986,9 @@ void micalEventAction::FormCmvCluster() {
       CmvHitBank[cmvhit->GetPlane()-1][cmvhit->GetLayer()].push_back(cmvhit);
     }//  for (unsigned int ix=0; ix<CmvHit_pointer->CmvHit_list.size(); ix++) {
   
+    //Fill number of hits in a layer:
 
+    
     for(unsigned int tmpside=0;tmpside<6;tmpside++){
       
       for(unsigned int tmplay=0;tmplay<4;tmplay++){
