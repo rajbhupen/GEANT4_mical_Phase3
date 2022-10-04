@@ -73,7 +73,7 @@ G4String name1=pv1->GetName();
 const G4VProcess* tpr2 = postStepPoint->GetProcessDefinedStep();
 const G4VProcess* tpr3 = track->GetCreatorProcess();
  
-// cout<<aStep->GetPreStepPoint()->GetProcessDefinedStep()->GetProcessName() <<endl;
+ cout<<aStep->GetPreStepPoint()->GetProcessDefinedStep()->GetProcessName() <<endl;
 
  G4int trkid = track->GetTrackID();
 G4int parentId = track->GetParentID();

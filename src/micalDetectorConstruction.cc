@@ -1481,6 +1481,8 @@ logicfiber_top = new G4LogicalVolume(solidfiber_top,
       					   0);//?
 
 
+
+   
   xposs = -0.5*(3*ScntLayShifTop) ;
   yposs = 0.0;
   //  zposs = posmagnet + parmagnet[2] + 180 + partopscint[2]; //without ass
@@ -1506,7 +1508,7 @@ logicfiber_top = new G4LogicalVolume(solidfiber_top,
  
     sprintf(nameps,"physiTopLay_1cm"); //,nlay); 
     cout<<nameps<<" "<<0<<" "<<xposs<<" "<<yposs<<" "<<zposs<<endl;
-    physiTopLay_2cm = new  G4PVPlacement(0,
+    physiTopLay_1cm = new  G4PVPlacement(0,
 					   G4ThreeVector(xposs,yposs,zposs),
 					 logicTopLay_1cm  ,
 					   nameps,
@@ -1520,7 +1522,7 @@ logicfiber_top = new G4LogicalVolume(solidfiber_top,
  
     sprintf(nameps,"physiTopLay_2cm"); //,nlay); 
     cout<<nameps<<" "<<0<<" "<<xposs<<" "<<yposs<<" "<<zposs<<endl;
-    physiTopLay_1cm = new  G4PVPlacement(0,
+    physiTopLay_2cm = new  G4PVPlacement(0,
 					   G4ThreeVector(xposs,yposs,zposs),
 					 logicTopLay_2cm  ,
 					   nameps,
@@ -1534,7 +1536,7 @@ logicfiber_top = new G4LogicalVolume(solidfiber_top,
  
     sprintf(nameps,"physiTopLay_1cm"); //,nlay); 
     cout<<nameps<<" "<<0<<" "<<xposs<<" "<<yposs<<" "<<zposs<<endl;
-    physiTopLay_2cm = new  G4PVPlacement(0,
+    physiTopLay_1cm = new  G4PVPlacement(0,
 					   G4ThreeVector(xposs,yposs,zposs),
 					 logicTopLay_1cm  ,
 					   nameps,
