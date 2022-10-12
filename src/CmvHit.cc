@@ -390,7 +390,7 @@ void CmvHit::Print() {
   //	cout<<"Hit combination "<<endl;
   cout<< "CmvHits():" 
     // <<std::setw(4) <<jk <<" "
-    // << "Idd="<<std::setw(3)<<GetStripId()
+      << "Idd="<<std::setw(3)<<GetStripId()
       << " Plane "<< std::setw(3)<<  GetPlane()
       << " Layer "<< std::setw(3)<<  GetLayer()
       << " Strip No "	<< std::setw(3)<<  GetStrip()

@@ -205,6 +205,8 @@ void SipmHit::Print() {
       << " Plane "<< std::setw(3)<<  GetPlane()
       << " Layer "<< std::setw(3)<<  GetLayer()
       << " Strip No "<< std::setw(3)<<  GetStrip()
+      << " StripId  "<< std::setw(3)<<  GetStripId()
+      << " Id "<< std::setw(3)<<  GetId()
       << " SiPM No "<< std::setw(3)<<  GetSiPM()
       << " pdgId No "<< std::setw(3)<<  GetpdgId()
       << " X_Loc=" <<std::setw(8)<<  GetXLocPos() 

@@ -1078,29 +1078,31 @@ void micalEventAction::FormCmvCluster() {
     }
 
   cout<<"...........First Sorting hits acc to stripno in each layer..................."<<endl;
-
+  //Note: Here we compare strip numbers which ranges from 0-88/40 in each layers rather than stripid.. since for two nearby strips strip no. diff is 1 but stripId diff is not one.
   
     for (unsigned int ix=0; ix<CmvHit_pointer->CmvHit_list.size(); ix++) {
     
       int side1 = CmvHit_pointer->CmvHit_list[ix]->GetPlane()-1;
       int lay1 = CmvHit_pointer->CmvHit_list[ix]->GetLayer();
-      int strp1  = CmvHit_pointer->CmvHit_list[ix]->GetStrip();
-
+      int strp1id  = CmvHit_pointer->CmvHit_list[ix]->GetStripId();
+      cout<<ix<<" "<<strp1id<<endl;
       
       for (unsigned int ixi=ix+1; ixi<CmvHit_pointer->CmvHit_list.size(); ixi++) {
       int side2 = CmvHit_pointer->CmvHit_list[ixi]->GetPlane()-1;
       int lay2 = CmvHit_pointer->CmvHit_list[ixi]->GetLayer();
-      int strp2  = CmvHit_pointer->CmvHit_list[ixi]->GetStrip();
-
+      int strp2id  = CmvHit_pointer->CmvHit_list[ixi]->GetStripId(); // this id is full id plus right shifting 2 bits i.e. excluding sipm 2-bits
+  cout<<ixi<<" "<<strp2id<<endl;
         
-	if(side1==side2 && lay1==lay2){
+      //	if(side1==side2 && lay1==lay2){
 
 	  
-	  if(strp1<strp2){
-	    swap(CmvHit_pointer->CmvHit_list[ix],CmvHit_pointer->CmvHit_list[ixi]);	  
+  //  if(strp1id<strp2id){
+  if(CmvHit_pointer->CmvHit_list[ixi]->GetStripId()<CmvHit_pointer->CmvHit_list[ix]->GetStripId()){
+    swap(CmvHit_pointer->CmvHit_list[ix],CmvHit_pointer->CmvHit_list[ixi]);
+    cout<<"swap"<<endl;
 	  }//  if(strp1<strp2){
 	
-	}// 	if(side1==side2 && lay1==lay2){
+	  //	}// 	if(side1==side2 && lay1==lay2){
 
     	
       }// for (unsigned ixi=ix+1; ixi<CmvHit_pointer->CmvHit_list.size(); ixi++) {
@@ -1138,7 +1140,7 @@ void micalEventAction::FormCmvCluster() {
 	  for(unsigned int kl=jk+1; kl<CmvHitBank[tmpside][tmplay].size(); kl++) {
 	    //	    cout<<"kl "<<kl<<endl;
 
-	    if( abs(CmvHitBank[tmpside][tmplay][kl-1]->GetStrip() - CmvHitBank[tmpside][tmplay][kl]->GetStrip()) >=2 ) continue;//Geometrically nearby  xx x xx 
+	    if( abs(CmvHitBank[tmpside][tmplay][kl-1]->GetStrip() - CmvHitBank[tmpside][tmplay][kl]->GetStrip()) >=2 ) break;//Geometrically nearby  xx x xx 
 
 	    
 	    if(  !( CmvHitBank[tmpside][tmplay][kl]->GetUsed())  ){
