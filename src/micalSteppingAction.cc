@@ -12,7 +12,7 @@
 #include "micalEventAction.hh"
 #include "MultiSimAnalysis.hh"
 #include "G4Track.hh"
-
+#include "G4VProcess.hh"
 ////#include "G4RunManager.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -32,7 +32,7 @@ micalSteppingAction::~micalSteppingAction()
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void micalSteppingAction::UserSteppingAction(const G4Step* aStep) {
-  // cout<<"   void micalSteppingAction::UserSteppingAction(const G4Step* aStep) {        "<<endl;
+   cout<<"   void micalSteppingAction::UserSteppingAction(const G4Step* aStep) {        "<<endl;
   // micalElectroMagneticField* ical0Field = micalElectroMagneticField::EMFPointer;
 
   const G4Track* track = aStep->GetTrack();
@@ -73,8 +73,10 @@ G4String name1=pv1->GetName();
 const G4VProcess* tpr2 = postStepPoint->GetProcessDefinedStep();
 const G4VProcess* tpr3 = track->GetCreatorProcess();
  
- cout<<aStep->GetPreStepPoint()->GetProcessDefinedStep()->GetProcessName() <<endl;
-
+ if(abs(PdgId)!=13 ){
+   cout<<"not muon "<<name<<" "<<aStep->GetPreStepPoint()->GetMaterial()<<endl;
+   //     aStep->GetPreStepPoint()->GetProcessDefinedStep()->GetProcessName() <<endl;
+ }
  G4int trkid = track->GetTrackID();
 G4int parentId = track->GetParentID();
 G4double edepNonIon = aStep->GetNonIonizingEnergyDeposit()/keV;
@@ -85,32 +87,6 @@ track->GetVertexKineticEnergy()/keV;
 // cout<<track->GetTotalEnergy()/keV;
 
 // cout<<"name "<<name<<endl;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -246,4 +246,4 @@
 # Touchable commands
 # None
 #/vis/viewer/flush
-/run/beamOn 1000
+/run/beamOn 100

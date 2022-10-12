@@ -531,7 +531,9 @@ void micalDetectorParameterDef::UpdateDetectorParameterDef(){
 //cmv
 
 cout<<".........Cosmic Muon Veto System Parameters............"<<endl;
-NoScntStrpTop = 88;
+ cout<<"top wall is at 520mm from the topmost layer. back wall is at 338 mm from the magnet. two side walls is shifted towards front side by 50mm. They are placed at dist of 35 mm from edge of top wall   "<<endl;
+
+ NoScntStrpTop = 88;
 NoScntStrpSide = 40;
  NoScntStrpSideSmallay=8;
  
@@ -571,7 +573,9 @@ ScntLayShifTop=(2*partopscint[0]+2*AirGapScintTop)/4; // 1/4 shift
 //top 
 ScintLayGPos[0][0][0]= INOroomPos[0]-0.5*(3*ScntLayShifTop);
 ScintLayGPos[0][0][1]=StackPosInRoom[1]+ INOroomPos[1];
- ScintLayGPos[0][0][2]= INOroomPos[2] -parino[2] + parmagnet[2] + parmagnet[2] + 180+ AlTileBase +0.5*(2*9);
+// ScintLayGPos[0][0][2]= INOroomPos[2] -parino[2] + parmagnet[2] + parmagnet[2] + 180+ AlTileBase +0.5*(2*9);
+ ScintLayGPos[0][0][2]= INOroomPos[2] + StackPosInRoom[2] + IRONLayerPosZ[10]+ IronLayerZdim[10] + 520 + AlTileBase +0.5*(2*9);
+
  
 ScintLayGPos[0][1][0]=ScintLayGPos[0][0][0]+ScntLayShifTop;
 ScintLayGPos[0][1][1]=ScintLayGPos[0][0][1];

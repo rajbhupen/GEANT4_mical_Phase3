@@ -383,26 +383,31 @@ class MultiSimAnalysis
   unsigned int CMVDnLayer;
   
   
-  G4float CMVDTruePosX[cmvdnlayermx];
-  G4float CMVDTruePosY[cmvdnlayermx];
-  G4float CMVDTruePosZ[cmvdnlayermx];
+  G4float CMVDTruePosX[32];
+  G4float CMVDTruePosY[32];
+  G4float CMVDTruePosZ[32];
 
-  G4float CMVDRecoPosX[cmvdnlayermx];
-  G4float CMVDRecoPosY[cmvdnlayermx];
-  G4float CMVDRecoPosZ[cmvdnlayermx];
+  G4float CMVDRecoPosX[32];
+  G4float CMVDRecoPosY[32];
+  G4float CMVDRecoPosZ[32];
 
-  G4float CMVDWRecoPosX[cmvdnlayermx];
-  G4float CMVDWRecoPosY[cmvdnlayermx];
-  G4float CMVDWRecoPosZ[cmvdnlayermx];
+  G4float CMVDWRecoPosX[32];
+  G4float CMVDWRecoPosY[32];
+  G4float CMVDWRecoPosZ[32];
   
-  G4float CMVDExpPosX[cmvdnlayermx];
-  G4float CMVDExpPosY[cmvdnlayermx];
-  G4float CMVDExpPosZ[cmvdnlayermx];
+  G4float CMVDExpPosX[32];
+  G4float CMVDExpPosY[32];
+  G4float CMVDExpPosZ[32];
 
-  G4float CMVDExpnHit[cmvdnlayermx];
-  G4int CMVDClustsInLay[cmvdnlayermx];
-  G4int CMVDHitsInLay[cmvdnlayermx];
-  G4int CMVDClusterSize[cmvdnlayermx];
+  G4int CMVDExpnHit[32];
+  G4int CMVDisExpIn[32];
+  G4int CMVDisHit[32];
+
+
+  G4int CMVDpl2[32];
+  G4int CMVDClustsInLay[32];
+  G4int CMVDHitsInLay[32];
+  G4int CMVDClusterSize[32];
   
   
   //

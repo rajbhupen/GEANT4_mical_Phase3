@@ -707,7 +707,12 @@ void MultiSimAnalysis::OpenRootfiles(G4String infile,  G4String outfile, G4Strin
   pEventTree->Branch("CMVDExpPosY", CMVDExpPosY, "CMVDExpPosY[32]/F");
   pEventTree->Branch("CMVDExpPosZ", CMVDExpPosZ, "CMVDExpPosZ[32]/F");
 
-  pEventTree->Branch("CMVDExpnHit", CMVDExpnHit, "CMVDExpnHit[32]/F");
+  pEventTree->Branch("CMVDExpnHit", CMVDExpnHit, "CMVDExpnHit[32]/I");
+
+  pEventTree->Branch("CMVDisExpIn", CMVDisExpIn, "CMVDisExpIn[32]/I");
+  pEventTree->Branch("CMVDisHit", CMVDisHit, "CMVDisHit[32]/I");
+
+  pEventTree->Branch("CMVDpl2", CMVDpl2, "CMVDpl2[32]/I");
   pEventTree->Branch("CMVDClusterSize", CMVDClusterSize, "CMVDClusterSize[32]/I");
 
   

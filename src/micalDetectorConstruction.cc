@@ -1223,7 +1223,7 @@ logicfiber_top = new G4LogicalVolume(solidfiber_top,
     xpos = +fiberXpos;
   }
 
-  //2.3 m 1cm Side Small Wall 11052022
+  //1 m 1cm Side Small Wall 11052022
 
  
   solidScint_2cm_2p3_side= new G4Box("solidScint_2cm_2p3_side",partopscint[0],1000,9);
@@ -1465,9 +1465,9 @@ logicfiber_top = new G4LogicalVolume(solidfiber_top,
   sprintf(nameps,"TopWallAss");  
   xposs = StackPosInRoom[0];
   yposs = StackPosInRoom[1];
-  zposs = posmagnet + parmagnet[2] + 180 +0.5*(2*(2*partopscint[2])+2*(2*9))+0.5*4*10;
+  zposs = posmagnet + parmagnet[2] +0.5*(2*(2*partopscint[2])+2*(2*9))+0.5*4*10;
 
-  
+    zposs = posmagnet + IRONLayerPosZ[10]+ IronLayerZdim[10]+ 520 +0.5*(2*(2*partopscint[2])+2*(2*9))+0.5*4*10;
   
   solidTopWallAss= new G4Box("solidTopWallAss",TopPlaneHalfLength+0.5*(3*ScntLayShifTop),partopscint[1]-50,0.5*(2*(2*partopscint[2])+2*(2*9) +4*10));
   logicTopWallAss = new G4LogicalVolume(solidTopWallAss, Air,	"logicTopWallAss");

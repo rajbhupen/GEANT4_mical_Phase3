@@ -208,6 +208,11 @@ void micalEventAction::CMVD_Extrapolation(){
     //    pAnalysis->chisq[jk]=-1.0; pAnalysis->chisq2[jk]=-1.0;
     //    pAnalysis->posxvx[jk]=0.0;  pAnalysis->posyvx[jk]=0.0;  pAnalysis->poszvx[jk]=0.0;
    
+   for(int pq=0;pq<32;pq++){
+      pAnalysis->CMVDisExpIn[pq] = 0;
+      pAnalysis->CMVDisHit[pq] = 0;
+    }
+
 
 
     //convert theta and phi to dxdz and dydz
@@ -253,17 +258,7 @@ void micalEventAction::CMVD_Extrapolation(){
 
 
 
-    // for (unsigned int ij=0; ij<CmvHit_pointer->CmvHit_list.size(); ij++) {
-
-      
-    //   CmvHit_pointer->CmvHit_list[ij]->Print();
-    // }
-    // //...
- 
-
     unsigned int layid = 0;
-    //    double ellip_diff[4][4];
-    //    double erralgstrplen[4][4];
     double  xhat=0,yhat=0,zhat=0; //area unit vector of planes
 
     double layhalflength;
@@ -307,7 +302,7 @@ void micalEventAction::CMVD_Extrapolation(){
 
 
 		
-	//	cout<<"Loc_no: "<<ijk<<" layhalflength "<<layhalflength<<"layhalfbreadth  "<<layhalfbreadth<<endl;
+		cout<<"Loc_no: "<<ijk<<" layhalflength "<<layhalflength<<"layhalfbreadth  "<<layhalfbreadth<<endl;
 
 	// cout<<"Point: "<<G_Point[0]<<" "<<G_Point[1]<<" "<<G_Point[2]<<endl;
 	vector <double> edge[4];
@@ -372,17 +367,20 @@ void micalEventAction::CMVD_Extrapolation(){
 		  
 	}
 
-	// CmvLayExtra* layexp = new CmvLayExtra(); //GMA Memory leakages ??
-
+        
 	     layid = ijk+1;
 	     layid<<=2;
 	     layid+=ij;
 
 	     cout<<"layid: "<<layid<<endl;
-	//     layexp->SetId(layid);
-	 
+	
+	     G4ThreeVector extposvec;
+	     G4ThreeVector tmphtvec;
+	     G4ThreeVector truehtvec;   
         if(pl2){
-        
+
+	  pAnalysis->CMVDpl2[layid]=1;
+	  
 	  cout<<"---Intersection with Plane found---"<<endl;
 	 
 	  bool isInside= false;
@@ -499,9 +497,7 @@ void micalEventAction::CMVD_Extrapolation(){
 	  // layexp->SetUsed(true);
 	  // layexp->Print();
 
-	  G4ThreeVector extposvec;
-	  G4ThreeVector tmphtvec;
-	  G4ThreeVector truehtvec;    
+ 
 
           if(isInside) {
 	    
@@ -532,7 +528,7 @@ void micalEventAction::CMVD_Extrapolation(){
 		  
 
 	   
-	    // cout<<"Point inside the detector boundary"<<endl;
+	     cout<<"Point inside the detector boundary"<<endl;
 
 	   
 
@@ -545,7 +541,7 @@ void micalEventAction::CMVD_Extrapolation(){
 	     cout<<"Point:"<<extposvec<<endl;
 	     cout<<" CmvClusterBank[ijk][ij].size() "<<CmvClusterBank[ijk][ij].size()<<endl;
 	    if(CmvClusterBank[ijk][ij].size()>0){
-	      cout<<"..check.."<<endl;
+	      cout<<"Hit Present"<<endl;
             for (unsigned int ix=0; ix<CmvClusterBank[ijk][ij].size(); ix++) {
 
 	      cout<<"## "<<CmvClusterBank[ijk][ij][ix]->GetPlane()-1<<" "<<CmvClusterBank[ijk][ij][ix]->GetLayer()<<" "<<ijk<<" "<<ij<<" "<<ix<<endl;
@@ -607,7 +603,9 @@ void micalEventAction::CMVD_Extrapolation(){
 		  pAnalysis->CMVDClusterSize[layid] = CmvClusterBank[ijk][ij][ix]->GetClusterSize();
 		   
 		  pAnalysis->CMVDExpnHit[layid] = 3;		  
-		 		  
+		  pAnalysis->CMVDisExpIn[layid] =1;
+                  pAnalysis->CMVDisHit[layid] = 1;
+	  
 	  
 		}//difx
 		
@@ -618,7 +616,33 @@ void micalEventAction::CMVD_Extrapolation(){
 	    }//if
 	   
 	    else{
+	      cout<<"Extrapolation is there but no hit"<<endl;
 	      pAnalysis->CMVDExpnHit[layid] = 2;
+
+	      pAnalysis->CMVDisExpIn[layid] =1;
+              pAnalysis->CMVDisHit[layid] =0;
+
+	      pAnalysis->CMVDTruePosX[layid] = -10000;
+	      pAnalysis->CMVDTruePosY[layid] = -10000;
+	      pAnalysis->CMVDTruePosZ[layid] = -10000;
+	      
+	      
+	      pAnalysis->CMVDRecoPosX[layid] =  -10000;
+	      pAnalysis->CMVDRecoPosY[layid] =  -10000;
+	      pAnalysis->CMVDRecoPosZ[layid] =  -10000;
+	      
+	      
+	      pAnalysis->CMVDWRecoPosX[layid] =  -10000;
+	      pAnalysis->CMVDWRecoPosY[layid] =  -10000;
+	      pAnalysis->CMVDWRecoPosZ[layid] =  -10000;
+	      
+	      pAnalysis->CMVDClusterSize[layid] =0;
+	      
+
+
+
+
+	      
 	    }
           }//isinside
 
@@ -627,6 +651,116 @@ void micalEventAction::CMVD_Extrapolation(){
 	    cout<<"..Extrapolated point outside.."<<endl;
 
 	    if(CmvClusterBank[ijk][ij].size()>0){
+
+	      cout<<"But Hit Present"<<endl;
+	      for (unsigned int ix=0; ix<CmvClusterBank[ijk][ij].size(); ix++) {
+		
+		//		cout<<"## "<<CmvClusterBank[ijk][ij][ix]->GetPlane()-1<<" "<<CmvClusterBank[ijk][ij][ix]->GetLayer()<<endl;
+        
+		CmvClusterBank[ijk][ij][ix]->Print();
+	     	
+		//		cout<<"CmvClusterBank[ijk][ij] inside loop "<<CmvClusterBank[ijk][ij][ix]->GetPlane()<<" "<<CmvClusterBank[ijk][ij][ix]->GetLayer()<<endl;
+		tmphtvec.setX(CmvClusterBank[ijk][ij][ix]->GetRecoPosX());
+		tmphtvec.setY(CmvClusterBank[ijk][ij][ix]->GetRecoPosY());
+		tmphtvec.setZ(CmvClusterBank[ijk][ij][ix]->GetRecoPosZ());
+
+		//		cout<<"recohtvec: "<<tmphtvec<<endl;
+        	 double difx = (extposvec-tmphtvec).mag();
+
+		truehtvec.setX(CmvClusterBank[ijk][ij][ix]->GetTruePosX());
+		truehtvec.setY(CmvClusterBank[ijk][ij][ix]->GetTruePosY());
+		truehtvec.setZ(CmvClusterBank[ijk][ij][ix]->GetTruePosZ());
+		cout<<" truehtvvec: "<<truehtvec<<endl;
+		//Store the differences in three
+
+
+		//For multiple clusters in a layer consider one with minimum difx
+		if (difx < diffmx) {
+
+		  diffmx = difx;
+		  //cout<<" Diff "<<difx<<endl;
+                
+	
+     		
+
+		  cout<<" Extrapolated position "<<G_Point[0]<<" "<<G_Point[1]<<" "<<G_Point[2]<<endl;
+		  cout<<" Reconstructed position "<<tmphtvec.x()<<" "<<tmphtvec.y()<<" "<<tmphtvec.z()<<endl;
+		  cout<<" True Position "<<truehtvec.x()<<" "<<truehtvec.x()<<" "<<truehtvec.y()<<" "<<truehtvec.z()<<endl;
+
+		  cout<<"Reco-Extrap: "<<  tmphtvec.x()-G_Point[0]<<" "<<  tmphtvec.y()-G_Point[1]<<" "    <<tmphtvec.z()-G_Point[2]<<endl;
+		  cout<<"True-Extra: "<<truehtvec.x()-G_Point[0]<<" " << truehtvec.y()-G_Point[1]<<" " << truehtvec.z()-G_Point[2] <<endl;
+    
+
+
+		  
+		  pAnalysis->CMVDTruePosX[layid] = CmvClusterBank[ijk][ij][ix]->GetTruePosX();
+		  pAnalysis->CMVDTruePosY[layid] = CmvClusterBank[ijk][ij][ix]->GetTruePosY();
+		  pAnalysis->CMVDTruePosZ[layid] = CmvClusterBank[ijk][ij][ix]->GetTruePosZ();
+
+		  
+		  pAnalysis->CMVDRecoPosX[layid] = CmvClusterBank[ijk][ij][ix]->GetRecoPosX();
+		  pAnalysis->CMVDRecoPosY[layid] = CmvClusterBank[ijk][ij][ix]->GetRecoPosY();
+		  pAnalysis->CMVDRecoPosZ[layid] = CmvClusterBank[ijk][ij][ix]->GetRecoPosZ();
+
+
+		  pAnalysis->CMVDWRecoPosX[layid] = CmvClusterBank[ijk][ij][ix]->GetWRecoPosX();
+		  pAnalysis->CMVDWRecoPosY[layid] = CmvClusterBank[ijk][ij][ix]->GetWRecoPosY();
+		  pAnalysis->CMVDWRecoPosZ[layid] = CmvClusterBank[ijk][ij][ix]->GetWRecoPosZ();
+
+		  pAnalysis->CMVDClusterSize[layid] = CmvClusterBank[ijk][ij][ix]->GetClusterSize();
+		   
+		  pAnalysis->CMVDExpnHit[layid] = 1;		  
+		  pAnalysis->CMVDisExpIn[layid] =0;
+		  pAnalysis->CMVDisHit[layid] =1;
+
+	  
+	  
+		}//difx
+		
+	      
+
+		
+	      }//  for (unsigned int ix=0; ix<CmvClusterBank[ijk][ij].size(); ix++) {
+	    }//    if(CmvClusterBank[ijk][ij].size()>0){
+	    else{
+	      cout<<"Extrapolation is outside and no hits"<<endl;
+	    pAnalysis->CMVDExpnHit[layid] = 0;// exp point is outside and no hit is there
+              pAnalysis->CMVDisExpIn[layid] =0;
+              pAnalysis->CMVDisHit[layid] =0;
+
+
+	      pAnalysis->CMVDTruePosX[layid] = -10000;
+	      pAnalysis->CMVDTruePosY[layid] = -10000;
+	      pAnalysis->CMVDTruePosZ[layid] = -10000;
+	      
+	      
+	      pAnalysis->CMVDRecoPosX[layid] =  -10000;
+	      pAnalysis->CMVDRecoPosY[layid] =  -10000;
+	      pAnalysis->CMVDRecoPosZ[layid] =  -10000;
+	      
+	      
+	      pAnalysis->CMVDWRecoPosX[layid] =  -10000;
+	      pAnalysis->CMVDWRecoPosY[layid] =  -10000;
+	      pAnalysis->CMVDWRecoPosZ[layid] =  -10000;
+	      
+	      pAnalysis->CMVDClusterSize[layid] =0;
+
+	    
+	    }
+
+	  }
+
+
+		  pAnalysis->CMVDExpPosX[layid] = G_Point[0];
+		  pAnalysis->CMVDExpPosY[layid] = G_Point[1];
+		  pAnalysis->CMVDExpPosZ[layid] = G_Point[2];
+
+        
+
+	}	else{//pl2
+	  cout<<"..No Line PLane Intersection.."<<endl;
+	  
+   if(CmvClusterBank[ijk][ij].size()>0){
 
 	      cout<<"But Hit Present"<<endl;
 	      for (unsigned int ix=0; ix<CmvClusterBank[ijk][ij].size(); ix++) {
@@ -698,51 +832,39 @@ void micalEventAction::CMVD_Extrapolation(){
 
 		
 	      }
-	    }
-	    else{
-	    pAnalysis->CMVDExpnHit[layid] = 0;// exp point is outside and no hit is there
-	    }
-
-	  }
+   }  else{
+		    cout<<"no lineplane intersection and no hits"<<endl;
 
 
-		  pAnalysis->CMVDExpPosX[layid] = G_Point[0];
-		  pAnalysis->CMVDExpPosY[layid] = G_Point[1];
-		  pAnalysis->CMVDExpPosZ[layid] = G_Point[2];
-
+	      pAnalysis->CMVDTruePosX[layid] = -10000;
+	      pAnalysis->CMVDTruePosY[layid] = -10000;
+	      pAnalysis->CMVDTruePosZ[layid] = -10000;
+	      
+	      
+	      pAnalysis->CMVDRecoPosX[layid] =  -10000;
+	      pAnalysis->CMVDRecoPosY[layid] =  -10000;
+	      pAnalysis->CMVDRecoPosZ[layid] =  -10000;
+	      
+	      
+	      pAnalysis->CMVDWRecoPosX[layid] =  -10000;
+	      pAnalysis->CMVDWRecoPosY[layid] =  -10000;
+	      pAnalysis->CMVDWRecoPosZ[layid] =  -10000;
+	      
+	      pAnalysis->CMVDClusterSize[layid] =0;
+	      
         
 
-	}
-	else{
-	  cout<<"..No Line PLane Intersection.."<<endl;
+		  pAnalysis->CMVDClusterSize[layid] = 0;
+		   
+		  pAnalysis->CMVDExpnHit[layid] = 0;
 
 
-
-
+		  }
 		  
-		  pAnalysis->CMVDTruePosX[layid] = -10000;
-		  pAnalysis->CMVDTruePosY[layid] = -10000;
-		  pAnalysis->CMVDTruePosZ[layid] = -10000;
-
-		  
-		  pAnalysis->CMVDRecoPosX[layid] = -10000;
-		  pAnalysis->CMVDRecoPosY[layid] = -10000;
-		  pAnalysis->CMVDRecoPosZ[layid] = -10000;
-
-
-		  pAnalysis->CMVDWRecoPosX[layid] = -10000;
-		  pAnalysis->CMVDWRecoPosY[layid] = -10000;
-		  pAnalysis->CMVDWRecoPosZ[layid] = -10000;
-
-
-
+        	  pAnalysis->CMVDpl2[layid]=0;
 		  pAnalysis->CMVDExpPosX[layid] = -10000;
 		  pAnalysis->CMVDExpPosY[layid] = -10000;
-		  pAnalysis->CMVDExpPosZ[layid] = -10000;
-
-		  pAnalysis->CMVDClusterSize[layid] = -10000;
-		   
-		  pAnalysis->CMVDExpnHit[layid] = -10000;		  
+		  pAnalysis->CMVDExpPosZ[layid] = -10000;		  
 		 		  
 
 	}
@@ -753,6 +875,14 @@ void micalEventAction::CMVD_Extrapolation(){
   
     }//loc_no loop
 
+    cout<<"Printing CMVDExpnHit "<<endl;
+    for(int iij=0;iij<32;iij++){
+      cout<<iij<<" "<<pAnalysis->CMVDExpnHit[iij]<<endl;
+  }
+
+
+
+    
   }
 
 
@@ -989,7 +1119,7 @@ void micalEventAction::FormCmvCluster() {
     //Fill number of hits in a layer:
 
     
-    for(unsigned int tmpside=0;tmpside<6;tmpside++){
+    for(unsigned int tmpside=0;tmpside<7;tmpside++){
       
       for(unsigned int tmplay=0;tmplay<4;tmplay++){
 	if(tmpside>0 && tmplay==3) continue;
@@ -1036,7 +1166,7 @@ void micalEventAction::FormCmvCluster() {
     }//  for(unsigned int jk=0; jk<CmvHitBank[tmpside][tmplay].size();jk++) {
       }// for(unsigned int tmplay=0;tmplay<4;tmplay++){
       
-    }// for(unsigned int tmpside=0;tmpside<6;tmpside++){
+    }// for(unsigned int tmpside=0;tmpside<7;tmpside++){
     
 
     cout<<" CmvCluster_list.size() "<<CmvCluster_pointer->CmvCluster_list.size()<<endl;
@@ -1851,7 +1981,7 @@ void micalEventAction::EndOfEventAction(const G4Event* evt) {
 	    //Only one clust per layer and that cluster should have less than 5 multiplicity:
 	    //	    cout<<"nxstrip nystrip  "<<ClustsInTrackBank[nlay][0]->GetNXStripsInClust() << " "<< ClustsInTrackBank[nlay][0]->GetNYStripsInClust() <<endl;
 
-	    if(ClustsInTrackBank[iji][nlay].size()>=1){
+	    //  if(ClustsInTrackBank[iji][nlay].size()>=1){
 	      cout<<"ClustsInTrackBank[iji][nlay].size() "<<ClustsInTrackBank[iji][nlay].size()<<endl;
 		
 	      if (ClustsInTrackBank[iji][nlay].size()==1 &&  ClustsInTrackBank[iji][nlay][0]->GetNXStripsInClust()<5 && ClustsInTrackBank[iji][nlay][0]->GetNYStripsInClust()<5 ){
@@ -1899,7 +2029,7 @@ void micalEventAction::EndOfEventAction(const G4Event* evt) {
 		Xusedpos[nlay]=false;
 		Yusedpos[nlay]=false;
 	      }  
-	    }
+	      // }
 	      cout<<nlay<<" "<<Xpos[nlay]<<" "<<Ypos[nlay]<<" "<<zval[nlay]<<" "<<Xusedpos[nlay]<<" "<<Yusedpos[nlay]<<" "<<errxsq[nlay]<<" "<<errysq[nlay]<<endl;
 	    
 	 
