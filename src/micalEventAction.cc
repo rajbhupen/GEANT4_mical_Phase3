@@ -429,7 +429,7 @@ void micalEventAction::CMVD_Extrapolation(){
 
 	    break;
 	    
-	  case 3: isInside = (  abs(G_Point[0]-PhyVolGlPos[ijk][ij][0])<layhalfbreadth+delta  && (G_Point[0])<  (PhyVolGlPos[ijk][ij][0]+layhalfbreadth+delta) &&  (G_Point[0])>  (PhyVolGlPos[ijk][ij][0]-layhalfbreadth-delta) &&  (G_Point[2])<  (PhyVolGlPos[ijk][ij][2]+layhalflength+delta) &&  (G_Point[2])> (PhyVolGlPos[ijk][ij][2]-layhalflength-delta)     &&  abs(G_Point[1] -PhyVolGlPos[ijk][ij][1])<1.e-10 );
+	  case 3: isInside = (   (G_Point[0])<  (PhyVolGlPos[ijk][ij][0]+layhalfbreadth+delta) &&  (G_Point[0])>  (PhyVolGlPos[ijk][ij][0]-layhalfbreadth-delta) &&  (G_Point[2])<  (PhyVolGlPos[ijk][ij][2]+layhalflength+delta) &&  (G_Point[2])> (PhyVolGlPos[ijk][ij][2]-layhalflength-delta)     &&  abs(G_Point[1] -PhyVolGlPos[ijk][ij][1])<1.e-10 );
 	    //	    cout<<"case 3:: "<<endl;
 
 
