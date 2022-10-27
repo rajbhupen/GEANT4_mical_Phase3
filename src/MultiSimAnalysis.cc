@@ -842,7 +842,7 @@ void MultiSimAnalysis::OpenRootfiles(G4String infile,  G4String outfile, G4Strin
 
 		
   }
-  if (InputOutput==2 ||  InputOutput==0 )  { //Sim output 17032022
+  if (InputOutput==2 ||  InputOutput==0 || InputOutput==1 )  { //Sim output 17032022
     //SImulation output
     pEventTree->Branch("nsimht", &nsimht, "nsimht/i");
     pEventTree->Branch("detid", detid, "detid[nsimht]/i");
@@ -857,7 +857,7 @@ void MultiSimAnalysis::OpenRootfiles(G4String infile,  G4String outfile, G4Strin
     pEventTree->Branch("simpz", simpz, "simpz[nsimht]/F");
     pEventTree->Branch("simlocvx", simlocvx, "simlocvx[nsimht]/F");
     pEventTree->Branch("simlocvy", simlocvy, "simlocvy[nsimht]/F");
-  pEventTree->Branch("simlocvz", simlocvz, "simlocvz[nsimht]/F");
+    pEventTree->Branch("simlocvz", simlocvz, "simlocvz[nsimht]/F");
     //pEventTree->Branch("range", &range, "range/F");
     pEventTree->Branch("simtotabenr",&simtotabenr, "simtotabenr/F");
     pEventTree->Branch("simtotrpcenr",&simtotrpcenr, "simtotrpcenr/F");
@@ -881,7 +881,7 @@ void MultiSimAnalysis::OpenRootfiles(G4String infile,  G4String outfile, G4Strin
 		
     pEventTree->Branch("cmv_simlocx", cmv_simlocx, "cmv_simlocx[cmv_nsimhit]/F");
     pEventTree->Branch("cmv_simlocy", cmv_simlocy, "cmv_simlocy[cmv_nsimhit]/F");
- pEventTree->Branch("cmv_simlocz", cmv_simlocz, "cmv_simlocz[cmv_nsimhit]/F");
+    pEventTree->Branch("cmv_simlocz", cmv_simlocz, "cmv_simlocz[cmv_nsimhit]/F");
     //cmv
   }
   if (!pEventTree) {

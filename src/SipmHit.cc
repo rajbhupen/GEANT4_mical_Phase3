@@ -99,7 +99,7 @@ SipmHit::SipmHit(CmvStrip* str, int Sipm) {
   if(debug) cout <<"SipmHit::SipmHit time edep dist "<<iplane<<"  " <<time<<" "<<pulse<<" "<<dist<<endl; //pulse is just edep in keV
   
   //	if (Sipm>1 ) { dist = 457.8 - dist;} // may be different for different CMV, change accordingly
-  //Exponential loss of signal in fibre
+  //Double Exponential loss of signal in fibre
   double lam1 = 883.3;
   double lam2 = 10121.0;
   double frac = 0.96;

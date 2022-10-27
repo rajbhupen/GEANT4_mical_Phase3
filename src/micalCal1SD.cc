@@ -766,7 +766,7 @@ void micalcal1SD::EndOfEvent(G4HCofThisEvent*)
     //   cout<<"\n Error: Event no. greater than total no. of entries in the input file.\n";
     //   exit(1);
     // }
-		
+    cout<<"pAnalysis->cmv_ndigihit "<<pAnalysis->cmv_ndigihit<<endl;
     for(unsigned ij=0;ij<pAnalysis->cmv_ndigihit;ij++) {
       //      unsigned istrp = pAnalysis->stripid[ij];
       SipmHit*  sipmht = new SipmHit(); //VALGRIND
@@ -784,7 +784,9 @@ void micalcal1SD::EndOfEvent(G4HCofThisEvent*)
     sipmht->SetZLocPos(pAnalysis->cmv_digilocz[ij]);
       int isipmid = sipmht->GetId();
       int oldid=-1;
+      cout<<"check11 "<<SipmHit_pointer->SipmHit_list.size()<<endl;
       for (unsigned int jk=0; jk<SipmHit_pointer->SipmHit_list.size(); jk++) {
+	cout<<"jk "<<jk<<endl;
 	if (isipmid==SipmHit_pointer->SipmHit_list[jk]->GetId()) {
 	  SipmHit_pointer->SipmHit_list[jk]->Update(sipmht->GetPulse(), sipmht->GetTime());
 	  oldid = jk;

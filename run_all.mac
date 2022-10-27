@@ -3,7 +3,7 @@
 #
 # 0:GEN->RECO, 1:GEN->DIGI, 2:GEN->SIM, 3: SIM -> RECO, 4: SIM -> DIFI, 5 : DIGI -> RECO
 # Gen 3: corsikadata_4m.root Gen 4: flux_Pethu_FLUKA_SIBYLL.root
-/mical/run/inout 0
+/mical/run/inout 5
 /mical/run/isVis 0
 /mical/run/isXterm 0
 /mical/gun/Gen 4
@@ -91,7 +91,7 @@
 
 
 /mical/run/output_file test1_coll
-/mical/run/input_file gen4_inout0_CMVD_SL_Trg30__CollatedIn_0001
+/mical/run/input_file test1_coll
 
 
 
