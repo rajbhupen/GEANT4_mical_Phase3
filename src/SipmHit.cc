@@ -1,3 +1,6 @@
+//Assume: nearer sipm has 33 npho for a muon passage.
+//1pe = 0.27 pC @2.5 ov
+//peaks in Led spectrum were fitted with gaussian whose sigma sq is s1^2+npho*s2^2 (s1 = 0.015pC,s2=0.006pC )
 #include <cassert>
 #include <iostream>
 #include "SipmHit.h"
@@ -88,7 +91,7 @@ SipmHit::SipmHit(CmvStrip* str, int Sipm) {
   if (iplane==6 || iplane==7){
     layhalflength = 1000;//
   } 
-    if(debug) cout<<"dist fYLocPos layhalflength "<<iplane<<" "<<dist<<" "<<fYLocPos<<" "<<layhalflength<<endl;
+  //  if(debug) cout<<"dist fYLocPos layhalflength "<<iplane<<" "<<dist<<" "<<fYLocPos<<" "<<layhalflength<<endl;
   
 
       
@@ -107,18 +110,21 @@ SipmHit::SipmHit(CmvStrip* str, int Sipm) {
   double signal =pulse*(lam1*exp(-dist/lam1) + frac*lam2*exp(-dist/lam2)) /(lam1+lam2*frac); // in KeV
   
   //Average number of ohotons will be vary for different scintillator, SiPM
-  double lambda = signal* 0.0225; // Assume 1cm scint (2MeV), observed signal in 45 photon in nearer SiPM
+  double lambda = signal* 0.0165; // Assume 1cm scint (2MeV), observed signal in 33 photon in nearer SiPM//33/2000
   //lambda *=0.1; // GMA Manually reduced it (Too much energy deposit in the scintillator veto detector : Probably multiple insertion of the chamber
   // lambda *=1;//material changed from lead to hydrocarbon
   //Poission fluctuations of observed SiPM
   int npho = gRandom->Poisson(lambda);
   
   //Charge in pC
-  double picoC = npho*0.2; 
+  double picoC = npho*0.27;//0.24 
   //Smeaing of charge
   if(debug)	cout <<"picoC "<<picoC<<endl;
-  picoC += gRandom->Gaus(0, 0.05); // Random noise in the signal
-  
+  double sigma1sq = pow(0.015,2);
+  double sigma2sq = pow(0.006,2);
+  double gausigmasq = sigma1sq + (npho*sigma2sq);
+  picoC += gRandom->Gaus(0,pow(gausigmasq,0.5)); // Random noise in the signal
+  //sqrt(a1^2+a2^2*npho)
   if (picoC<0) { picoC = 0;}
   //Digitisation of signal, assuming least count 0.01pC
   int iPul = picoC*100+ Sipm_Pedestal;//100= pedestal

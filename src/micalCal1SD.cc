@@ -365,7 +365,7 @@ G4int TileNo = theTouchable->GetCopyNumber(2);
    //  newHit->SetLocalXPos(localpos.x());
    // newHit->SetLocalYPos(localpos.y());		     
    //  newHit->SetLocalZPos(localpos.z());	
-    newHit->SetMom( aStep->GetTrack()->GetMomentum());
+   newHit->SetMom( aStep->GetTrack()->GetMomentum());//Get momentum from prestep
       
     InCell = cal1Collection->insert( newHit );
     //  cout<<"InCell "<<InCell<<endl;
@@ -470,7 +470,7 @@ void micalcal1SD::EndOfEvent(G4HCofThisEvent*)
   }
 
   if (pAnalysis->InputOutput <=4) {
-    if (pAnalysis->InputOutput==2 || pAnalysis->InputOutput==0    ) { //gen to sim. 0 added on 17022022
+    if (pAnalysis->InputOutput==2 || pAnalysis->InputOutput==0 ||  pAnalysis->InputOutput==1   ) { //gen to sim. 0 added on 17022022
   gDirectory->pwd();
       pAnalysis->pRootFile->cd();
   gDirectory->pwd();

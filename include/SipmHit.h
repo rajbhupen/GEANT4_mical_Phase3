@@ -87,7 +87,7 @@ class SipmHit
   bool isUsed;
   //	TRandom3* gRandom3;
 
-  bool debug = false;
+  bool debug = true;
 };
 
 

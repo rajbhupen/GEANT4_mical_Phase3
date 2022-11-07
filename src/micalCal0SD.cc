@@ -791,7 +791,7 @@ void micalcal0SD::EndOfEvent(G4HCofThisEvent*) {
     pAnalysis->pRootFile->cd();
   }
   if (pAnalysis->InputOutput <=4) {
-    if (pAnalysis->InputOutput==2 || pAnalysis->InputOutput==0) { //17032022 raj
+    if (pAnalysis->InputOutput==2 || pAnalysis->InputOutput==0 || pAnalysis->InputOutput==1 ) { //17032022 raj
       pAnalysis->pRootFile->cd();
       pAnalysis->nsimht = cal0Collection->entries();
       //      cout<<" "<<cal0Collection->entries()<<" "<<pAnalysis->nsimht<<endl;
