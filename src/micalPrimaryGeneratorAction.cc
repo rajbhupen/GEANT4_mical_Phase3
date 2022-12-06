@@ -70,7 +70,8 @@ micalPrimaryGeneratorAction::micalPrimaryGeneratorAction(
   
   //create a messenger for this class
   gunMessenger = new micalPrimaryGeneratorMessenger(this);
-  
+   gRandom3 = new TRandom3();
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -79,6 +80,8 @@ micalPrimaryGeneratorAction::~micalPrimaryGeneratorAction() {
   // G4cout<<"micalPrimaryGeneratorAction Distructor"<<endl;
   if (particleGun)	{delete particleGun;}
   if (gunMessenger) {delete gunMessenger;}
+    if(gRandom3) {delete gRandom3;}
+
 }
 
 void micalPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent) {
@@ -778,9 +781,31 @@ ShiftInZ = paradef->GetShiftInZ(0);
        if(pAnalysis->InputOutput==0 || pAnalysis->InputOutput==1 || pAnalysis->InputOutput==2) {
 	 // if(1) {
 	for (unsigned int count=0; count<pAnalysis->ngent; count++) {
-	  // cout<<"seed "<<gRandom->GetSeed()<<endl;
-	  
+	  // cout<<"seed "<<grandom3random3->GetSeed()<<endl;
+
+
+	  G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
+	  G4ParticleDefinition* particle;
+	  G4ThreeVector tmp3v,ini_Dir;
 	  double Pxx,Pyy,Pzz;
+	  double Point2[3];
+	  // double energy;
+	  double vertexX;
+	  double vertexY;
+	  double vertexZ;
+	  double Ini_Theta = 0;
+	  double Ini_Phi = 0;
+	  
+	  pAnalysis->ngenerated = 0;
+	  pAnalysis->naperture = 0;
+
+	  double theta, phi;
+	  int brkpt = 1;
+	  int brkcnt = 0;
+	  
+	  while(brkpt) {
+
+	  
 	  muFlux->GetRandom3(Pxx,Pyy,Pzz);
 	  int gBin = muFlux->FindBin(Pxx,Pyy,Pzz);
 	  cout<<"gBin "<<gBin<<endl;
@@ -795,32 +820,23 @@ ShiftInZ = paradef->GetShiftInZ(0);
 	  }
 	  cout << " partID " << partID << endl;
 	  
-	  G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-	  G4ParticleDefinition* particle = particleTable->FindParticle(partID);
+	 
+	  particle = particleTable->FindParticle(partID);
 	  particleGun->SetParticleDefinition(particle);
 	  particleGun->SetParticlePosition(G4ThreeVector(0,0,0));
 
-	  G4ThreeVector tmp3v(Pxx*GeV,Pyy*GeV,Pzz*GeV);
-	  
-	  double Point2[3];
-	  // double energy;
-	  double vertexX;
-	  double vertexY;
-	  double vertexZ;
-	  double Ini_Theta = 0;
-	  double Ini_Phi = 0;
-	  G4ThreeVector ini_Dir(tmp3v.unit());
-	  double theta, phi;
-	  int brkpt = 1;
-	  int brkcnt = 0;
+	   tmp3v.setX(Pxx*GeV);
+	   tmp3v.setY(Pyy*GeV);
+	   tmp3v.setZ(Pzz*GeV);
 
-	  pAnalysis->ngenerated = 0;
-	  pAnalysis->naperture = 0;
-	  
-	  while(brkpt) {
+	   ini_Dir = tmp3v.unit();
 
-	    vx = pargas[0]*(2*G4UniformRand()-1.0);
-            vy =(2*(pargas[1]+parchm[1])*G4UniformRand())+(-parchm[1]-paradef->GetParFrpBox(1)+paradef->GetShiftInY() );
+
+	  
+	  // while(brkpt) {
+
+	    vx = pargas[0]*(2*gRandom3->Uniform()-1.0);
+            vy =(2*(pargas[1]+parchm[1])*gRandom3->Uniform())+(-parchm[1]-paradef->GetParFrpBox(1)+paradef->GetShiftInY() );
 	    vz = RPCLayerPosZ[toptrgly];
 
 	    cout<<"vy "<<vy<<endl;	    
@@ -913,7 +929,7 @@ ShiftInZ = paradef->GetShiftInZ(0);
 	   cout << " mom theta phi " << tmp3v.mag() << " " << Ini_Theta << " " << Ini_Phi << endl;
 	  
 	  // Ini_Enrgy = enrgy;
-	  // double Ini_Enrgy = (G4UniformRand()*EUpLim+ELowLim)*MeV;
+	  // double Ini_Enrgy = (gRandom->Uniform()*EUpLim+ELowLim)*MeV;
 	  // cout << " Ini_Enrgy " << Ini_Enrgy << endl;
 	  // cout << " ELowLim " << ELowLim << " EUpLim " << EUpLim << endl;	  
 	  
@@ -987,8 +1003,8 @@ ShiftInZ = paradef->GetShiftInZ(0);
 	  pAnalysis->ngenerated = 0;
 	  pAnalysis->naperture = 0;
 
-	  vx = 0;//500*(2*G4UniformRand()-1.0);
-	  vy = 0;//500*(2*G4UniformRand()-1.0);
+	  vx = 0;//500*(2*gRandom->Uniform()-1.0);
+	  vy = 0;//500*(2*gRandom->Uniform()-1.0);
 	  vz = RPCLayerPosZ[toptrgly] + 101*mm;
 	  
 	  vertexX = vx + StackPosInWorld[0];

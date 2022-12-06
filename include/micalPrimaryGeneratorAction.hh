@@ -11,6 +11,7 @@
 #include <fstream>
 #include "micalDetectorParameterDef.hh"
 #include "TFile.h"
+#include "TRandom3.h"
 class G4ParticleGun;
 class G4Event;
 class micalDetectorConstruction;
@@ -148,6 +149,8 @@ public:
     
   G4String FluxFileDir;
   G4String FluxFileName;
+
+  TRandom3* gRandom3;
 };
 
 #endif
