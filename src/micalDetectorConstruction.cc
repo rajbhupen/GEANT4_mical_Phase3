@@ -1294,7 +1294,7 @@ logicfiber_top = new G4LogicalVolume(solidfiber_top,
 	
 
   solidTopTileBase= new G4Box("solidTopTileBase",TileWidth,partopscint[1]-50,partopscint[2]);
-  logicTopTileBase = new G4LogicalVolume(solidTopTileBase, Aluminium,	"logicTopTileBase");
+  logicTopTileBase = new G4LogicalVolume(solidTopTileBase, Air,	"logicTopTileBase");
 
 
 
@@ -1564,7 +1564,7 @@ logicfiber_top = new G4LogicalVolume(solidfiber_top,
   logicLeftSideTile_1cm = new G4LogicalVolume(solidLeftSideTile_1cm, Air,	"logicLeftSideTile_1cm");
 
   solidLeftSideTileBase= new G4Box("solidLeftSideTileBase",TileWidth,partopscint[1]+0,partopscint[2]);
-  logicLeftSideTileBase = new G4LogicalVolume(solidLeftSideTileBase, Aluminium,	"logicLeftSideTileBase"); // Al base for 8 EPS in one Tile
+  logicLeftSideTileBase = new G4LogicalVolume(solidLeftSideTileBase, Air,	"logicLeftSideTileBase"); // Al base for 8 EPS in one Tile
 
 
 
@@ -1714,7 +1714,7 @@ logicfiber_top = new G4LogicalVolume(solidfiber_top,
   logicRightSideTile_1cm = new G4LogicalVolume(solidRightSideTile_1cm, Air,	"logicRightSideTile_1cm");
 
   solidRightSideTileBase= new G4Box("solidRightSideTileBase",TileWidth,partopscint[1],partopscint[2]);
-  logicRightSideTileBase = new G4LogicalVolume(solidRightSideTileBase, Aluminium,	"logicRightSideTileBase"); // Al base for 8 EPS in one Tile
+  logicRightSideTileBase = new G4LogicalVolume(solidRightSideTileBase, Air,	"logicRightSideTileBase"); // Al base for 8 EPS in one Tile
 
 
 
@@ -1852,7 +1852,7 @@ logicfiber_top = new G4LogicalVolume(solidfiber_top,
   logicmLeftSideTile_2cm = new G4LogicalVolume(solidmLeftSideTile_2cm, Air,	"logicmLeftSideTile_2cm");
 
   solidmLeftSideTileBase= new G4Box("solidmLeftSideTileBase",TileWidth,1000+0,partopscint[2]);
-  logicmLeftSideTileBase = new G4LogicalVolume(solidmLeftSideTileBase, Aluminium,	"logicmLeftSideTileBase"); // Al base for 8 EPS in one Tile
+  logicmLeftSideTileBase = new G4LogicalVolume(solidmLeftSideTileBase, Air,	"logicmLeftSideTileBase"); // Al base for 8 EPS in one Tile
 
 
 
@@ -1995,7 +1995,7 @@ logicfiber_top = new G4LogicalVolume(solidfiber_top,
   logicmRightSideTile_2cm = new G4LogicalVolume(solidmRightSideTile_2cm, Air,	"logicmRightSideTile_2cm");
 
   solidmRightSideTileBase= new G4Box("solidmRightSideTileBase",TileWidth,1000+0,partopscint[2]);
-  logicmRightSideTileBase = new G4LogicalVolume(solidmRightSideTileBase, Aluminium,	"logicmRightSideTileBase"); // Al base for 8 EPS in one Tile
+  logicmRightSideTileBase = new G4LogicalVolume(solidmRightSideTileBase, Air,	"logicmRightSideTileBase"); // Al base for 8 EPS in one Tile
 
 
 
@@ -2191,7 +2191,7 @@ logicfiber_top = new G4LogicalVolume(solidfiber_top,
   logicBackSideTile_1cm = new G4LogicalVolume(solidBackSideTile_1cm, Air,	"logicBackSideTile_1cm");
 
   solidBackSideTileBase= new G4Box("solidBackSideTileBase",TileWidth,partopscint[1]+50,partopscint[2]);
-  logicBackSideTileBase = new G4LogicalVolume(solidBackSideTileBase, Aluminium,	"logicBackSideTileBase"); // Al base for 8 EPS in one Tile
+  logicBackSideTileBase = new G4LogicalVolume(solidBackSideTileBase, Air,	"logicBackSideTileBase"); // Al base for 8 EPS in one Tile
 
 
 

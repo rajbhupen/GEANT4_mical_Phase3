@@ -165,7 +165,7 @@ int main(int argc,char** argv) {
   runManager->Initialize();
   cout <<"10xxx "<<endl;
   // //  Write the GDML files
-  //  parser.Write("detector_world.gdml", G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->GetWorldVolume());
+    parser.Write("detector_world.gdml", G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->GetWorldVolume());
   // cout <<"11xxx "<<endl;
   // system("rm geo.gdml");
   // cout <<"12xxx "<<endl;

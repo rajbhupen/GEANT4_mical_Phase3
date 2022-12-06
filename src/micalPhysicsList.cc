@@ -118,7 +118,7 @@ micalPhysicsList::micalPhysicsList(micalDetectorConstruction* adet):G4VModularPh
 
     region1 = G4RegionStore::GetInstance()->GetRegion(reg1Name);
   cutsb = new G4ProductionCuts;
-  cutsb->SetProductionCut(5*cm); // same cuts for gamma, e- and e+
+  cutsb->SetProductionCut(0.1*mm); // same cuts for gamma, e- and e+
 
   region1->SetProductionCuts(cutsb);
 
@@ -131,7 +131,7 @@ micalPhysicsList::micalPhysicsList(micalDetectorConstruction* adet):G4VModularPh
 
     region2 = G4RegionStore::GetInstance()->GetRegion(reg2Name);
   cutsb = new G4ProductionCuts;
-  cutsb->SetProductionCut(5*cm); // same cuts for gamma, e- and e+
+  cutsb->SetProductionCut(0.1*mm); // same cuts for gamma, e- and e+
 
   region2->SetProductionCuts(cutsb);
 
@@ -145,7 +145,7 @@ micalPhysicsList::micalPhysicsList(micalDetectorConstruction* adet):G4VModularPh
 
     region3 = G4RegionStore::GetInstance()->GetRegion(reg3Name);
   cutsb = new G4ProductionCuts;
-  cutsb->SetProductionCut(5*cm); // same cuts for gamma, e- and e+
+  cutsb->SetProductionCut(0.1*mm); // same cuts for gamma, e- and e+
 
   region3->SetProductionCuts(cutsb);
 
@@ -158,7 +158,7 @@ micalPhysicsList::micalPhysicsList(micalDetectorConstruction* adet):G4VModularPh
 
     region4 = G4RegionStore::GetInstance()->GetRegion(reg4Name);
   cutsb = new G4ProductionCuts;
-  cutsb->SetProductionCut(5*cm); // same cuts for gamma, e- and e+
+  cutsb->SetProductionCut(0.1*mm); // same cuts for gamma, e- and e+
 
   region4->SetProductionCuts(cutsb);
 
@@ -172,7 +172,7 @@ micalPhysicsList::micalPhysicsList(micalDetectorConstruction* adet):G4VModularPh
 
     region5 = G4RegionStore::GetInstance()->GetRegion(reg5Name);
   cutsb = new G4ProductionCuts;
-  cutsb->SetProductionCut(5*cm); // same cuts for gamma, e- and e+
+  cutsb->SetProductionCut(0.1*mm); // same cuts for gamma, e- and e+
 
   region5->SetProductionCuts(cutsb);
   //

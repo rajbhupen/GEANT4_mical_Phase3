@@ -1,6 +1,20 @@
-//Assume: nearer sipm has 33 npho for a muon passage.
-//1pe = 0.27 pC @2.5 ov
-//peaks in Led spectrum were fitted with gaussian whose sigma sq is s1^2+npho*s2^2 (s1 = 0.015pC,s2=0.006pC )
+//SiPM/Scint parameters:
+/*
+DEFAULT:
+
+    edep = 0.973*edep/(1+(0.001*0.126*edep/plen));//birks law kB 0.126mm/MeV polystyrene 
+  double lam1 = 883.3;
+  double lam2 = 10121.0;
+  double frac = 0.96;//0.96
+ double lambda = signal*0.013;
+  int npho = gRandom->Poisson(lambda);
+  npho =  gRandom->Poisson(npho);
+ double picoC = npho*0.255;
+
+ double sigma1 = pow(0.0223,1);
+  double sigma2 = pow(0.0223,1);
+
+ */
 #include <cassert>
 #include <iostream>
 #include "SipmHit.h"
@@ -110,19 +124,19 @@ SipmHit::SipmHit(CmvStrip* str, int Sipm) {
   double signal =pulse*(lam1*exp(-dist/lam1) + frac*lam2*exp(-dist/lam2)) /(lam1+lam2*frac); // in KeV
   
   //Average number of ohotons will be vary for different scintillator, SiPM
-  double lambda = signal* 0.0165; // Assume 1cm scint (2MeV), observed signal in 33 photon in nearer SiPM//33/2000
+  double lambda = signal* 0.0130; // Assume 1cm scint (2MeV), observed signal in 33 photon in nearer SiPM//33/2000
   //lambda *=0.1; // GMA Manually reduced it (Too much energy deposit in the scintillator veto detector : Probably multiple insertion of the chamber
   // lambda *=1;//material changed from lead to hydrocarbon
   //Poission fluctuations of observed SiPM
   int npho = gRandom->Poisson(lambda);
-  
+   npho =  gRandom->Poisson(npho);
   //Charge in pC
-  double picoC = npho*0.27;//0.24 
+  double picoC = npho*0.255;
   //Smeaing of charge
   if(debug)	cout <<"picoC "<<picoC<<endl;
-  double sigma1sq = pow(0.015,2);
-  double sigma2sq = pow(0.006,2);
-  double gausigmasq = sigma1sq + (npho*sigma2sq);
+  double sigma1 = pow(0.0223,1);
+  double sigma2 = pow(0.0223,1);
+  double gausigmasq = sigma1*sigma1 + (npho*sigma2*sigma2);
   picoC += gRandom->Gaus(0,pow(gausigmasq,0.5)); // Random noise in the signal
   //sqrt(a1^2+a2^2*npho)
   if (picoC<0) { picoC = 0;}

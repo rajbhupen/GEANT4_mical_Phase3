@@ -2,7 +2,7 @@
 # of the B2 example when running in interactive mode
 #
 # 0:GEN->RECO, 1:GEN->DIGI, 2:GEN->SIM, 3: SIM -> RECO, 4: SIM -> DIFI, 5 : DIGI -> RECO
-# Gen 3: corsikadata_4m.root Gen 4: flux_Pethu_FLUKA_SIBYLL.root
+# Gen 3: corsikadata_4m.root Gen 4: flux_Pethu_FLUKA_SIBYLL_Surya.root
 /mical/run/inout 0
 /mical/run/isVis 0
 /mical/run/isXterm 0
@@ -38,7 +38,7 @@
 #/mical/gun/corsika_file_dir ./
 #/mical/gun/corsika_file corsikadata_4m.root
 /mical/gun/flux_file_dir ./
-/mical/gun/flux_file flux_Pethu_FLUKA_SIBYLL.root
+/mical/gun/flux_file flux_Pethu_FLUKA_SIBYLL_Surya.root
 
 /mical/run/firstEvt 1
 /mical/run/input_dir ./

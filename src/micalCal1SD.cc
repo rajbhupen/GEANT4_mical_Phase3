@@ -185,7 +185,7 @@ G4bool micalcal1SD::ProcessHits(G4Step* aStep,
   cout<<endl<<"micalcal1SD::ProcessHits start"<<endl;
   
   G4double edep = aStep->GetTotalEnergyDeposit()/keV;
-  
+
   G4TouchableHistory* theTouchable = (G4TouchableHistory*)( aStep->GetPreStepPoint()->GetTouchable() );
   
   int pdgid = aStep->GetTrack()->GetDefinition()->GetPDGEncoding();
@@ -208,6 +208,15 @@ G4bool micalcal1SD::ProcessHits(G4Step* aStep,
   //  if (abs(aStep->GetTrack()->GetDefinition()->GetPDGEncoding()) !=13) return false;
   //cout<<"edep "<< edep<<endl;
     if (edep==0.)  return false;
+
+  double plen = aStep->GetStepLength();//pathlength
+  cout<<"before birks "<< edep<<endl;
+
+    edep = 0.973*edep/(1+(0.001*0.126*edep/plen));//birks law kB 0.126mm/MeV polystyrene 
+  //edep =  gRandom->Poisson(edep);
+  cout<<"after birks "<< edep<<endl;
+
+    
   cout<<"pid "<<aStep->GetTrack()->GetDefinition()->GetPDGEncoding()<<endl;  
   //We are simulating a  detector that will trigger only if some energy has been deposited (i.e. via ionization), 
   //for example if a neutron passes through the detector (without making interactions) its passage should not be recorded.
